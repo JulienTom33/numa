@@ -26,7 +26,17 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - `useEffect`/`useCallback`/`useMemo` : dependency arrays complètes et exactes.
 - Pas de duplication évitable ; pas d'abstraction créée avant qu'un second usage réel existe.
 - Pas de code mort, pas de commentaire expliquant le "quoi" (le nom du code doit suffire) — commentaire seulement si le "pourquoi" est non évident.
+- **Aucun `console.log`, aucun commentaire `TODO`/`FIXME`/`XXX` dans le code poussé** (sauf commentaire "pourquoi" ci-dessus). Bloqué par ESLint (`no-console`, `no-warning-comments`) dans `npm run lint`.
+- Exception : commentaires libres autorisés dans les fichiers de test (`*.test.ts(x)`, `src/test/**`) et fichiers de config (`*.config.ts`, `*.config.js`, `.env*`, `package.json`, etc.) — `no-warning-comments` désactivé sur ces fichiers dans `eslint.config.js`.
 
 ## Couverture
 
-La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de la logique. Pas de seuil arbitraire fixé ici — voir `decision-log.md` si un seuil est décidé plus tard.
+La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de la logique. Seuil initial : 70 % (lignes, statements, fonctions, branches), configuré dans `vite.config.ts` (`test.coverage.thresholds`). Voir `decision-log.md`.
+
+## CI
+
+- Workflow `.github/workflows/ci.yml`, deux jobs :
+  - `quality` : `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`.
+  - `supabase-migrations` : si `supabase/migrations` existe, démarre Supabase local et exécute `supabase db reset` pour valider les migrations ; sinon l'étape est ignorée (pas encore de schéma Supabase dans le dépôt).
+- Déclenchement : PR vers `master` et `epic/*/main`, et push sur ces branches (couvre la CI post-merge).
+- `master` et `epic/*/main` sont protégées côté GitHub (check `quality` obligatoire, branche à jour, 1 review humaine) — voir `pull-requests.md`.
