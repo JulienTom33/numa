@@ -26,8 +26,14 @@ Le socle qualité est mis en place avant le développement fonctionnel :
 
 ## Démarrage
 
-Les instructions d’installation et les commandes seront ajoutées avec le socle technique.
-Consulter `CLAUDE.md` et `docs/claude/` dès qu’ils sont disponibles.
+```bash
+npm install
+cp .env.example .env   # renseigner VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY
+npx supabase start     # stack Supabase locale (config dans supabase/config.toml)
+npm run dev
+```
+
+Consulter `CLAUDE.md` et `docs/claude/` pour les règles détaillées.
 
 ## Workflow Git
 
