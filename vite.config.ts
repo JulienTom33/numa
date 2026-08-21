@@ -17,6 +17,7 @@ export default defineConfig({
         "src/vite-env.d.ts",
         "src/test/**",
         "dist/**",
+        "scripts/**",
       ],
       thresholds: {
         lines: 70,
