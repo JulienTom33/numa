@@ -26,6 +26,7 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - `useEffect`/`useCallback`/`useMemo` : dependency arrays complètes et exactes.
 - Pas de duplication évitable ; pas d'abstraction créée avant qu'un second usage réel existe.
 - Pas de code mort, pas de commentaire expliquant le "quoi" (le nom du code doit suffire) — commentaire seulement si le "pourquoi" est non évident.
+- **Aucun `console.log`, aucun commentaire `TODO`/`FIXME`, aucun commentaire dans le code poussé** (sauf commentaire "pourquoi" ci-dessus). Bloqué par ESLint (`no-console`, `no-warning-comments`) dans `npm run lint`.
 
 ## Couverture
 
