@@ -29,4 +29,12 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 
 ## Couverture
 
-La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de la logique. Pas de seuil arbitraire fixé ici — voir `decision-log.md` si un seuil est décidé plus tard.
+La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de la logique. Seuil initial : 70 % (lignes, statements, fonctions, branches), configuré dans `vite.config.ts` (`test.coverage.thresholds`). Voir `decision-log.md`.
+
+## CI
+
+- Workflow `.github/workflows/ci.yml`, deux jobs :
+  - `quality` : `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`.
+  - `supabase-migrations` : si `supabase/migrations` existe, démarre Supabase local et exécute `supabase db reset` pour valider les migrations ; sinon l'étape est ignorée (pas encore de schéma Supabase dans le dépôt).
+- Déclenchement : PR vers `master` et `epic/*/main`, et push sur ces branches (couvre la CI post-merge).
+- `master` et `epic/*/main` sont protégées côté GitHub (check `quality` obligatoire, branche à jour, 1 review humaine) — voir `pull-requests.md`.

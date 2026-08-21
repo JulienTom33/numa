@@ -18,3 +18,9 @@
 ## Interdiction de merge automatique
 
 **Aucune PR n'est mergée automatiquement, sous aucune condition** (CI verte, review approuvée, urgence perçue). Le merge est toujours une action humaine explicite, déclenchée par l'utilisateur ou une personne autorisée du projet. Claude Code ne merge jamais une PR de sa propre initiative.
+
+## Protection des branches
+
+- `master` : branch protection classique — check CI `Lint, typecheck, test, build` obligatoire, branche à jour requise (`strict`), 1 review humaine obligatoire, admins inclus, force-push et suppression interdits.
+- `epic/*/main` : repository ruleset `epic-main-protection` (pattern `refs/heads/epic/*/main`, actif même si la branche n'existe pas encore) — mêmes exigences : check CI obligatoire, branche à jour, 1 review humaine, suppression et force-push interdits.
+- En cas d'échec de la CI, le merge est bloqué au niveau GitHub, indépendamment de toute action de Claude Code.
