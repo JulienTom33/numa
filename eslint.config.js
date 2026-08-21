@@ -24,4 +24,10 @@ export default tseslint.config(
       "no-warning-comments": ["error", { terms: ["todo", "fixme", "xxx"], location: "anywhere" }],
     },
   },
+  {
+    files: ["**/*.test.{ts,tsx}", "src/test/**", "**/*.config.{ts,js}"],
+    rules: {
+      "no-warning-comments": "off",
+    },
+  },
 );
