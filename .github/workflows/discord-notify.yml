@@ -1,0 +1,115 @@
+name: Discord notifications
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+  pull_request_review:
+    types: [submitted]
+  workflow_run:
+    workflows: ["CI"]
+    types: [requested, completed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  notify:
+    name: Notifier Discord
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft != true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: PR ouverte
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_REPOSITORY: ${{ github.repository }}
+          NOTIFY_TITLE: ${{ github.event.pull_request.title }}
+          NOTIFY_URL: ${{ github.event.pull_request.html_url }}
+          NOTIFY_BRANCH: ${{ github.event.pull_request.head.ref }}
+          NOTIFY_AUTHOR: ${{ github.event.pull_request.user.login }}
+        continue-on-error: true
+        run: npm run notify:discord -- pr_opened
+
+      - name: PR mise à jour
+        if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_REPOSITORY: ${{ github.repository }}
+          NOTIFY_TITLE: ${{ github.event.pull_request.title }}
+          NOTIFY_URL: ${{ github.event.pull_request.html_url }}
+          NOTIFY_BRANCH: ${{ github.event.pull_request.head.ref }}
+          NOTIFY_AUTHOR: ${{ github.event.pull_request.user.login }}
+        continue-on-error: true
+        run: npm run notify:discord -- pr_updated
+
+      - name: PR mergée
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_REPOSITORY: ${{ github.repository }}
+          NOTIFY_TITLE: ${{ github.event.pull_request.title }}
+          NOTIFY_URL: ${{ github.event.pull_request.html_url }}
+          NOTIFY_BRANCH: ${{ github.event.pull_request.base.ref }}
+          NOTIFY_AUTHOR: ${{ github.event.pull_request.merged_by.login }}
+        continue-on-error: true
+        run: npm run notify:discord -- pr_merged
+
+      - name: Correction demandée
+        if: github.event_name == 'pull_request_review' && github.event.review.state == 'changes_requested'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_REPOSITORY: ${{ github.repository }}
+          NOTIFY_TITLE: ${{ github.event.pull_request.title }}
+          NOTIFY_URL: ${{ github.event.pull_request.html_url }}
+          NOTIFY_BRANCH: ${{ github.event.pull_request.head.ref }}
+          NOTIFY_AUTHOR: ${{ github.event.review.user.login }}
+          NOTIFY_SUMMARY: ${{ github.event.review.body }}
+        continue-on-error: true
+        run: npm run notify:discord -- pr_changes_requested
+
+      - name: CI démarrée
+        if: github.event_name == 'workflow_run' && github.event.action == 'requested'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_REPOSITORY: ${{ github.repository }}
+          NOTIFY_TITLE: ${{ github.event.workflow_run.display_title }}
+          NOTIFY_URL: ${{ github.event.workflow_run.html_url }}
+          NOTIFY_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          NOTIFY_AUTHOR: ${{ github.event.workflow_run.actor.login }}
+        continue-on-error: true
+        run: npm run notify:discord -- ci_started
+
+      - name: CI réussie
+        if: github.event_name == 'workflow_run' && github.event.action == 'completed' && github.event.workflow_run.conclusion == 'success'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_REPOSITORY: ${{ github.repository }}
+          NOTIFY_TITLE: ${{ github.event.workflow_run.display_title }}
+          NOTIFY_URL: ${{ github.event.workflow_run.html_url }}
+          NOTIFY_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          NOTIFY_AUTHOR: ${{ github.event.workflow_run.actor.login }}
+        continue-on-error: true
+        run: npm run notify:discord -- ci_success
+
+      - name: CI en échec
+        if: github.event_name == 'workflow_run' && github.event.action == 'completed' && github.event.workflow_run.conclusion == 'failure'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_REPOSITORY: ${{ github.repository }}
+          NOTIFY_TITLE: ${{ github.event.workflow_run.display_title }}
+          NOTIFY_URL: ${{ github.event.workflow_run.html_url }}
+          NOTIFY_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          NOTIFY_AUTHOR: ${{ github.event.workflow_run.actor.login }}
+        continue-on-error: true
+        run: npm run notify:discord -- ci_failure
