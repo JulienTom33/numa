@@ -111,14 +111,17 @@ select lives_ok(
   'daily_horoscopes: la tentative de suppression de l''horoscope de User B ne lève pas d''erreur (0 ligne visible)'
 );
 
+-- Vérifié hors RLS (rôle postgres) : la ligne de User B, invisible à User A,
+-- doit persister après la tentative de suppression ci-dessus.
+reset role;
+
 select is(
   (select count(*)::int from public.daily_horoscopes where id = 'd2222222-2222-2222-2222-222222222222'),
   1,
-  'daily_horoscopes: l''horoscope de User B existe toujours'
+  'daily_horoscopes: l''horoscope de User B existe toujours (vérifié hors RLS)'
 );
 
 -- Reset : impersonation de User B pour vérifier la symétrie de l'isolation.
-reset role;
 set local role authenticated;
 set local request.jwt.claim.sub = '22222222-2222-2222-2222-222222222222';
 
@@ -140,57 +143,61 @@ select results_eq(
   'messages: User B ne voit que les messages de sa propre conversation'
 );
 
--- Utilisateur anonyme / non authentifié : aucun accès aux tables utilisateur.
+-- Rôle Postgres anon (appel API non authentifié, sans session) : aucun GRANT
+-- sur les tables user-data, donc refus net (permission denied), pas juste
+-- filtré par RLS. Les "sessions anonymes" Numa (découverte sans compte)
+-- s'authentifient avec le rôle authenticated (auth.users.is_anonymous = true)
+-- et sont déjà couvertes par les policies testées ci-dessus (User A / User B).
 reset role;
 set local role anon;
 
-select is(
-  (select count(*)::int from public.profiles),
-  0,
-  'profiles: un utilisateur anonyme (rôle anon) ne voit aucun profil'
+select throws_ok(
+  $$select count(*) from public.profiles$$,
+  '42501', null,
+  'profiles: le rôle anon (non authentifié) n''a aucun accès'
 );
 
-select is(
-  (select count(*)::int from public.birth_data),
-  0,
-  'birth_data: un utilisateur anonyme ne voit aucune donnée de naissance'
+select throws_ok(
+  $$select count(*) from public.birth_data$$,
+  '42501', null,
+  'birth_data: le rôle anon (non authentifié) n''a aucun accès'
 );
 
-select is(
-  (select count(*)::int from public.natal_charts),
-  0,
-  'natal_charts: un utilisateur anonyme ne voit aucun thème natal'
+select throws_ok(
+  $$select count(*) from public.natal_charts$$,
+  '42501', null,
+  'natal_charts: le rôle anon (non authentifié) n''a aucun accès'
 );
 
-select is(
-  (select count(*)::int from public.daily_horoscopes),
-  0,
-  'daily_horoscopes: un utilisateur anonyme ne voit aucun horoscope'
+select throws_ok(
+  $$select count(*) from public.daily_horoscopes$$,
+  '42501', null,
+  'daily_horoscopes: le rôle anon (non authentifié) n''a aucun accès'
 );
 
-select is(
-  (select count(*)::int from public.conversations),
-  0,
-  'conversations: un utilisateur anonyme ne voit aucune conversation'
+select throws_ok(
+  $$select count(*) from public.conversations$$,
+  '42501', null,
+  'conversations: le rôle anon (non authentifié) n''a aucun accès'
 );
 
-select is(
-  (select count(*)::int from public.messages),
-  0,
-  'messages: un utilisateur anonyme ne voit aucun message'
+select throws_ok(
+  $$select count(*) from public.messages$$,
+  '42501', null,
+  'messages: le rôle anon (non authentifié) n''a aucun accès'
 );
 
-select is(
-  (select count(*)::int from public.usage_counters),
-  0,
-  'usage_counters: un utilisateur anonyme ne voit aucun compteur'
+select throws_ok(
+  $$select count(*) from public.usage_counters$$,
+  '42501', null,
+  'usage_counters: le rôle anon (non authentifié) n''a aucun accès'
 );
 
 select throws_ok(
   $$insert into public.profiles (id, display_name) values ('33333333-3333-3333-3333-333333333333', 'intrusion anonyme')$$,
   '42501',
   null,
-  'profiles: un utilisateur anonyme ne peut pas créer de profil pour un autre id'
+  'profiles: le rôle anon ne peut pas créer de profil'
 );
 
 reset role;
