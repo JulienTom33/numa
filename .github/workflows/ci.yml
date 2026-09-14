@@ -70,6 +70,10 @@ jobs:
         if: steps.check.outputs.present == 'true'
         run: supabase db reset
 
+      - name: Run database tests (RLS)
+        if: steps.check.outputs.present == 'true'
+        run: supabase test db
+
       - name: No migrations yet
         if: steps.check.outputs.present == 'false'
         run: echo "supabase/migrations absent, étape ignorée."

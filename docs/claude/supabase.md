@@ -15,6 +15,7 @@
 - **RLS activé sur toute table contenant des données utilisateur.**
 - Une table sans RLS n'est acceptée que si elle ne contient aucune donnée liée à un utilisateur (référentiel public, config statique) — à justifier explicitement dans la PR.
 - Policies testées : un utilisateur ne doit jamais pouvoir lire/modifier les données d'un autre utilisateur, y compris en session anonyme.
+- Tests RLS via pgTAP dans `supabase/tests/database/` (accès nominal + accès interdit, par table). Exécutés en CI par `supabase test db` (job `supabase-migrations`), et localement via la même commande après `supabase start`.
 
 ## Migrations
 
