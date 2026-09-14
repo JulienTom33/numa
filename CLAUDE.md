@@ -31,6 +31,7 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 | `docs/claude/ai-astrology.md` | API astrologique, IA, contexte structuré, règles éditoriales |
 | `docs/claude/security.md` | Secrets, données personnelles, rate limiting, logs |
 | `docs/claude/pull-requests.md` | Création de PR, corrections, notifications, interdiction de merge auto |
+| `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |
 | `docs/claude/decision-log.md` | Décisions d'architecture et règles évolutives |
 
 Consulter le document spécialisé concerné avant toute tâche touchant à son périmètre.
