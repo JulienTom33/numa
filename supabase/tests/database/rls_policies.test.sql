@@ -159,13 +159,17 @@ select results_eq(
   'messages: User B ne voit que les messages de sa propre conversation'
 );
 
--- Rôle Postgres anon (appel API non authentifié, sans session) : aucun GRANT
--- sur les tables user-data, donc refus net (permission denied), pas juste
--- filtré par RLS. Les "sessions anonymes" Numa (découverte sans compte)
--- s'authentifient avec le rôle authenticated (auth.users.is_anonymous = true)
--- et sont déjà couvertes par les policies testées ci-dessus (User A / User B).
+-- Rôle Postgres anon (appel API non authentifié, sans session). Selon
+-- l'environnement, l'accès est bloqué au niveau GRANT (permission denied)
+-- ou laissé à RLS ; les deux sont acceptés par visible_count(). Les
+-- "sessions anonymes" Numa (découverte sans compte) s'authentifient avec
+-- le rôle authenticated (auth.users.is_anonymous = true) et sont déjà
+-- couvertes par les policies testées ci-dessus (User A / User B).
 reset role;
 set local role anon;
+-- Un vrai appel anon ne porte aucun JWT : on efface le sub laissé par le
+-- bloc précédent, sinon auth.uid() renverrait encore l'id de User B.
+set local request.jwt.claim.sub = '';
 
 select is(
   pg_temp.visible_count('select count(*) from public.profiles'),
