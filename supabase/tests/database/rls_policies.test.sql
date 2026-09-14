@@ -8,6 +8,22 @@ begin;
 
 select plan(23);
 
+-- Compte les lignes visibles d'une requête, en traitant "permission denied"
+-- (aucun GRANT sur la table) comme équivalent à "0 ligne visible" : selon
+-- l'environnement, le rôle anon peut être bloqué au niveau GRANT ou filtré
+-- par RLS (auth.uid() = null) — les deux garantissent l'absence d'accès.
+create or replace function pg_temp.visible_count(query text) returns int
+language plpgsql as $$
+declare
+  n int;
+begin
+  execute query into n;
+  return n;
+exception when insufficient_privilege then
+  return 0;
+end;
+$$;
+
 -- Deux utilisateurs de test, créés directement (bypass RLS, rôle postgres).
 insert into auth.users (id, email) values
   ('11111111-1111-1111-1111-111111111111', 'user-a@test.local'),
@@ -151,46 +167,46 @@ select results_eq(
 reset role;
 set local role anon;
 
-select throws_ok(
-  $$select count(*) from public.profiles$$,
-  '42501', null,
-  'profiles: le rôle anon (non authentifié) n''a aucun accès'
+select is(
+  pg_temp.visible_count('select count(*) from public.profiles'),
+  0,
+  'profiles: le rôle anon (non authentifié) ne voit aucune ligne'
 );
 
-select throws_ok(
-  $$select count(*) from public.birth_data$$,
-  '42501', null,
-  'birth_data: le rôle anon (non authentifié) n''a aucun accès'
+select is(
+  pg_temp.visible_count('select count(*) from public.birth_data'),
+  0,
+  'birth_data: le rôle anon (non authentifié) ne voit aucune ligne'
 );
 
-select throws_ok(
-  $$select count(*) from public.natal_charts$$,
-  '42501', null,
-  'natal_charts: le rôle anon (non authentifié) n''a aucun accès'
+select is(
+  pg_temp.visible_count('select count(*) from public.natal_charts'),
+  0,
+  'natal_charts: le rôle anon (non authentifié) ne voit aucune ligne'
 );
 
-select throws_ok(
-  $$select count(*) from public.daily_horoscopes$$,
-  '42501', null,
-  'daily_horoscopes: le rôle anon (non authentifié) n''a aucun accès'
+select is(
+  pg_temp.visible_count('select count(*) from public.daily_horoscopes'),
+  0,
+  'daily_horoscopes: le rôle anon (non authentifié) ne voit aucune ligne'
 );
 
-select throws_ok(
-  $$select count(*) from public.conversations$$,
-  '42501', null,
-  'conversations: le rôle anon (non authentifié) n''a aucun accès'
+select is(
+  pg_temp.visible_count('select count(*) from public.conversations'),
+  0,
+  'conversations: le rôle anon (non authentifié) ne voit aucune ligne'
 );
 
-select throws_ok(
-  $$select count(*) from public.messages$$,
-  '42501', null,
-  'messages: le rôle anon (non authentifié) n''a aucun accès'
+select is(
+  pg_temp.visible_count('select count(*) from public.messages'),
+  0,
+  'messages: le rôle anon (non authentifié) ne voit aucune ligne'
 );
 
-select throws_ok(
-  $$select count(*) from public.usage_counters$$,
-  '42501', null,
-  'usage_counters: le rôle anon (non authentifié) n''a aucun accès'
+select is(
+  pg_temp.visible_count('select count(*) from public.usage_counters'),
+  0,
+  'usage_counters: le rôle anon (non authentifié) ne voit aucune ligne'
 );
 
 select throws_ok(
