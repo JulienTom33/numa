@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy sur OVH
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Synchroniser les fichiers
+        run: |
+          rsync -az --delete \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude 'dist' \
+            --exclude 'coverage' \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/numa/"
+
+      - name: Écrire le fichier d'environnement
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "cat > /opt/numa/.env" <<EOF
+          SITE_ADDRESS=${{ secrets.SITE_ADDRESS }}
+          VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          EOF
+
+      - name: Build et redémarrage des conteneurs
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "cd /opt/numa && docker compose up -d --build --remove-orphans && docker image prune -f"
+
+      - name: Vérifier la santé du service
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "cd /opt/numa && docker compose ps"
