@@ -7,7 +7,7 @@
 - **Tailwind CSS** : styling utilitaire, pas de CSS custom sauf nécessité justifiée.
 - **Supabase** : Auth, base PostgreSQL, RLS. Voir `supabase.md`.
 - **OVH** : hébergement/déploiement de l'application.
-- **n8n** : automatisations/orchestration hors application principale (workflows, intégrations).
+- **n8n** : non utilisé pour l'instant (voir `decision-log.md`, issue #44). Hors chemin critique par principe — jamais pour Auth, chat ou calcul astrologique. À installer en Docker sur OVH seulement si un besoin asynchrone concret apparaît.
 
 ## Principes
 
