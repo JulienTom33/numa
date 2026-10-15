@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { buildDiscordMessage, sendDiscordNotification } from "./discordNotify";
+import {
+  buildDiscordMessage,
+  isNotificationEventType,
+  NOTIFICATION_EVENT_TYPES,
+  sendDiscordNotification,
+} from "./discordNotify";
 
 describe("buildDiscordMessage", () => {
   it("formats a PR opened event with fields and color", () => {
@@ -48,6 +53,55 @@ describe("buildDiscordMessage", () => {
     expect(payload.embeds[0].title.length).toBe(256);
     expect(payload.embeds[0].title.endsWith("…")).toBe(true);
     expect(payload.embeds[0].description.length).toBe(2000);
+  });
+});
+
+describe("Claude review notifications", () => {
+  const base = {
+    repository: "julto/numa",
+    title: "feat: add feature",
+    url: "https://github.com/julto/numa/pull/1",
+    branch: "issue-1-feature",
+  };
+
+  it("announces a PR ready for human review with success color", () => {
+    const payload = buildDiscordMessage({ ...base, type: "claude_review_ok", summary: "RAS" });
+
+    expect(payload.content).toBe("Review Claude OK : PR prête pour review humaine");
+    expect(payload.embeds[0].color).toBe(0x2ecc71);
+    expect(payload.embeds[0].description).toBe("RAS");
+  });
+
+  it("announces an automatic fix in progress with its iteration status", () => {
+    const payload = buildDiscordMessage({ ...base, type: "claude_review_fixing", status: "1/3" });
+
+    expect(payload.content).toBe("Review Claude : correction automatique en cours");
+    expect(payload.embeds[0].color).toBe(0x5865f2);
+    expect(payload.embeds[0].fields).toContainEqual({ name: "Statut", value: "1/3", inline: true });
+  });
+
+  it("asks for human intervention with action-needed color", () => {
+    const payload = buildDiscordMessage({
+      ...base,
+      type: "claude_review_human_needed",
+      status: "3/3",
+    });
+
+    expect(payload.content).toBe("Review Claude : intervention humaine requise");
+    expect(payload.embeds[0].color).toBe(0xf1c40f);
+  });
+});
+
+describe("isNotificationEventType", () => {
+  it("accepts every declared event type", () => {
+    for (const type of NOTIFICATION_EVENT_TYPES) {
+      expect(isNotificationEventType(type)).toBe(true);
+    }
+  });
+
+  it("rejects unknown event types", () => {
+    expect(isNotificationEventType("claude_review_approved")).toBe(false);
+    expect(isNotificationEventType("")).toBe(false);
   });
 });
 

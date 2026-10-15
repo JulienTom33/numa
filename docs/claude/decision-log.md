@@ -14,6 +14,14 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-15 — Review automatique des PR par Claude en CI (issue #116)
+
+Contexte : le mainteneur est seul à relire les PR. Une première passe automatique doit vérifier les conventions du dépôt et faire corriger les écarts avant la review humaine, sans jamais remplacer celle-ci.
+Décision : workflow `claude-review.yml` avec `anthropics/claude-code-action` épinglée par SHA (v1.0.248). Verdict en sortie structurée JSON, traduit en labels `claude-review:ok` / `claude-review:changes` et en notifications Discord. Retours publiés en commentaires inline et en review de type commentaire, jamais `APPROVE` ni `REQUEST_CHANGES` : la review Claude ne bloque ni ne débloque un merge, qui reste manuel. Boucle de correction automatique bornée à 3 itérations par PR (compteur : commentaires marqués postés par `github-actions[bot]`), puis « intervention humaine requise ». Pas d'exécution sur les forks ni les brouillons ; workflow inactif sans `ANTHROPIC_API_KEY` ni `CLAUDE_CODE_OAUTH_TOKEN`. Les corrections sont poussées par la GitHub App Claude, dont les pushes relancent CI et review (le `GITHUB_TOKEN` ne le ferait pas).
+Coût : une review par push sur une PR (≤ 40 tours d'agent), plus au plus 3 corrections par PR (≤ 60 tours). Avec `ANTHROPIC_API_KEY`, facturation à l'usage ; avec `CLAUDE_CODE_OAUTH_TOKEN`, consommation du quota de l'abonnement. Durée bornée par `timeout-minutes` (20 min review, 30 min correction).
+Limites : un LLM peut manquer un défaut ou en signaler à tort ; la review humaine reste obligatoire. Le contenu d'une PR peut tenter une injection de prompt : risque limité aux contributeurs ayant un accès en écriture (forks exclus) et aux outils autorisés (lecture seule pour la review, push vers la seule branche de la PR pour la correction). La GitHub App ne peut pas modifier `.github/workflows/`, donc les écarts dans les workflows sont signalés mais pas corrigés. Le workflow n'a pas pu être testé de bout en bout avant configuration des secrets.
+Alternatives écartées : `REQUEST_CHANGES` / `APPROVE` par le bot (bloquerait ou simulerait une décision humaine) ; correction via le `GITHUB_TOKEN` (le push ne relancerait ni CI ni review) ; déclenchement sur `workflow_run` après CI (exécute la version `master` du workflow et complique le lien avec la PR).
+
 ## 2026-10-15 — Code serveur : Supabase Edge Functions (issue #98)
 
 Contexte : l'app est un site statique (build Vite servi par Caddy) ; tout code exécuté dans le navigateur est public. Les appels aux API astrologique (#20) et IA (#26), dont les clés doivent rester secrètes, et le quota de questions anonymes (#27), qui ne doit pas être contournable, exigent du code serveur. Constat associé : les policies actuelles de `usage_counters` autorisent l'utilisateur à modifier ou supprimer son propre compteur, donc le quota géré côté client est contournable.
