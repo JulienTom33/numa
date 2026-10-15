@@ -418,5 +418,8 @@ enabled = true
 [functions.whoami]
 verify_jwt = true
 
+[functions.chat]
+verify_jwt = true
+
 [functions.geocode]
 verify_jwt = true

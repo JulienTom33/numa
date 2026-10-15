@@ -1,9 +1,6 @@
 import type { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "./supabaseClient";
 
-/** Nombre de questions autorisées avant inscription. */
-export const ANONYMOUS_QUESTION_LIMIT = 2;
-
 export interface AnonymousSessionError {
   message: string;
 }
@@ -27,24 +24,4 @@ export async function startAnonymousSession(): Promise<{ error: AnonymousSession
     .upsert({ id: data.user.id }, { onConflict: "id" });
 
   return { error: toSessionError(profileError) };
-}
-
-/**
- * Incrémente de façon atomique le compteur de questions anonymes du jour via la fonction
- * Postgres `increment_usage_counter` (évite une course lecture-puis-écriture côté client).
- */
-export async function incrementAnonymousQuestionCount(): Promise<{
-  count: number | null;
-  error: AnonymousSessionError | null;
-}> {
-  const periodStart = new Date().toISOString().slice(0, 10);
-  const { data, error } = await supabase.rpc("increment_usage_counter", {
-    p_period_start: periodStart,
-  });
-
-  if (error) {
-    return { count: null, error: toSessionError(error) };
-  }
-
-  return { count: data as number, error: null };
 }

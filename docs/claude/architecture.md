@@ -25,6 +25,7 @@ supabase/functions/
     handler.ts         # createHandler() : préflight, méthode, auth, erreurs, CORS
     http.ts            # json(), HttpError, errorResponse()
     supabase.ts        # client Supabase côté fonction, vérification du JWT
+  chat/                # question au chat + quota anonyme (#27), fournisseur injectable
   geocode/             # recherche de lieux de naissance (Open-Meteo), cf. ci-dessous
   whoami/              # vérification de bout en bout (auth, CORS, déploiement)
   <fonction>/index.ts  # Deno.serve(createHandler({ … }))
