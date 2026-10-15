@@ -8,7 +8,7 @@ describe("supabaseClient", () => {
 
   it("creates a client when env vars are set", async () => {
     vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
-    vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon-key");
+    vi.stubEnv("VITE_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_test");
 
     const { supabase } = await import("./supabaseClient");
 
@@ -17,7 +17,7 @@ describe("supabaseClient", () => {
 
   it("throws when env vars are missing", async () => {
     vi.stubEnv("VITE_SUPABASE_URL", "");
-    vi.stubEnv("VITE_SUPABASE_ANON_KEY", "");
+    vi.stubEnv("VITE_SUPABASE_PUBLISHABLE_KEY", "");
 
     await expect(import("./supabaseClient")).rejects.toThrow(
       /Variables d'environnement Supabase manquantes/,

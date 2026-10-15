@@ -28,7 +28,7 @@ Le socle qualité est mis en place avant le développement fonctionnel :
 
 ```bash
 npm install
-cp .env.example .env   # renseigner VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY
+cp .env.example .env   # renseigner VITE_SUPABASE_URL et VITE_SUPABASE_PUBLISHABLE_KEY
 npx supabase start     # stack Supabase locale (config dans supabase/config.toml)
 npm run dev
 ```
