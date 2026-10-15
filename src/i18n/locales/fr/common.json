@@ -1,0 +1,10 @@
+{
+  "app": {
+    "name": "Numa"
+  },
+  "actions": {
+    "back": "Retour",
+    "close": "Fermer",
+    "send": "Envoyer"
+  }
+}
