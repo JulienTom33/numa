@@ -4,6 +4,7 @@
 
 - Authentification via Supabase Auth.
 - Sessions anonymes supportées pour permettre l'usage sans compte (lecture astrologique avant inscription) ; migration vers compte identifié gère la conservation des données déjà produites.
+- Conversion anonyme → compte : identité rattachée au même user id (`src/lib/accountUpgrade.ts`, hook `useAccountUpgrade`) ; `profiles.status` passe à `authenticated` par trigger sur `auth.users.is_anonymous`. Requiert `enable_manual_linking` pour l'OAuth. Voir `decision-log.md` (issue #15).
 
 ## PostgreSQL
 
