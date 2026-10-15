@@ -29,7 +29,15 @@
 - Local : `supabase start`, puis `supabase functions serve` (rechargement à chaud) ; tests unitaires : `deno task test` dans `supabase/functions/`.
 - Test de bout en bout : `scripts/smoke-edge-functions.sh` (session anonyme réelle → `whoami`, appel sans JWT → 401), exécuté en CI dans le job `supabase-migrations`.
 - Secrets d'une fonction : `supabase secrets set NOM=valeur --project-ref <ref>`. En local : `supabase/functions/.env` (non commité).
-- Une table que seules les fonctions doivent modifier (quota, résultats calculés) n'a pas de policy `insert` / `update` / `delete` pour `authenticated` ; la fonction écrit avec la clé secrète (`SUPABASE_SECRET_KEYS`).
+- Une table que seules les fonctions doivent modifier (quota, résultats calculés) n'a pas de policy `insert` / `update` / `delete` pour `authenticated` ; la fonction écrit avec la clé secrète (`SUPABASE_SECRET_KEYS`, client `createAdminClient()`).
+- Une fonction SQL appelée uniquement par le serveur est `security definer` avec `set search_path = ''`, et son `EXECUTE` est révoqué à `public`, `anon` et `authenticated` puis accordé à `service_role` (les privilèges par défaut de Supabase l'ouvrent sinon à tous).
+
+## Quota de questions anonymes
+
+- Deux questions par session anonyme (`ANONYMOUS_QUESTION_LIMIT`, `supabase/functions/chat/quota.ts`), comptées dans `usage_counters` (`period_start = '-infinity'` : toute la session).
+- Edge Function `chat` : `GET` renvoie `{ quota }`, `POST { question }` renvoie `{ answer, quota }`, `429 question_quota_exceeded` au-delà de la limite, `502 provider_unavailable` si le fournisseur échoue (question non décomptée).
+- Parcours serveur : `reserve_question` → appel fournisseur → `commit_question` (succès) ou `release_question` (échec). Voir `decision-log.md` (2026-10-15, #27).
+- Client : `src/lib/questionQuota.ts` et `useQuestionQuota()` ; le compteur affiché vient toujours du serveur.
 
 ## Clés API
 

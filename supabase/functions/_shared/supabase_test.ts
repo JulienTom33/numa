@@ -1,7 +1,13 @@
 import { assertEquals, assertThrows } from "jsr:@std/assert@1";
-import { createPublicClient } from "./supabase.ts";
+import { createAdminClient, createPublicClient } from "./supabase.ts";
 
-const VARIABLES = ["SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEYS", "SUPABASE_ANON_KEY"];
+const VARIABLES = [
+  "SUPABASE_URL",
+  "SUPABASE_PUBLISHABLE_KEYS",
+  "SUPABASE_ANON_KEY",
+  "SUPABASE_SECRET_KEYS",
+  "SUPABASE_SERVICE_ROLE_KEY",
+];
 
 function withEnv(values: Record<string, string>, run: () => void) {
   const saved = new Map(VARIABLES.map((name) => [name, Deno.env.get(name)]));
@@ -41,5 +47,23 @@ Deno.test("createPublicClient fails clearly when configuration is missing", () =
   });
   withEnv({ SUPABASE_URL: "http://127.0.0.1:54321", SUPABASE_PUBLISHABLE_KEYS: "{}" }, () => {
     assertThrows(() => createPublicClient(), Error, "SUPABASE_ANON_KEY");
+  });
+});
+
+Deno.test("createAdminClient uses the default secret key", () => {
+  withEnv({
+    SUPABASE_URL: "http://127.0.0.1:54321",
+    SUPABASE_SECRET_KEYS: JSON.stringify({ default: "sb_secret_test" }),
+  }, () => {
+    assertEquals(typeof createAdminClient().rpc, "function");
+  });
+});
+
+Deno.test("createAdminClient falls back to the legacy service role key", () => {
+  withEnv({ SUPABASE_URL: "http://127.0.0.1:54321", SUPABASE_SERVICE_ROLE_KEY: "legacy" }, () => {
+    assertEquals(typeof createAdminClient().rpc, "function");
+  });
+  withEnv({ SUPABASE_URL: "http://127.0.0.1:54321" }, () => {
+    assertThrows(() => createAdminClient(), Error, "SUPABASE_SERVICE_ROLE_KEY");
   });
 });
