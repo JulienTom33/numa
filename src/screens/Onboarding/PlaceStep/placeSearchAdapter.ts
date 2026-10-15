@@ -1,9 +1,7 @@
 import type { PlaceSearchErrorCode, PlaceSuggestion, SearchPlaces } from "../../../lib/placeSearch";
 
-/** Recherche attendue par `PlaceStep` : un échec du service est une promesse rejetée. */
 export type PlaceSearch = (query: string, signal: AbortSignal) => Promise<PlaceSuggestion[]>;
 
-/** Erreur levée quand le service de géocodage renvoie un résultat en échec. */
 export class PlaceSearchFailure extends Error {
   readonly code: PlaceSearchErrorCode;
 

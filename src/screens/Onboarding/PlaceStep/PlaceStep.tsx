@@ -16,7 +16,6 @@ export type SelectedPlace = BirthPlace;
 
 interface Props {
   id: string;
-  /** Recherche injectée ; en production, `toPlaceSearch(searchPlaces)`. */
   search: PlaceSearch;
   value: SelectedPlace | null;
   onChange: (place: SelectedPlace | null) => void;
@@ -24,7 +23,6 @@ interface Props {
 
 type SearchStatus = "loading" | "success" | "error";
 
-/** Même seuil que `PLACE_SEARCH_MIN_LENGTH`, sans importer le client Supabase à l'exécution. */
 export const MIN_QUERY_LENGTH = 2;
 export const SEARCH_DEBOUNCE_MS = 300;
 
