@@ -6,7 +6,8 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "coverage", "storybook-static", "!.storybook"] },
+  // supabase/functions : code Deno, vérifié par deno lint (job CI edge-functions).
+  { ignores: ["dist", "coverage", "storybook-static", "supabase/functions", "!.storybook"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],

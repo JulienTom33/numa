@@ -14,6 +14,19 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-15 — Code serveur : Supabase Edge Functions (issue #98)
+
+Contexte : l'app est un site statique (build Vite servi par Caddy) ; tout code exécuté dans le navigateur est public. Les appels aux API astrologique (#20) et IA (#26), dont les clés doivent rester secrètes, et le quota de questions anonymes (#27), qui ne doit pas être contournable, exigent du code serveur. Constat associé : les policies actuelles de `usage_counters` autorisent l'utilisateur à modifier ou supprimer son propre compteur, donc le quota géré côté client est contournable.
+Décision : le code serveur est écrit en **Supabase Edge Functions** (Deno), dans `supabase/functions/`.
+- Authentification : `verify_jwt = true` pour toute fonction appelée depuis l'app. La plateforme rejette les requêtes sans JWT valide (compte ou session anonyme, anciennes clés HS256 comme nouvelles clés asymétriques), puis la fonction relit l'appelant via `auth.getClaims()` (`sub`, `is_anonymous`) dans `_shared/auth.ts`. `verify_jwt = false` uniquement pour les webhooks entrants, avec vérification de signature dans le code.
+- Les écritures sensibles (compteurs de quota, résultats de calcul, réponses IA) sont faites par les fonctions ; les tables concernées ne seront plus modifiables par le client (à appliquer dans #27).
+- Secrets : variables d'environnement des fonctions (`supabase secrets set`), jamais `VITE_*`. La plateforme fournit `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEYS` et `SUPABASE_SECRET_KEYS`.
+- Clés API : utiliser les nouvelles clés `sb_publishable_…` / `sb_secret_…`. Les clés `anon` / `service_role` cessent de fonctionner fin 2026 (migration du client à faire avant cette date).
+- Contraintes à respecter : 2 s de CPU par requête (les attentes réseau ne comptent pas), 150 s de durée maximale sur le plan Free (400 s sur les plans payants), 256 Mo de mémoire. Les appels IA longs se font en streaming ; aucun calcul astrologique lourd dans la fonction (délégué à l'API externe, cf. #50).
+- Socle commun : CORS limité à `ALLOWED_ORIGINS`, erreurs JSON `{ error: { code, message } }` sans détail interne, journalisation sans donnée personnelle.
+- Déploiement : workflow `deploy-functions.yml` sur push `master`, inactif tant que le projet Supabase distant n'est pas configuré.
+Alternatives écartées : API Node conteneurisée sur le VPS OVH (serveur, mises à jour, TLS et supervision supplémentaires à maintenir, vérification des JWT Supabase à réimplémenter) ; Cloudflare Workers (nouveau fournisseur et nouveaux secrets hors de l'écosystème Supabase, sans accès direct au Postgres du projet) ; n8n (hors chemin critique, cf. 2026-09-14).
+
 ## 2026-10-15 — Workflow Git simplifié : une branche par ticket vers `master` (issue #91)
 
 Contexte : le workflow documenté (`master` → `epic/<slug>/main` → `epic/<slug>/issue-<id>-<slug>`) n'a jamais été appliqué : les 11 PRs de l'epic fondations ont toutes ciblé `master` directement, et aucune branche `epic/*/main` n'a été créée. La documentation contredisait la pratique.

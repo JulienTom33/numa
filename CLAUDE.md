@@ -20,7 +20,7 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 - Tout nouveau fichier de logique ou composant significatif est accompagné de son test **dans la même PR**. Voir `docs/claude/development.md`.
 - Aucun secret, clé privée ou donnée personnelle commité. Voir `docs/claude/security.md`.
 - RLS obligatoire sur toute table Supabase exposée à des données utilisateur. Voir `docs/claude/supabase.md`.
-- Toute clé d'API astrologique ou IA reste côté serveur, jamais dans le bundle client (`VITE_*`). Voir `docs/claude/architecture.md`.
+- Code serveur = Supabase Edge Functions (`supabase/functions/`). Toute clé d'API astrologique ou IA y reste, jamais dans le bundle client (`VITE_*`). Voir `docs/claude/architecture.md`.
 - Notifications Discord (PR, CI, tickets) : webhook stocké dans `secrets.DISCORD_WEBHOOK_URL`, jamais dans le code. Voir `docs/claude/pull-requests.md`.
 
 ## Validation avant PR
@@ -37,12 +37,14 @@ npm run build-storybook
 
 Si le ticket touche `supabase/` : `supabase db reset` puis `supabase test db` (stack locale démarrée via `supabase start`).
 
+Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier : `deno fmt --check`, `deno lint`, `deno task check`, `deno task test`.
+
 ## Démarrer un ticket
 
 1. `gh issue view <id>` : lire objectif, critères d'acceptation et section « Tickets liés ».
 2. Pour un ticket `[Design]`, se référer à la maquette ; pour un ticket fonctionnel, vérifier s'il a un ticket `[Design]` associé.
-3. Créer la branche depuis `master` à jour (voir `docs/claude/git-workflow.md`).
-4. Implémenter, tester, valider, ouvrir la PR avec `Closes #<id>` (voir `docs/claude/pull-requests.md`).
+3. Créer la branche depuis `master` à jour (voir `docs/claude/git-workflow.md`) et passer le ticket en « In progress » dans le GitHub Project.
+4. Implémenter, tester, valider, ouvrir la PR avec `Closes #<id>` (voir `docs/claude/pull-requests.md`), puis passer le ticket en « In review ».
 
 ## Index de la documentation
 

@@ -22,6 +22,21 @@
 - Chaque migration est un fichier versionné dans le dépôt, appliqué via l'outillage Supabase.
 - Pas de migration destructive (drop de colonne/table contenant des données) sans validation humaine explicite.
 
+## Edge Functions
+
+- Code serveur dans `supabase/functions/` (structure dans `architecture.md`).
+- Local : `supabase start`, puis `supabase functions serve` (rechargement à chaud) ; tests unitaires : `deno task test` dans `supabase/functions/`.
+- Test de bout en bout : `scripts/smoke-edge-functions.sh` (session anonyme réelle → `whoami`, appel sans JWT → 401), exécuté en CI dans le job `supabase-migrations`.
+- Secrets d'une fonction : `supabase secrets set NOM=valeur --project-ref <ref>`. En local : `supabase/functions/.env` (non commité).
+- Une table que seules les fonctions doivent modifier (quota, résultats calculés) n'a pas de policy `insert` / `update` / `delete` pour `authenticated` ; la fonction écrit avec la clé secrète (`SUPABASE_SECRET_KEYS`).
+
+## Clés API
+
+- Supabase remplace les clés `anon` / `service_role` (JWT) par des clés `sb_publishable_…` (client) et `sb_secret_…` (serveur). **Les anciennes clés cessent de fonctionner fin 2026.**
+- Client : clé publishable (actuellement encore `VITE_SUPABASE_ANON_KEY`, migration à faire).
+- Fonctions : `SUPABASE_PUBLISHABLE_KEYS` / `SUPABASE_SECRET_KEYS` (JSON, clé `default`), fournies par la plateforme ; `_shared/supabase.ts` se replie sur l'ancienne variable tant qu'elle existe.
+- Une clé API n'est jamais envoyée en `Authorization: Bearer` (ce n'est pas un JWT) : en-tête `apikey` uniquement.
+
 ## Environnements
 
 - **Local** : stack Supabase locale via `supabase start` (config versionnée dans `supabase/config.toml`). Utilisé pour le développement et testé en CI par le job `supabase-migrations` (`supabase start` + `supabase db reset`).

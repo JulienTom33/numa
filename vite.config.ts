@@ -18,6 +18,7 @@ export default defineConfig({
         "src/test/**",
         "dist/**",
         "storybook-static/**",
+        "supabase/**",
         "scripts/**",
         "src/**/*.stories.tsx",
         "src/docs/**",

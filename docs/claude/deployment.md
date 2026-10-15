@@ -40,6 +40,20 @@ Déclenché automatiquement à chaque push sur `master` (donc après merge d'une
 
 Déclenchement manuel possible depuis l'onglet Actions → workflow `Deploy` → `Run workflow`.
 
+## Edge Functions (Supabase)
+
+Les fonctions ne sont pas hébergées sur le VPS : elles sont déployées sur le projet Supabase par `.github/workflows/deploy-functions.yml`, à chaque push sur `master` qui touche `supabase/functions/` ou `supabase/config.toml` (ou manuellement).
+
+Configuration requise (environnement `production`) :
+
+| Nom | Type | Contenu |
+|---|---|---|
+| `SUPABASE_ACCESS_TOKEN` | secret | Jeton personnel Supabase (Account → Access Tokens) dédié au déploiement |
+| `SUPABASE_PROJECT_REF` | secret | Référence du projet Supabase de production |
+| `ALLOWED_ORIGINS` | variable | Origines autorisées en CORS, séparées par des virgules (ex. `https://164-132-107-30.sslip.io`) |
+
+Tant que l'un des trois manque, le workflow se termine sans déployer (avertissement dans le résumé du run). Le workflow pousse `ALLOWED_ORIGINS` dans les secrets des fonctions avant chaque déploiement ; les autres secrets (clés API astrologique, IA) se définissent avec `supabase secrets set` et ne transitent pas par GitHub.
+
 ## Logs et redémarrages
 
 - Logs applicatifs (Caddy) : `docker compose logs -f app` sur le serveur, ou fichier `access.log` dans le volume `caddy_data` (rotation automatique, 10 Mo × 5 fichiers).
