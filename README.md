@@ -38,8 +38,7 @@ Consulter `CLAUDE.md` et `docs/claude/` pour les règles détaillées.
 ## Workflow Git
 
 - `master` : branche stable.
-- `epic/<slug>/main` : branche d’intégration d’une epic.
-- `epic/<slug>/issue-<id>-<slug>` : branche de travail d’un ticket.
+- `issue-<id>-<slug>` : branche de travail d’un ticket, créée depuis `master`.
 - Toute modification passe par une pull request.
 - Aucun merge automatique.
 - La CI doit être verte et une revue humaine est requise avant merge.
