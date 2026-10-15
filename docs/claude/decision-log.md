@@ -26,6 +26,15 @@ Décision : `i18next` + `react-i18next`.
 - Règle ESLint `i18next/no-literal-string` (mode `jsx-text-only`) en erreur sur `src/**` hors tests, stories et `src/docs/**`.
 Alternatives écartées : `react-intl` / FormatJS (syntaxe ICU plus lourde pour les traducteurs, typage des clés moins direct) ; LinguiJS (étape de compilation des catalogues et macros supplémentaires) ; dictionnaire maison (pluriels, interpolation et changement de langue à réimplémenter). Chargement des traductions par HTTP (`i18next-http-backend`) écarté tant qu'il n'y a qu'une ou deux langues.
 
+## 2026-10-15 — Conversion d'une session anonyme en compte : même user id (issue #15)
+
+Contexte : l'utilisateur produit des données (profil, naissance, thème, conversations) en session anonyme ; à l'inscription, il doit les retrouver sans ressaisie.
+Décision : on **rattache une identité à l'utilisateur anonyme existant** (approche officielle Supabase) au lieu de créer un nouvel utilisateur : `auth.updateUser({ email })` (lien de confirmation, puis `updateUser({ password })`) ou `auth.linkIdentity({ provider })` pour l'OAuth. Le `auth.users.id` ne change pas, donc aucune donnée n'est copiée ni réattribuée. API client : `src/lib/accountUpgrade.ts` (`upgradeAnonymousAccount`, `resendUpgradeConfirmation`, `linkAnonymousAccountWithProvider`, `setAccountPassword`, `readUpgradeRedirectError`) et hook `useAccountUpgrade`. Erreurs normalisées (`UpgradeError` : `code`, `message` affichable, `retryable`).
+- `profiles.status` (`anonymous` | `authenticated`) est **dérivé** de `auth.users.is_anonymous` : trigger `after update of is_anonymous` sur `auth.users` + trigger `before insert or update` sur `profiles` qui recalcule la valeur, pour qu'un client ne puisse pas la forger via ses policies.
+- Email déjà utilisé par un autre compte : refus (`email_already_used`), sans fusion automatique. Les données anonymes d'un utilisateur qui se connecte à un compte existant ne sont pas transférées (fusion de comptes hors périmètre).
+- Config Supabase requise : `enable_manual_linking = true` pour `linkIdentity` ; URL de retour du lien listée dans les redirect URLs ; la confirmation email (Auth → Email) détermine si la conversion est immédiate ou attend le clic.
+Alternatives écartées : créer un nouvel utilisateur puis migrer les lignes par `user_id` (fonction serveur privilégiée, risque de perte partielle, nouvelles sessions à gérer) ; statut stocké librement par le client (forgeable).
+
 ## 2026-10-15 — Code serveur : Supabase Edge Functions (issue #98)
 
 Contexte : l'app est un site statique (build Vite servi par Caddy) ; tout code exécuté dans le navigateur est public. Les appels aux API astrologique (#20) et IA (#26), dont les clés doivent rester secrètes, et le quota de questions anonymes (#27), qui ne doit pas être contournable, exigent du code serveur. Constat associé : les policies actuelles de `usage_counters` autorisent l'utilisateur à modifier ou supprimer son propre compteur, donc le quota géré côté client est contournable.
