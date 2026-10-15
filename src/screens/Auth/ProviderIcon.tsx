@@ -2,8 +2,10 @@ import type { ReactElement } from "react";
 
 export type AuthProvider = "google" | "apple" | "email";
 
-// Glyphes pleins (marques) ou tracés propres à l'auth : gardés hors du jeu d'icônes partagé, qui
-// n'expose que des pictogrammes au trait. Monochromes (currentColor) pour rester dans la palette.
+/**
+ * Glyphes pleins (marques) ou tracés propres à l'auth : gardés hors du jeu d'icônes partagé, qui
+ * n'expose que des pictogrammes au trait. Monochromes (currentColor) pour rester dans la palette.
+ */
 const glyphs: Record<AuthProvider, ReactElement> = {
   google: (
     <path
