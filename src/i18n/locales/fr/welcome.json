@@ -1,8 +1,20 @@
 {
   "subtitle": "Lectures astrologiques compréhensibles et transparentes.",
+  "title": "Votre thème astral, lu simplement.",
+  "account": {
+    "signUp": "Créer mon compte",
+    "signIn": "Se connecter",
+    "later": "Vous pourrez créer un compte plus tard pour retrouver vos lectures."
+  },
   "discover": {
     "start": "Découvrir sans compte",
     "loading": "Création de la session…"
   },
-  "discoveryMode": "Mode découverte"
+  "discoveryMode": "Mode découverte",
+  "about": {
+    "title": "Qui est Numa ?",
+    "closeLabel": "Fermer la fiche",
+    "intro": "Numa lit votre thème astral à partir de votre date, de votre heure et de votre lieu de naissance, puis vous explique ce qu'il dit, sans jargon.",
+    "approach": "Chaque lecture montre d'où elle vient et reste nuancée : l'astrologie propose des pistes de réflexion, jamais des certitudes."
+  }
 }
