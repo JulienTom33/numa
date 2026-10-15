@@ -32,6 +32,7 @@ npm run lint
 npm run typecheck
 npm run test:coverage   # seuil 70 %
 npm run build
+npm run build-storybook
 ```
 
 Si le ticket touche `supabase/` : `supabase db reset` puis `supabase test db` (stack locale démarrée via `supabase start`).
