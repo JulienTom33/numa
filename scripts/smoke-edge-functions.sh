@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Vérifie de bout en bout les Edge Functions sur la stack Supabase locale (supabase start) :
-# une session anonyme réelle appelle `whoami`, et un appel sans JWT doit être refusé.
+# une session anonyme réelle appelle `whoami`, un appel sans JWT doit être refusé, et `chat`
+# applique le quota de deux questions anonymes côté serveur.
 set -euo pipefail
 
 eval "$(supabase status -o env)"
@@ -49,4 +50,20 @@ done
 jq -e '.isAnonymous == true and (.userId | length > 0)' "$BODY_FILE" >/dev/null ||
   fail "Réponse inattendue de whoami : $(cat "$BODY_FILE")"
 
-echo "Edge Functions OK : session anonyme authentifiée, appel sans JWT refusé."
+CHAT_URL="$API_URL/functions/v1/chat"
+AUTH=(-H "apikey: $API_KEY" -H "Authorization: Bearer $access_token")
+
+status=$(request "$CHAT_URL" "${AUTH[@]}")
+[[ "$status" == "200" ]] || fail "chat GET : 200 attendu, reçu $status ($(cat "$BODY_FILE"))"
+jq -e '.quota.remaining == 2' "$BODY_FILE" >/dev/null || fail "Quota initial inattendu : $(cat "$BODY_FILE")"
+
+for expected_remaining in 1 0; do
+  status=$(request -X POST "$CHAT_URL" "${AUTH[@]}" -H "Content-Type: application/json"     -d '{"question":"Test de bout en bout"}')
+  [[ "$status" == "200" ]] || fail "chat POST : 200 attendu, reçu $status ($(cat "$BODY_FILE"))"
+  jq -e --argjson r "$expected_remaining" '.quota.remaining == $r and (.answer | length > 0)'     "$BODY_FILE" >/dev/null || fail "Réponse inattendue de chat : $(cat "$BODY_FILE")"
+done
+
+status=$(request -X POST "$CHAT_URL" "${AUTH[@]}" -H "Content-Type: application/json"   -d '{"question":"Troisième question"}')
+[[ "$status" == "429" ]] || fail "3e question : 429 attendu, reçu $status ($(cat "$BODY_FILE"))"
+
+echo "Edge Functions OK : session anonyme authentifiée, appel sans JWT refusé, quota appliqué."
