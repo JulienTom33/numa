@@ -17,5 +17,34 @@
     "dayOrdinal_ordinal_other": "{{count}}",
     "confirmation": "Date enregistrée : {{day}} {{month}} {{year}}",
     "invalid": "Cette date n'existe pas ou n'est pas encore passée. Vérifiez le jour et le mois."
+  },
+  "time": {
+    "question": "Connaissez-vous votre heure de naissance ?",
+    "exact": {
+      "title": "Heure exacte",
+      "description": "Je connais l'heure à la minute près.",
+      "timeLabel": "Heure de naissance"
+    },
+    "approximate": {
+      "title": "Heure approximative",
+      "description": "Je connais l'heure à peu près.",
+      "timeLabel": "Heure approximative",
+      "marginLabel": "Marge d'incertitude",
+      "marginPlaceholder": "Choisir une marge"
+    },
+    "unknown": {
+      "title": "Heure inconnue",
+      "description": "Je ne connais pas mon heure de naissance.",
+      "warning": "Sans heure de naissance, votre ascendant et vos maisons astrologiques seront imprécis.",
+      "whereToFind": {
+        "summary": "Où trouver cette information ?",
+        "body": "L'heure figure souvent sur la copie intégrale de votre acte de naissance, à demander à la mairie de votre lieu de naissance. Votre livret de famille ou votre carnet de santé peuvent aussi la mentionner."
+      }
+    },
+    "margins": {
+      "under_30_min": "< 30 min",
+      "between_30_min_and_2_h": "30 min–2 h",
+      "over_2_h": "> 2 h"
+    }
   }
 }
