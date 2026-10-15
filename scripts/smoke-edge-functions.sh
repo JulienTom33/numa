@@ -28,7 +28,6 @@ supabase functions serve >"$SERVE_LOG" 2>&1 &
 SERVE_PID=$!
 trap 'kill "$SERVE_PID" 2>/dev/null || true' EXIT
 
-# La fonction est prête quand elle répond 401 à un appel sans JWT (avant : 000, 404, 502, 503).
 status="000"
 for _ in $(seq 1 "$READY_ATTEMPTS"); do
   status=$(request -H "apikey: $API_KEY" "$FUNCTION_URL")
@@ -42,7 +41,11 @@ status=$(request -X POST "$API_URL/auth/v1/signup" \
 [[ "$status" == "200" ]] || fail "Session anonyme : 200 attendu, reçu $status ($(cat "$BODY_FILE"))"
 access_token=$(jq -r .access_token "$BODY_FILE")
 
-status=$(request "$FUNCTION_URL" -H "apikey: $API_KEY" -H "Authorization: Bearer $access_token")
+for _ in $(seq 1 "$READY_ATTEMPTS"); do
+  status=$(request "$FUNCTION_URL" -H "apikey: $API_KEY" -H "Authorization: Bearer $access_token")
+  [[ "$status" =~ ^(000|502|503)$ ]] || break
+  sleep "$READY_DELAY_SECONDS"
+done
 [[ "$status" == "200" ]] || fail "whoami : 200 attendu, reçu $status ($(cat "$BODY_FILE"))"
 jq -e '.isAnonymous == true and (.userId | length > 0)' "$BODY_FILE" >/dev/null ||
   fail "Réponse inattendue de whoami : $(cat "$BODY_FILE")"
