@@ -1,20 +1,22 @@
+import i18n from "../i18n";
+
 export const ZODIAC_SIGNS = [
-  { value: "aries", label: "Bélier" },
-  { value: "taurus", label: "Taureau" },
-  { value: "gemini", label: "Gémeaux" },
-  { value: "cancer", label: "Cancer" },
-  { value: "leo", label: "Lion" },
-  { value: "virgo", label: "Vierge" },
-  { value: "libra", label: "Balance" },
-  { value: "scorpio", label: "Scorpion" },
-  { value: "sagittarius", label: "Sagittaire" },
-  { value: "capricorn", label: "Capricorne" },
-  { value: "aquarius", label: "Verseau" },
-  { value: "pisces", label: "Poissons" },
+  "aries",
+  "taurus",
+  "gemini",
+  "cancer",
+  "leo",
+  "virgo",
+  "libra",
+  "scorpio",
+  "sagittarius",
+  "capricorn",
+  "aquarius",
+  "pisces",
 ] as const;
 
-export type ZodiacSign = (typeof ZODIAC_SIGNS)[number]["value"];
+export type ZodiacSign = (typeof ZODIAC_SIGNS)[number];
 
 export function getSignLabel(sign: ZodiacSign): string {
-  return ZODIAC_SIGNS.find((entry) => entry.value === sign)?.label ?? sign;
+  return i18n.t(`astrology:signs.${sign}`);
 }
