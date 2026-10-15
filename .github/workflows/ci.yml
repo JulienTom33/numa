@@ -4,11 +4,9 @@ on:
   pull_request:
     branches:
       - master
-      - "epic/*/main"
   push:
     branches:
       - master
-      - "epic/*/main"
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}

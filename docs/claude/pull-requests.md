@@ -2,8 +2,9 @@
 
 ## Création
 
-- Une PR par ticket, depuis `epic/<slug>/issue-<id>-<slug>` vers `epic/<slug>/main` (ou `master` si pas d'epic).
-- Description de PR claire : objectif, changements, plan de test.
+- Une PR par ticket, depuis `issue-<id>-<slug>` vers `master`.
+- Titre au format Conventional Commits, avec le numéro du ticket : `feat: … (#<id>)`, `fix: …`, `docs: …`, `chore: …`.
+- Description de PR claire : objectif, changements, plan de test (commandes de validation cochées), `Closes #<id>`.
 - Tests inclus dans la même PR que le code qu'ils couvrent.
 
 ## Corrections
@@ -30,6 +31,5 @@
 
 ## Protection des branches
 
-- `master` : branch protection classique — check CI `Lint, typecheck, test, build` obligatoire, branche à jour requise (`strict`), 1 review humaine obligatoire, admins inclus, force-push et suppression interdits.
-- `epic/*/main` : repository ruleset `epic-main-protection` (pattern `refs/heads/epic/*/main`, actif même si la branche n'existe pas encore) — mêmes exigences : check CI obligatoire, branche à jour, 1 review humaine, suppression et force-push interdits.
+- `master` : branch protection classique — check CI `Lint, typecheck, test, build` obligatoire, branche à jour requise (`strict`), PR obligatoire avec **0 approbation requise** (projet à un seul mainteneur : GitHub interdit d'approuver sa propre PR), admins inclus, force-push et suppression interdits.
 - En cas d'échec de la CI, le merge est bloqué au niveau GitHub, indépendamment de toute action de Claude Code.

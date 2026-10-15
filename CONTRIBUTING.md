@@ -50,15 +50,13 @@ Avant de considérer une tâche terminée ou une PR prête pour review, `lint`, 
 
 ```
 master
- └── epic/<slug>/main
-      └── epic/<slug>/issue-<id>-<slug>
+ └── issue-<id>-<slug>
 ```
 
 - `master` : branche stable, toujours déployable.
-- `epic/<slug>/main` : branche d'intégration d'une epic, reçoit les PRs des tickets de cette epic.
-- `epic/<slug>/issue-<id>-<slug>` : branche de travail d'un ticket unique, créée depuis `epic/<slug>/main` (ou `master` si le ticket n'appartient pas à une epic).
+- `issue-<id>-<slug>` : branche de travail d'un ticket unique, créée depuis `master` à jour (ex. `issue-72-design-system`).
 
-Une branche de travail traite un seul ticket. Jamais de commit direct sur `master` ou `epic/<slug>/main`.
+Une branche de travail traite un seul ticket. Jamais de commit direct sur `master`. Les epics regroupent les tickets dans GitHub, sans branche d'intégration (voir `docs/claude/decision-log.md`).
 
 ## Convention de commits
 
@@ -74,10 +72,10 @@ Types usuels : `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
 
 ## Pull requests
 
-- Une PR par ticket, depuis `epic/<slug>/issue-<id>-<slug>` vers `epic/<slug>/main` (ou `master` si pas d'epic).
+- Une PR par ticket, depuis `issue-<id>-<slug>` vers `master`.
 - Description claire : objectif, changements, plan de test. Référencer le ticket lié (ex. `Closes #54`).
 - Tests inclus dans la même PR que le code qu'ils couvrent.
-- CI verte (`quality` : lint, typecheck, test:coverage, build) et une revue humaine obligatoires avant merge.
+- CI verte (`quality` : lint, typecheck, test:coverage, build) obligatoire avant merge. Aucune approbation n'est exigée (projet à un seul mainteneur) : le merge reste manuel, l'auteur relit sa PR avant de merger.
 - **Aucun merge automatique, sous aucune condition.** Le merge est toujours une action humaine explicite.
 - Les retours de review sont traités par de nouveaux commits sur la même branche, pas par rebase forcé sauf demande explicite.
 

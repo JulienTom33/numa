@@ -29,6 +29,19 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - **Aucun `console.log`, aucun commentaire `TODO`/`FIXME`/`XXX` dans le code poussé** (sauf commentaire "pourquoi" ci-dessus). Bloqué par ESLint (`no-console`, `no-warning-comments`) dans `npm run lint`.
 - Exception : commentaires libres autorisés dans les fichiers de test (`*.test.ts(x)`, `src/test/**`) et fichiers de config (`*.config.ts`, `*.config.js`, `.env*`, `package.json`, etc.) — `no-warning-comments` désactivé sur ces fichiers dans `eslint.config.js`.
 
+## IDs HTML
+
+Tout élément significatif (conteneur, titre, champ, bouton, lien, item de liste) porte un `id` stable, utilisé par les tests :
+
+- Format `<composant>__<type>--<descriptor>` en kebab-case (ex. `app__main--root`, `login-form__input--email`).
+- Items de liste : suffixe avec l'identifiant métier, jamais l'index (`conversation-list__item--${conversation.id}`).
+- Chaque `<label>` est relié à son champ via `htmlFor`.
+
+## Design system
+
+- Les tokens de la maquette (couleurs, typographie, rayons) sont déclarés une seule fois dans `tailwind.config.ts` ; aucune couleur en dur dans les composants (pas de `bg-[#…]`).
+- Les écrans suivent la maquette Claude Design (`Astraia.dc.html`) ; chaque écran a son ticket `[Design]`.
+
 ## Couverture
 
 La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de la logique. Seuil initial : 70 % (lignes, statements, fonctions, branches), configuré dans `vite.config.ts` (`test.coverage.thresholds`). Voir `decision-log.md`.
@@ -37,6 +50,6 @@ La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de 
 
 - Workflow `.github/workflows/ci.yml`, deux jobs :
   - `quality` : `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`.
-  - `supabase-migrations` : si `supabase/migrations` existe, démarre Supabase local et exécute `supabase db reset` pour valider les migrations ; sinon l'étape est ignorée (pas encore de schéma Supabase dans le dépôt).
-- Déclenchement : PR vers `master` et `epic/*/main`, et push sur ces branches (couvre la CI post-merge).
-- `master` et `epic/*/main` sont protégées côté GitHub (check `quality` obligatoire, branche à jour, 1 review humaine) — voir `pull-requests.md`.
+  - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis exécute les tests pgTAP (`supabase test db`).
+- Déclenchement : PR vers `master` et push sur `master` (couvre la CI post-merge).
+- `master` est protégée côté GitHub (check `quality` obligatoire, branche à jour, PR obligatoire ; aucune approbation exigée) — voir `pull-requests.md`.
