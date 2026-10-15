@@ -1,12 +1,22 @@
-export type NotificationEventType =
-  | "pr_opened"
-  | "pr_updated"
-  | "pr_changes_requested"
-  | "pr_merged"
-  | "ci_started"
-  | "ci_success"
-  | "ci_failure"
-  | "ticket_status";
+export const NOTIFICATION_EVENT_TYPES = [
+  "pr_opened",
+  "pr_updated",
+  "pr_changes_requested",
+  "pr_merged",
+  "ci_started",
+  "ci_success",
+  "ci_failure",
+  "ticket_status",
+  "claude_review_ok",
+  "claude_review_fixing",
+  "claude_review_human_needed",
+] as const;
+
+export type NotificationEventType = (typeof NOTIFICATION_EVENT_TYPES)[number];
+
+export function isNotificationEventType(value: string): value is NotificationEventType {
+  return (NOTIFICATION_EVENT_TYPES as readonly string[]).includes(value);
+}
 
 export interface NotificationEvent {
   type: NotificationEventType;
@@ -46,6 +56,9 @@ const EVENT_LABELS: Record<NotificationEventType, string> = {
   ci_success: "CI réussie",
   ci_failure: "CI en échec",
   ticket_status: "Statut de ticket changé",
+  claude_review_ok: "Review Claude OK : PR prête pour review humaine",
+  claude_review_fixing: "Review Claude : correction automatique en cours",
+  claude_review_human_needed: "Review Claude : intervention humaine requise",
 };
 
 const EVENT_COLORS: Record<NotificationEventType, number> = {
@@ -57,6 +70,9 @@ const EVENT_COLORS: Record<NotificationEventType, number> = {
   ci_success: COLOR_SUCCESS,
   ci_failure: COLOR_FAILURE,
   ticket_status: COLOR_INFO,
+  claude_review_ok: COLOR_SUCCESS,
+  claude_review_fixing: COLOR_INFO,
+  claude_review_human_needed: COLOR_ACTION_NEEDED,
 };
 
 function truncate(value: string, maxLength: number): string {
