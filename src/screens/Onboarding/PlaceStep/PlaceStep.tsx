@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Autocomplete, {
   type AutocompleteSuggestion,
 } from "../../../components/ui/Autocomplete/Autocomplete";
 import Button from "../../../components/ui/Button/Button";
 import Callout from "../../../components/ui/Callout/Callout";
+import type { BirthPlace } from "../../../lib/birthData";
+import type { PlaceSuggestion } from "../../../lib/placeSearch";
+import type { PlaceSearch } from "./placeSearchAdapter";
 
-// Types minimaux, à aligner sur le service de géocodage (#19) au branchement.
-export interface PlaceSuggestion {
-  id: string;
-  label: string;
-  region?: string;
-  country: string;
-  latitude: number;
-  longitude: number;
-  timezone: string;
-}
+export type { PlaceSuggestion } from "../../../lib/placeSearch";
+export type { PlaceSearch } from "./placeSearchAdapter";
 
-export type SelectedPlace = PlaceSuggestion;
-
-export type PlaceSearch = (query: string, signal: AbortSignal) => Promise<PlaceSuggestion[]>;
+export type SelectedPlace = BirthPlace;
 
 interface Props {
   id: string;
+  /** Recherche injectée ; en production, `toPlaceSearch(searchPlaces)`. */
   search: PlaceSearch;
   value: SelectedPlace | null;
   onChange: (place: SelectedPlace | null) => void;
@@ -29,6 +24,7 @@ interface Props {
 
 type SearchStatus = "loading" | "success" | "error";
 
+/** Même seuil que `PLACE_SEARCH_MIN_LENGTH`, sans importer le client Supabase à l'exécution. */
 export const MIN_QUERY_LENGTH = 2;
 export const SEARCH_DEBOUNCE_MS = 300;
 
@@ -37,6 +33,7 @@ function describePlace(place: PlaceSuggestion): string {
 }
 
 function PlaceStep({ id, search, value, onChange }: Props) {
+  const { t } = useTranslation("onboarding");
   const [query, setQuery] = useState(value?.label ?? "");
   const [results, setResults] = useState<PlaceSuggestion[]>([]);
   const [status, setStatus] = useState<SearchStatus>("loading");
@@ -50,8 +47,6 @@ function PlaceStep({ id, search, value, onChange }: Props) {
     if (!searching) return;
     const controller = new AbortController();
     const timer = setTimeout(() => {
-      // Le signal est vérifié ici aussi : un service qui l'ignore ne doit pas
-      // pouvoir afficher la réponse d'une saisie déjà remplacée.
       search(term, controller.signal).then(
         (places) => {
           if (controller.signal.aborted) return;
@@ -87,7 +82,6 @@ function PlaceStep({ id, search, value, onChange }: Props) {
   const handleRetry = () => {
     setStatus("loading");
     setAttempt((count) => count + 1);
-    // Le bouton prend le focus : sans le rendre au champ, la liste reste fermée.
     document.getElementById(inputId)?.focus();
   };
 
@@ -96,7 +90,7 @@ function PlaceStep({ id, search, value, onChange }: Props) {
     searching && status === "success"
       ? results.map((place) => ({
           id: place.id,
-          label: place.label,
+          label: place.name,
           description: describePlace(place),
         }))
       : [];
@@ -105,16 +99,16 @@ function PlaceStep({ id, search, value, onChange }: Props) {
     <div id={id} className="flex flex-col gap-4">
       <Autocomplete
         id={inputId}
-        label="Ville de naissance"
-        placeholder="Ex. : Bordeaux"
+        label={t("place.cityLabel")}
+        placeholder={t("place.cityPlaceholder")}
         value={query}
         onInputChange={handleInputChange}
         suggestions={suggestions}
         onSelect={handleSelect}
         loading={searching && status === "loading"}
         minChars={MIN_QUERY_LENGTH}
-        noResultsText="Aucune ville trouvée. Vérifiez l'orthographe ou essayez une ville proche."
-        error={failed ? "La recherche a échoué. Vérifiez votre connexion." : undefined}
+        noResultsText={t("place.noResults")}
+        error={failed ? t("place.searchFailed") : undefined}
       />
       {failed && (
         <Button
@@ -124,12 +118,12 @@ function PlaceStep({ id, search, value, onChange }: Props) {
           className="self-start"
           onClick={handleRetry}
         >
-          Réessayer
+          {t("place.retry")}
         </Button>
       )}
       {value && (
-        <Callout id={`${id}-selected`} tone="info" title={`${value.label}, ${describePlace(value)}`}>
-          <span id={`${id}-timezone`}>Fuseau horaire détecté : {value.timezone}</span>
+        <Callout id={`${id}-selected`} tone="info" title={value.label}>
+          <span id={`${id}-timezone`}>{t("place.timezone", { timezone: value.timezone })}</span>
         </Callout>
       )}
     </div>

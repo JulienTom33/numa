@@ -6,27 +6,33 @@ import PlaceStep, { type PlaceSearch, type PlaceSuggestion, type SelectedPlace }
 const cities: PlaceSuggestion[] = [
   {
     id: "bordeaux-fr",
-    label: "Bordeaux",
+    name: "Bordeaux",
     region: "Gironde",
     country: "France",
+    countryCode: "FR",
+    label: "Bordeaux, Gironde, France",
     latitude: 44.84,
     longitude: -0.58,
     timezone: "Europe/Paris",
   },
   {
     id: "bourges-fr",
-    label: "Bourges",
+    name: "Bourges",
     region: "Cher",
     country: "France",
+    countryCode: "FR",
+    label: "Bourges, Cher, France",
     latitude: 47.08,
     longitude: 2.4,
     timezone: "Europe/Paris",
   },
   {
     id: "bologna-it",
-    label: "Bologne",
+    name: "Bologne",
     region: "Émilie-Romagne",
     country: "Italie",
+    countryCode: "IT",
+    label: "Bologne, Émilie-Romagne, Italie",
     latitude: 44.49,
     longitude: 11.34,
     timezone: "Europe/Rome",
@@ -35,7 +41,7 @@ const cities: PlaceSuggestion[] = [
 
 const searchCities: PlaceSearch = async (query) => {
   const term = query.toLocaleLowerCase("fr-FR");
-  return cities.filter((city) => city.label.toLocaleLowerCase("fr-FR").startsWith(term));
+  return cities.filter((city) => city.name.toLocaleLowerCase("fr-FR").startsWith(term));
 };
 
 const typeQuery =
@@ -65,7 +71,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Contenu de l'étape 4 de l'onboarding. La recherche est injectée (service de géocodage #19) ; elle est débouncée et les réponses périmées sont ignorées.",
+          "Contenu de l'étape 4 de l'onboarding. La recherche est injectée (en production : `toPlaceSearch(searchPlaces)`, service de géocodage #19) ; elle est débouncée et les réponses périmées sont ignorées.",
       },
     },
   },

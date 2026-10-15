@@ -1,0 +1,10 @@
+{
+  "place": {
+    "cityLabel": "Ville de naissance",
+    "cityPlaceholder": "Ex. : Bordeaux",
+    "noResults": "Aucune ville trouvée. Vérifiez l'orthographe ou essayez une ville proche.",
+    "searchFailed": "La recherche a échoué. Vérifiez votre connexion.",
+    "retry": "Réessayer",
+    "timezone": "Fuseau horaire détecté : {{timezone}}"
+  }
+}

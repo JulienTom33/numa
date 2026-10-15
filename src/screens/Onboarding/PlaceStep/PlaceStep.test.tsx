@@ -11,9 +11,11 @@ import PlaceStep, {
 
 const bordeaux: PlaceSuggestion = {
   id: "bordeaux-fr",
-  label: "Bordeaux",
+  name: "Bordeaux",
   region: "Gironde",
   country: "France",
+  countryCode: "FR",
+  label: "Bordeaux, Gironde, France",
   latitude: 44.84,
   longitude: -0.58,
   timezone: "Europe/Paris",
@@ -21,8 +23,11 @@ const bordeaux: PlaceSuggestion = {
 
 const bologna: PlaceSuggestion = {
   id: "bologna-it",
-  label: "Bologne",
+  name: "Bologne",
+  region: null,
   country: "Italie",
+  countryCode: "IT",
+  label: "Bologne, Italie",
   latitude: 44.49,
   longitude: 11.34,
   timezone: "Europe/Rome",
@@ -64,8 +69,6 @@ async function flushDebounce() {
 describe("PlaceStep", () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    // Testing Library ne détecte les faux timers que via le global `jest` :
-    // sans lui, son attente interne (setTimeout 0) n'avance jamais.
     vi.stubGlobal("jest", { advanceTimersByTime: (ms: number) => vi.advanceTimersByTime(ms) });
   });
 
@@ -144,7 +147,7 @@ describe("PlaceStep", () => {
     await user.click(screen.getByRole("option", { name: /Bordeaux/ }));
 
     expect(onChange).toHaveBeenLastCalledWith(bordeaux);
-    expect(input).toHaveValue("Bordeaux");
+    expect(input).toHaveValue("Bordeaux, Gironde, France");
     expect(screen.getByText("Bordeaux, Gironde, France")).toBeInTheDocument();
     expect(screen.getByText("Fuseau horaire détecté : Europe/Paris")).toBeInTheDocument();
   });
@@ -171,7 +174,7 @@ describe("PlaceStep", () => {
     const search = vi.fn<PlaceSearch>().mockResolvedValue([bordeaux]);
     const { user, input } = setup({ search, onChange, initial: bordeaux });
 
-    expect(input).toHaveValue("Bordeaux");
+    expect(input).toHaveValue("Bordeaux, Gironde, France");
     expect(screen.getByText(/Fuseau horaire détecté/)).toBeInTheDocument();
 
     await user.type(input, "x");
