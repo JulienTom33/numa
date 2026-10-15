@@ -1,24 +1,19 @@
 import { FunctionsFetchError, FunctionsHttpError } from "@supabase/supabase-js";
 import { supabase } from "./supabaseClient";
 
-/** Nombre minimal de caractères avant d'interroger le service. */
 export const PLACE_SEARCH_MIN_LENGTH = 2;
 
-/** Au-delà, la fonction `geocode` répond déjà `provider_timeout` (5 s) : marge pour le réseau. */
 const INVOKE_TIMEOUT_MS = 8000;
 
-/** Lieu renvoyé par la fonction `geocode`. Compatible avec le lieu de naissance du domaine. */
 export interface PlaceSuggestion {
   id: string;
   name: string;
   region: string | null;
   country: string;
   countryCode: string;
-  /** Ville, région, pays : libellé à afficher et à enregistrer. */
   label: string;
   latitude: number;
   longitude: number;
-  /** Fuseau IANA (ex. `Europe/Paris`), à combiner avec `resolveUtcOffset`. */
   timezone: string;
 }
 

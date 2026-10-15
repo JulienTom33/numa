@@ -7,14 +7,6 @@ import {
 } from "@supabase/supabase-js";
 import { supabase } from "./supabaseClient";
 
-/**
- * Conversion d'une session anonyme en compte permanent.
- *
- * On rattache une identité (email ou fournisseur OAuth) à l'utilisateur anonyme existant au lieu
- * de créer un nouvel utilisateur : le user id ne change pas, donc profil, données de naissance,
- * thème et conversations (tous liés à ce user id) restent attachés sans aucune copie.
- * Le passage du profil à `authenticated` est fait côté base, par trigger sur `auth.users`.
- */
 
 export type UpgradeErrorCode =
   | "no_session"
@@ -32,7 +24,6 @@ export type UpgradeErrorCode =
 export interface UpgradeError {
   code: UpgradeErrorCode;
   message: string;
-  /** Vrai quand relancer la même action à l'identique a une chance d'aboutir. */
   retryable: boolean;
 }
 
@@ -43,7 +34,6 @@ export type UpgradeResult =
   | { status: null; error: UpgradeError };
 
 export interface UpgradeOptions {
-  /** URL de retour après clic sur le lien de confirmation (doit figurer dans les redirect URLs Supabase). */
   redirectTo?: string;
 }
 

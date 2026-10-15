@@ -10,7 +10,6 @@ export const TIME_MARGIN_LABELS: Record<TimeMargin, string> = {
   over_2_h: "> 2 h",
 };
 
-/** Lieu résolu par le géocodage serveur (#19) : le fuseau est celui en vigueur à la date de naissance. */
 export interface BirthPlace {
   label: string;
   latitude: number;
@@ -20,9 +19,7 @@ export interface BirthPlace {
 
 export interface BirthTimeInput {
   precision: TimePrecision | null;
-  /** Format HH:MM ; ignorée quand la précision est « unknown ». */
   time: string;
-  /** Requise uniquement pour une heure approximative. */
   margin: TimeMargin | null;
 }
 
@@ -34,7 +31,6 @@ export interface BirthDateParts {
 
 export interface OnboardingData {
   firstName: string;
-  /** Format ISO YYYY-MM-DD. */
   birthDate: string | null;
   birthTime: BirthTimeInput;
   birthPlace: BirthPlace | null;
@@ -52,7 +48,6 @@ export const MIN_BIRTH_YEAR = 1900;
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
-/** Caractères de contrôle : invisibles à l'écran, ils rendraient le prénom affiché incohérent. */
 function hasControlCharacter(value: string): boolean {
   return Array.from(value).some((character) => {
     const code = character.charCodeAt(0);
@@ -177,7 +172,6 @@ export interface OnboardingSummary {
   birthTime: string;
   birthPlace: string | null;
   timezone: string | null;
-  /** Avertissement à afficher quand la précision de l'heure limite la lecture. */
   timeWarning: string | null;
 }
 

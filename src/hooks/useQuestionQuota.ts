@@ -8,7 +8,6 @@ import {
 } from "../lib/questionQuota";
 
 export interface UseQuestionQuotaResult {
-  /** Compteur lu depuis le serveur ; null tant qu'il n'est pas chargé ou pour un compte identifié. */
   quota: QuestionQuota | null;
   loading: boolean;
   error: QuestionQuotaError | null;

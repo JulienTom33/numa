@@ -3,7 +3,6 @@ import { supabase } from "./supabaseClient";
 
 const CHAT_FUNCTION = "chat";
 
-/** État du quota tel que calculé par le serveur ; null pour un compte identifié (sans quota). */
 export interface QuestionQuota {
   limit: number;
   used: number;
@@ -11,7 +10,6 @@ export interface QuestionQuota {
 }
 
 export interface QuestionQuotaError {
-  /** Code renvoyé par la fonction (`question_quota_exceeded`, `provider_unavailable`…). */
   code: string;
   message: string;
 }
@@ -38,7 +36,6 @@ function isQuotaError(value: unknown): value is QuestionQuotaError {
   return typeof code === "string" && typeof message === "string";
 }
 
-/** Les erreurs HTTP de la fonction portent `{ error: { code, message } }` dans le corps. */
 async function toQuotaError(error: unknown): Promise<QuestionQuotaError> {
   if (error instanceof FunctionsHttpError && error.context instanceof Response) {
     const detail = errorField(await error.context.json().catch(() => null));

@@ -12,9 +12,7 @@ export interface QuotaStatus {
 }
 
 export interface QuotaStore {
-  /** Renvoie l'identifiant de réservation, ou null si le quota est atteint. */
   reserve(userId: string, limit: number): Promise<string | null>;
-  /** Valide la réservation et renvoie le nombre de questions consommées. */
   commit(reservationId: string): Promise<number>;
   release(reservationId: string): Promise<void>;
   used(userId: string): Promise<number>;
@@ -22,7 +20,6 @@ export interface QuotaStore {
 
 export interface AnswerResult {
   answer: string;
-  /** null pour un compte identifié : le quota ne s'applique qu'aux sessions anonymes. */
   quota: QuotaStatus | null;
 }
 

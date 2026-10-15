@@ -7,10 +7,6 @@ function requireEnv(name: string): string {
   return value;
 }
 
-/**
- * La plateforme expose les nouvelles clés en JSON (`{ "default": "sb_publishable_…" }`) ;
- * les anciennes (`SUPABASE_ANON_KEY`) restent le repli tant qu'elles existent.
- */
 function readDefaultKey(keysVariable: string, legacyVariable: string): string {
   const raw = Deno.env.get(keysVariable);
   if (raw) {

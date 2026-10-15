@@ -7,7 +7,6 @@ export const MAX_LIMIT = 10;
 export const PROVIDER_TIMEOUT_MS = 5000;
 
 const OPEN_METEO_SEARCH_URL = "https://geocoding-api.open-meteo.com/v1/search";
-// Le filtrage des lieux non habités se fait après la réponse : on demande plus que la limite.
 const PROVIDER_COUNT = 20;
 
 export interface SearchRequest {
@@ -78,7 +77,6 @@ export function toPlace(raw: unknown): Place | null {
   if (typeof raw !== "object" || raw === null) return null;
   const entry = raw as Record<string, unknown>;
 
-  // Codes GeoNames « PPL* » : localités habitées. Exclut aéroports, montagnes, régions…
   const featureCode = nonEmptyString(entry.feature_code);
   if (!featureCode?.startsWith("PPL")) return null;
 
@@ -144,7 +142,6 @@ export async function searchPlaces(
   }
   if (typeof payload !== "object" || payload === null) throw providerUnavailable();
 
-  // Open-Meteo omet la clé `results` quand rien ne correspond.
   const { results } = payload as Record<string, unknown>;
   if (results === undefined) return [];
   if (!Array.isArray(results)) throw providerUnavailable();

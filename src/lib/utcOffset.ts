@@ -1,31 +1,16 @@
-/**
- * Décalage UTC applicable à une date et une heure locales dans un fuseau IANA, en tenant compte
- * de l'historique du fuseau (heure d'été, changements d'heure légale) tel que fourni par la base
- * tz embarquée dans le moteur JavaScript (ICU).
- *
- * Limites : la précision dépend de la base tz du navigateur ; avant l'adoption d'une heure
- * légale (ex. Paris avant 1911), la base donne le temps moyen local, arrondi ici à la minute.
- */
 
 export interface LocalDateTime {
-  /** `AAAA-MM-JJ` */
   date: string;
-  /** `HH:mm` */
   time: string;
 }
 
 export type UtcOffsetStatus =
-  /** Heure locale unique. */
   | "exact"
-  /** Heure vécue deux fois (retour à l'heure d'hiver) : la première occurrence est retenue. */
   | "ambiguous"
-  /** Heure sautée (passage à l'heure d'été) : le décalage d'avant le saut est retenu. */
   | "nonexistent";
 
 export interface UtcOffset {
-  /** Minutes à ajouter à UTC pour obtenir l'heure locale (Paris en hiver : 60). */
   offsetMinutes: number;
-  /** Instant UTC correspondant, ISO 8601. */
   utc: string;
   status: UtcOffsetStatus;
 }

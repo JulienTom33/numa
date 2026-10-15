@@ -31,9 +31,7 @@ export interface OnboardingErrors {
 }
 
 export interface UseOnboardingOptions {
-  /** user_id Supabase de la session courante (anonyme ou permanente) ; null tant qu'elle n'existe pas. */
   userId: string | null;
-  /** Référence pour refuser les dates futures ; injectable pour les tests. */
   today?: Date;
 }
 
@@ -42,27 +40,21 @@ export interface UseOnboardingResult {
   stepCount: number;
   data: OnboardingData;
   birthDateParts: BirthDateParts;
-  /** Erreurs de saisie courantes ; à afficher par l'écran au moment opportun (après interaction). */
   errors: OnboardingErrors;
   isStepValid: (step: OnboardingStep) => boolean;
-  /** Pilote l'état actif du bouton « Continuer ». */
   canContinue: boolean;
   summary: OnboardingSummary;
   hasPreciseBirthData: boolean;
-  /** Ligne birth_data produite à la finalisation (fin de l'étape 4). */
   birthDataId: string | null;
   loading: boolean;
   saving: boolean;
-  /** Erreur de chargement ou de sauvegarde, en français, sans détail technique. */
   error: string | null;
   setFirstName: (value: string) => void;
   setBirthDateParts: (parts: BirthDateParts) => void;
   setBirthTime: (input: BirthTimeInput) => void;
   setBirthPlace: (place: BirthPlace | null) => void;
-  /** Sauvegarde puis passe à l'étape suivante ; finalise l'onboarding en quittant l'étape 4. */
   next: () => Promise<boolean>;
   back: () => void;
-  /** Retour sur une étape déjà remplie (lien « Modifier » du récapitulatif). */
   goToStep: (step: OnboardingStep) => void;
 }
 

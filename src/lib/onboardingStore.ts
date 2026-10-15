@@ -10,7 +10,6 @@ export interface OnboardingDraft {
   data: OnboardingData;
 }
 
-/** Ligne de public.onboarding_drafts (hors colonnes gérées par la base). */
 export interface OnboardingDraftRow {
   user_id: string;
   current_step: number;
@@ -25,7 +24,6 @@ export interface OnboardingDraftRow {
   timezone: string | null;
 }
 
-/** Message volontairement générique : le détail technique Supabase ne doit pas être montré à l'utilisateur. */
 export const SAVE_ERROR_MESSAGE = "Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.";
 export const LOAD_ERROR_MESSAGE = "Votre saisie précédente n'a pas pu être récupérée. Vous pouvez reprendre depuis le début.";
 
@@ -89,7 +87,6 @@ export function rowToDraft(row: OnboardingDraftRow): OnboardingDraft {
 
 export interface LoadedOnboardingDraft {
   draft: OnboardingDraft | null;
-  /** Renseigné si l'onboarding a déjà été finalisé au moins une fois. */
   birthDataId: string | null;
   error: string | null;
 }

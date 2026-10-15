@@ -14,7 +14,6 @@ export type AccountUpgradeStep = "idle" | "submitting" | "confirmation_sent" | "
 
 export interface UseAccountUpgradeResult {
   step: AccountUpgradeStep;
-  /** Adresse soumise, conservée pour permettre le renvoi du lien sans ressaisie. */
   email: string | null;
   error: UpgradeError | null;
   upgrade: (email: string) => Promise<void>;
