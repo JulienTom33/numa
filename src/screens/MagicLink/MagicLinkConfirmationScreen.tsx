@@ -6,7 +6,6 @@ import Icon from "../../components/ui/Icon/Icon";
 import TopBar from "../../components/ui/TopBar/TopBar";
 import { useCooldown } from "../../hooks/useCooldown";
 
-/** Aligné sur la limite par défaut de Supabase Auth (un email OTP par adresse toutes les 60 s). */
 export const DEFAULT_RESEND_COOLDOWN_SECONDS = 60;
 
 type ResendStatus = "idle" | "sending" | "sent" | "failed";
@@ -17,7 +16,6 @@ interface Props {
   onResend: (email: string) => Promise<void> | void;
   onBack?: () => void;
   resendCooldownSeconds?: number;
-  /** Le premier lien vient d'être envoyé : par défaut, le renvoi attend le même délai qu'après un renvoi. */
   initialCooldownSeconds?: number;
 }
 

@@ -1,4 +1,3 @@
-/** Limites RFC 5321 : au-delà, les serveurs SMTP refusent l'adresse. */
 const MAX_EMAIL_LENGTH = 254;
 const MAX_LOCAL_PART_LENGTH = 64;
 const MAX_DOMAIN_LABEL_LENGTH = 63;
