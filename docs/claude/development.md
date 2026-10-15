@@ -52,4 +52,4 @@ La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de 
   - `quality` : `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`.
   - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis exécute les tests pgTAP (`supabase test db`).
 - Déclenchement : PR vers `master` et push sur `master` (couvre la CI post-merge).
-- `master` est protégée côté GitHub (check `quality` obligatoire, branche à jour, 1 review humaine) — voir `pull-requests.md`.
+- `master` est protégée côté GitHub (check `quality` obligatoire, branche à jour, PR obligatoire ; aucune approbation exigée) — voir `pull-requests.md`.

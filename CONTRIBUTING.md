@@ -75,7 +75,7 @@ Types usuels : `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
 - Une PR par ticket, depuis `issue-<id>-<slug>` vers `master`.
 - Description claire : objectif, changements, plan de test. Référencer le ticket lié (ex. `Closes #54`).
 - Tests inclus dans la même PR que le code qu'ils couvrent.
-- CI verte (`quality` : lint, typecheck, test:coverage, build) et une revue humaine obligatoires avant merge.
+- CI verte (`quality` : lint, typecheck, test:coverage, build) obligatoire avant merge. Aucune approbation n'est exigée (projet à un seul mainteneur) : le merge reste manuel, l'auteur relit sa PR avant de merger.
 - **Aucun merge automatique, sous aucune condition.** Le merge est toujours une action humaine explicite.
 - Les retours de review sont traités par de nouveaux commits sur la même branche, pas par rebase forcé sauf demande explicite.
 

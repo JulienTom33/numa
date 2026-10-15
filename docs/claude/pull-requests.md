@@ -31,5 +31,5 @@
 
 ## Protection des branches
 
-- `master` : branch protection classique — check CI `Lint, typecheck, test, build` obligatoire, branche à jour requise (`strict`), 1 review humaine obligatoire, admins inclus, force-push et suppression interdits.
+- `master` : branch protection classique — check CI `Lint, typecheck, test, build` obligatoire, branche à jour requise (`strict`), PR obligatoire avec **0 approbation requise** (projet à un seul mainteneur : GitHub interdit d'approuver sa propre PR), admins inclus, force-push et suppression interdits.
 - En cas d'échec de la CI, le merge est bloqué au niveau GitHub, indépendamment de toute action de Claude Code.

@@ -17,7 +17,7 @@ Alternatives écartées : le cas échéant.
 ## 2026-10-15 — Workflow Git simplifié : une branche par ticket vers `master` (issue #91)
 
 Contexte : le workflow documenté (`master` → `epic/<slug>/main` → `epic/<slug>/issue-<id>-<slug>`) n'a jamais été appliqué : les 11 PRs de l'epic fondations ont toutes ciblé `master` directement, et aucune branche `epic/*/main` n'a été créée. La documentation contredisait la pratique.
-Décision : une branche `issue-<id>-<slug>` par ticket, créée depuis `master`, PR directe vers `master`. Les epics regroupent les tickets dans GitHub (labels `type:epic`, GitHub Project) sans branche d'intégration. Les garde-fous restent identiques : CI obligatoire, revue humaine, aucun merge automatique.
+Décision : une branche `issue-<id>-<slug>` par ticket, créée depuis `master`, PR directe vers `master`. Les epics regroupent les tickets dans GitHub (labels `type:epic`, GitHub Project) sans branche d'intégration. Les garde-fous restent : PR obligatoire, CI obligatoire, aucun merge automatique. Aucune approbation n'est exigée par GitHub (0 approbation requise) : avec un seul mainteneur, une approbation obligatoire bloquerait tout merge puisque GitHub interdit d'approuver sa propre PR ; la relecture et le merge restent des actions manuelles du mainteneur.
 Alternatives écartées : appliquer réellement les branches `epic/*/main` — surcoût (double PR par ticket, synchronisation des branches) sans bénéfice pour un projet à un seul développeur où chaque ticket est livrable isolément.
 
 ## 2026-09-14 — Usage de n8n (issue #44)

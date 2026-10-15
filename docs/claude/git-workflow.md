@@ -17,7 +17,7 @@ Les epics (`type:epic`) servent à regrouper les tickets dans GitHub, pas à cr�
 - Une branche de travail traite **un seul ticket**.
 - Toute modification passe par une pull request vers `master` : jamais de commit direct sur `master`.
 - **Aucun merge automatique**, quel que soit le contexte (CI verte, review approuvée, etc.). Voir `pull-requests.md`.
-- La CI doit être verte et une revue humaine obtenue avant tout merge.
+- La CI doit être verte avant tout merge. Aucune approbation n'est exigée : le mainteneur relit et merge lui-même, manuellement.
 
 ## Démarrer un ticket
 
@@ -44,5 +44,5 @@ Le statut d'avancement (Backlog, en cours, en review…) est suivi dans le GitHu
 ## Statuts de PR
 
 - PR ouverte : travail en cours ou prêt pour review.
-- PR en review : attend une revue humaine.
+- PR en review : attend la relecture du mainteneur.
 - PR approuvée + CI verte : prête à merger — merge reste une action humaine explicite.

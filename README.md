@@ -41,7 +41,7 @@ Consulter `CLAUDE.md` et `docs/claude/` pour les règles détaillées.
 - `issue-<id>-<slug>` : branche de travail d’un ticket, créée depuis `master`.
 - Toute modification passe par une pull request.
 - Aucun merge automatique.
-- La CI doit être verte et une revue humaine est requise avant merge.
+- La CI doit être verte avant merge ; le merge est manuel (relecture par le mainteneur).
 
 ## Tests
 
