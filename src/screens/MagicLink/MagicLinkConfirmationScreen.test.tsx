@@ -6,8 +6,10 @@ import MagicLinkConfirmationScreen, {
 
 const EMAIL = "lea@example.fr";
 
-// fireEvent plutôt que userEvent : sous les fake timers de Vitest, l'attente interne de
-// userEvent (setTimeout non avancé) bloque le test.
+/**
+ * fireEvent plutôt que userEvent : sous les fake timers de Vitest, l'attente interne de
+ * userEvent (setTimeout non avancé) bloque le test.
+ */
 async function click(element: HTMLElement) {
   await act(async () => {
     fireEvent.click(element);

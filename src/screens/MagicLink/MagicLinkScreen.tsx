@@ -15,7 +15,6 @@ function MagicLinkScreen({ onSend, onResend, onOpenSpace, onBack, resendCooldown
   const [lastEmail, setLastEmail] = useState("");
 
   async function handleSend(email: string) {
-    // Une erreur levée par onSend remonte à l'écran de saisie, qui l'affiche sans changer d'étape.
     await onSend(email);
     setLastEmail(email);
     setSentTo(email);

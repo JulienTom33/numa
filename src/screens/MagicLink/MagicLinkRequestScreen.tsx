@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "../../components/ui/Button/Button";
 import Callout from "../../components/ui/Callout/Callout";
 import TextField from "../../components/ui/TextField/TextField";
@@ -11,17 +12,14 @@ interface Props {
   defaultEmail?: string;
 }
 
-const SEND_ERROR_MESSAGE = "L'envoi du lien a échoué. Vérifiez votre connexion puis réessayez.";
-const FORMAT_ERROR_MESSAGE = "Saisissez une adresse email complète, par exemple prenom@exemple.fr.";
-
 function MagicLinkRequestScreen({ onSend, onBack, defaultEmail = "" }: Props) {
+  const { t } = useTranslation("auth");
   const [email, setEmail] = useState(defaultEmail);
   const [touched, setTouched] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendFailed, setSendFailed] = useState(false);
 
   const isValid = isValidEmail(email);
-  // L'erreur de format n'apparaît qu'après la sortie du champ, pour ne pas sanctionner la saisie en cours.
   const showFormatError = touched && email.trim() !== "" && !isValid;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -53,33 +51,32 @@ function MagicLinkRequestScreen({ onSend, onBack, defaultEmail = "" }: Props) {
       >
         <div className="flex flex-col gap-2">
           <h1 id="magic-link-request__title--main" className="font-display text-title font-bold">
-            Connexion par lien magique
+            {t("magicLink.request.title")}
           </h1>
           <p id="magic-link-request__text--intro" className="text-sm text-ink-secondary">
-            Saisissez votre adresse email : nous vous envoyons un lien pour vous connecter, sans mot
-            de passe.
+            {t("magicLink.request.intro")}
           </p>
         </div>
 
         <TextField
           id="magic-link-request__input--email"
-          label="Adresse email"
+          label={t("magicLink.request.emailLabel")}
           type="email"
           inputMode="email"
           autoComplete="email"
           autoCapitalize="none"
           spellCheck={false}
-          placeholder="prenom@exemple.fr"
+          placeholder={t("magicLink.request.emailPlaceholder")}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           onBlur={() => setTouched(true)}
-          error={showFormatError ? FORMAT_ERROR_MESSAGE : undefined}
+          error={showFormatError ? t("magicLink.request.formatError") : undefined}
           disabled={sending}
         />
 
         {sendFailed && (
           <Callout id="magic-link-request__callout--error" tone="error">
-            {SEND_ERROR_MESSAGE}
+            {t("magicLink.request.sendError")}
           </Callout>
         )}
 
@@ -89,10 +86,10 @@ function MagicLinkRequestScreen({ onSend, onBack, defaultEmail = "" }: Props) {
           fullWidth
           disabled={!isValid}
           loading={sending}
-          loadingLabel="Envoi en cours…"
+          loadingLabel={t("magicLink.request.sending")}
           className="mt-auto"
         >
-          Envoyer le lien
+          {t("magicLink.request.send")}
         </Button>
       </form>
     </main>

@@ -1,4 +1,4 @@
-// Limites RFC 5321 : au-delà, les serveurs SMTP refusent l'adresse.
+/** Limites RFC 5321 : au-delà, les serveurs SMTP refusent l'adresse. */
 const MAX_EMAIL_LENGTH = 254;
 const MAX_LOCAL_PART_LENGTH = 64;
 const MAX_DOMAIN_LABEL_LENGTH = 63;
@@ -11,8 +11,10 @@ export function normalizeEmail(value: string): string {
   return value.trim();
 }
 
-// Volontairement plus strict que la RFC 5322 (pas de guillemets, d'IP littérale ni de domaine
-// sans point) : ces formes sont valides en théorie mais quasi toujours des fautes de frappe.
+/**
+ * Volontairement plus strict que la RFC 5322 (pas de guillemets, d'IP littérale ni de domaine
+ * sans point) : ces formes sont valides en théorie mais quasi toujours des fautes de frappe.
+ */
 export function isValidEmail(value: string): boolean {
   const email = normalizeEmail(value);
   if (email.length === 0 || email.length > MAX_EMAIL_LENGTH) return false;
