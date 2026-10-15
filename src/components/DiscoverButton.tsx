@@ -12,12 +12,12 @@ function DiscoverButton({ onClick, loading, error }: Props) {
         type="button"
         onClick={onClick}
         disabled={loading}
-        className="rounded-full bg-indigo-500 px-5 py-2 text-sm font-medium text-white disabled:opacity-60"
+        className="rounded-button bg-coral px-5 py-3 font-display text-base font-bold text-white transition-colors hover:bg-coral-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-ink disabled:bg-coral-disabled"
       >
         {loading ? "Création de la session…" : "Découvrir sans compte"}
       </button>
       {error && (
-        <p id="discover-button__error--start" role="alert" className="text-sm text-red-400">
+        <p id="discover-button__error--start" role="alert" className="text-sm text-coral-ink">
           {error}
         </p>
       )}

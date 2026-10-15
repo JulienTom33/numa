@@ -18,6 +18,9 @@ export default defineConfig({
         "src/test/**",
         "dist/**",
         "scripts/**",
+        "src/**/*.stories.tsx",
+        "src/docs/**",
+        ".storybook/**",
       ],
       thresholds: {
         lines: 70,
