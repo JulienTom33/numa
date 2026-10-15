@@ -117,6 +117,6 @@ describe("BottomSheet", () => {
       </BottomSheet>,
     );
 
-    expect(container.firstChild).toHaveClass("bottom-16");
+    expect(container.firstChild).toHaveClass("bottom-[calc(4rem+env(safe-area-inset-bottom))]");
   });
 });
