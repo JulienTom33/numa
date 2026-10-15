@@ -1,4 +1,5 @@
 import { type KeyboardEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import { fieldControl, fieldLabel } from "../styles";
 
@@ -33,10 +34,11 @@ function Autocomplete({
   loading = false,
   minChars = 2,
   placeholder,
-  noResultsText = "Aucun résultat",
-  loadingText = "Recherche…",
+  noResultsText,
+  loadingText,
   error,
 }: Props) {
+  const { t } = useTranslation("ui");
   const [focused, setFocused] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -46,6 +48,9 @@ function Autocomplete({
   const open = focused && !dismissed && value.trim().length >= minChars;
   const showSuggestions = open && !loading && suggestions.length > 0;
   const optionId = (suggestion: AutocompleteSuggestion) => `${id}-option-${suggestion.id}`;
+  const loadingStatus = loadingText ?? t("autocomplete.loading");
+  const noResultsStatus = noResultsText ?? t("autocomplete.noResults");
+  const statusText = loading ? loadingStatus : noResultsStatus;
   const activeOptionId =
     showSuggestions && activeIndex >= 0 ? optionId(suggestions[activeIndex]) : undefined;
 
@@ -135,10 +140,9 @@ function Autocomplete({
           </li>
         ))}
       </ul>
-      {/* Une erreur affichée prime : « Aucun résultat » serait trompeur. */}
       {open && !showSuggestions && !error && (
         <p role="status" className="text-sm text-ink-secondary">
-          {loading ? loadingText : noResultsText}
+          {statusText}
         </p>
       )}
     </div>
