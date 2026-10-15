@@ -26,6 +26,16 @@ export function createPublicClient(): SupabaseClient {
   );
 }
 
+// Clé secrète (rôle service_role) : réservée au code serveur qui écrit les données que le
+// client ne doit pas modifier, comme le quota de questions.
+export function createAdminClient(): SupabaseClient {
+  return createClient(
+    requireEnv("SUPABASE_URL"),
+    readDefaultKey("SUPABASE_SECRET_KEYS", "SUPABASE_SERVICE_ROLE_KEY"),
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+}
+
 export const verifySupabaseToken: TokenVerifier = async (token) => {
   const { data, error } = await createPublicClient().auth.getClaims(token);
   if (error || !data) return null;

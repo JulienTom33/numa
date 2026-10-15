@@ -417,3 +417,6 @@ enabled = true
 # la plateforme rejette toute requête sans JWT valide avant d'exécuter le code.
 [functions.whoami]
 verify_jwt = true
+
+[functions.chat]
+verify_jwt = true
