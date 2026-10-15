@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "Numa"
+  },
+  "actions": {
+    "back": "Retour",
+    "close": "Fermer",
+    "send": "Envoyer"
+  },
+  "tabs": {
+    "today": "Aujourd'hui",
+    "consult": "Consulter",
+    "theme": "Mon thème",
+    "profile": "Profil"
+  },
+  "comingSoon": "Cet écran arrive bientôt."
+}

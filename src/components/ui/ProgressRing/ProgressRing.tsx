@@ -1,3 +1,6 @@
+import { useTranslation } from "react-i18next";
+import { formatPercent } from "../../../i18n/format";
+
 interface Props {
   id: string;
   value: number;
@@ -7,6 +10,7 @@ interface Props {
 }
 
 function ProgressRing({ id, value, label, size = 84, strokeWidth = 6 }: Props) {
+  const { i18n } = useTranslation();
   const clamped = Math.min(100, Math.max(0, Math.round(value)));
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -44,7 +48,7 @@ function ProgressRing({ id, value, label, size = 84, strokeWidth = 6 }: Props) {
           className="stroke-violet transition-[stroke-dashoffset] duration-500 motion-reduce:transition-none"
         />
       </svg>
-      <span className="absolute font-display text-lg font-bold text-ink">{clamped} %</span>
+      <span className="absolute font-display text-lg font-bold text-ink">{formatPercent(clamped / 100, i18n.language)}</span>
     </div>
   );
 }

@@ -52,7 +52,7 @@ export const MIN_BIRTH_YEAR = 1900;
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
-// Caractères de contrôle : invisibles à l'écran, ils rendraient le prénom affiché incohérent.
+/** Caractères de contrôle : invisibles à l'écran, ils rendraient le prénom affiché incohérent. */
 function hasControlCharacter(value: string): boolean {
   return Array.from(value).some((character) => {
     const code = character.charCodeAt(0);
@@ -87,7 +87,6 @@ function isRealDate(year: number, month: number, day: number): boolean {
   if (month < 1 || month > 12 || day < 1) {
     return false;
   }
-  // Date.UTC normalise le 31 février en 3 mars : la date n'existe que si rien n'a été décalé.
   const candidate = new Date(Date.UTC(year, month - 1, day));
   return candidate.getUTCFullYear() === year && candidate.getUTCMonth() === month - 1 && candidate.getUTCDate() === day;
 }
@@ -124,7 +123,6 @@ export function validateBirthDate(value: string | null, today: Date = new Date()
   if (year < MIN_BIRTH_YEAR) {
     return `L'année de naissance doit être postérieure à ${MIN_BIRTH_YEAR - 1}.`;
   }
-  // Comparaison de chaînes ISO de même longueur : équivalente à l'ordre chronologique.
   if (value > toLocalIsoDate(today)) {
     return "La date de naissance ne peut pas être dans le futur.";
   }

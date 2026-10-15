@@ -1,10 +1,16 @@
+import { useTranslation } from "react-i18next";
 import type { TabBarItem } from "../components/ui/TabBar/TabBar";
 
 export type MainTab = "today" | "consult" | "theme" | "profile";
 
-export const mainTabs: TabBarItem<MainTab>[] = [
-  { key: "today", label: "Aujourd'hui", icon: "today" },
-  { key: "consult", label: "Consulter", icon: "consult" },
-  { key: "theme", label: "Mon thème", icon: "theme" },
-  { key: "profile", label: "Profil", icon: "profile" },
+export const mainTabs: Omit<TabBarItem<MainTab>, "label">[] = [
+  { key: "today", icon: "today" },
+  { key: "consult", icon: "consult" },
+  { key: "theme", icon: "theme" },
+  { key: "profile", icon: "profile" },
 ];
+
+export function useMainTabs(): TabBarItem<MainTab>[] {
+  const { t } = useTranslation("common");
+  return mainTabs.map((item) => ({ ...item, label: t(`tabs.${item.key}`) }));
+}

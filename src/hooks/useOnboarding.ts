@@ -91,7 +91,6 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
       return;
     }
 
-    // Évite qu'une réponse tardive d'une session précédente écrase celle de la session courante.
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -129,7 +128,6 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
   const isStepValid = useCallback(
     (target: OnboardingStep): boolean => {
       const stepErrors = [errors.firstName, errors.birthDate, errors.birthTime, errors.birthPlace];
-      // Une étape n'est valide que si toutes les précédentes le sont : l'étape 5 récapitule les quatre.
       return stepErrors.slice(0, Math.min(target, stepErrors.length)).every((stepError) => stepError === null);
     },
     [errors],

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import Disclosure from "../Disclosure/Disclosure";
 
@@ -13,11 +14,6 @@ interface Props {
   pending?: boolean;
   pendingLabel?: string;
 }
-
-const authorLabels: Record<ChatAuthor, string> = {
-  user: "Vous",
-  numa: "Numa",
-};
 
 const bubbleClasses: Record<ChatAuthor, string> = {
   user: "ml-auto rounded-br-md bg-ink text-white",
@@ -37,12 +33,14 @@ function ChatBubble({
   period,
   why,
   pending = false,
-  pendingLabel = "Numa écrit…",
+  pendingLabel,
 }: Props) {
+  const { t } = useTranslation("ui");
+
   return (
     <article
       id={id}
-      aria-label={authorLabels[author]}
+      aria-label={t(`chat.author.${author}`)}
       aria-busy={pending || undefined}
       className={cx(
         "flex max-w-[85%] flex-col gap-2 rounded-card px-4 py-3 text-sm leading-relaxed",
@@ -62,18 +60,18 @@ function ChatBubble({
               />
             ))}
           </span>
-          {pendingLabel}
+          {pendingLabel ?? t("chat.pending")}
         </p>
       ) : (
         <div>{children}</div>
       )}
       {!pending && period && (
         <p className="text-xs text-ink-secondary">
-          <span className="font-semibold">Période concernée :</span> {period}
+          <span className="font-semibold">{t("chat.period")}</span> {period}
         </p>
       )}
       {!pending && why && (
-        <Disclosure id={`${id}-why`} summary="Pourquoi cette réponse ?">
+        <Disclosure id={`${id}-why`} summary={t("chat.why")}>
           {why}
         </Disclosure>
       )}

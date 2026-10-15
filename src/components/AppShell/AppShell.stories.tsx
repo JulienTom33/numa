@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { mainTabs, type MainTab } from "../../navigation/mainTabs";
+import { useMainTabs, type MainTab } from "../../navigation/mainTabs";
 import EmptyState from "../ui/EmptyState/EmptyState";
 import TabBar from "../ui/TabBar/TabBar";
 import AppShell from "./AppShell";
@@ -20,7 +20,8 @@ const sections = ["intro", "detail", "suite", "fin"];
 export const WithTabBar: Story = {
   render: function Render(args) {
     const [activeTab, setActiveTab] = useState<MainTab>("today");
-    const tab = mainTabs.find((item) => item.key === activeTab) ?? mainTabs[0];
+    const tabItems = useMainTabs();
+    const tab = tabItems.find((item) => item.key === activeTab) ?? tabItems[0];
     return (
       <AppShell
         {...args}
@@ -28,7 +29,7 @@ export const WithTabBar: Story = {
         tabBar={
           <TabBar
             id="storybook__tabbar--main"
-            items={mainTabs}
+            items={tabItems}
             activeKey={activeTab}
             onSelect={setActiveTab}
           />

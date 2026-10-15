@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import Icon from "../Icon/Icon";
 import type { IconName } from "../Icon/icons";
@@ -25,12 +26,14 @@ function TabBar<K extends string>({
   items,
   activeKey,
   onSelect,
-  label = "Navigation principale",
+  label,
 }: Props<K>) {
+  const { t } = useTranslation("ui");
+
   return (
     <nav
       id={id}
-      aria-label={label}
+      aria-label={label ?? t("tabBar.label")}
       className="border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="mx-auto flex h-16 max-w-app items-center justify-around px-2">

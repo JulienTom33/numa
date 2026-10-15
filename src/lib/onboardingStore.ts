@@ -25,7 +25,7 @@ export interface OnboardingDraftRow {
   timezone: string | null;
 }
 
-// Message volontairement générique : le détail technique Supabase ne doit pas être montré à l'utilisateur.
+/** Message volontairement générique : le détail technique Supabase ne doit pas être montré à l'utilisateur. */
 export const SAVE_ERROR_MESSAGE = "Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.";
 export const LOAD_ERROR_MESSAGE = "Votre saisie précédente n'a pas pu être récupérée. Vous pouvez reprendre depuis le début.";
 
@@ -72,14 +72,12 @@ export function rowToDraft(row: OnboardingDraftRow): OnboardingDraft {
       birthDate: row.birth_date,
       birthTime: {
         precision: toPrecision(row.time_precision),
-        // Postgres renvoie un time en HH:MM:SS ; le domaine manipule HH:MM.
         time: row.birth_time ? row.birth_time.slice(0, 5) : "",
         margin: toMargin(row.time_margin),
       },
       birthPlace: hasPlace
         ? {
             label: row.birth_place as string,
-            // numeric Postgres : renvoyé en chaîne par PostgREST selon la précision.
             latitude: Number(row.latitude),
             longitude: Number(row.longitude),
             timezone: row.timezone as string,

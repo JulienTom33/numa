@@ -1,0 +1,30 @@
+{
+  "autocomplete": {
+    "loading": "Recherche…",
+    "noResults": "Aucun résultat"
+  },
+  "chat": {
+    "author": {
+      "numa": "Numa",
+      "user": "Vous"
+    },
+    "inputLabel": "Votre question",
+    "inputPlaceholder": "Posez votre question à Numa…",
+    "pending": "Numa écrit…",
+    "period": "Période concernée :",
+    "why": "Pourquoi cette réponse ?"
+  },
+  "stepChecklist": {
+    "status": {
+      "current": "en cours",
+      "done": "terminé",
+      "pending": "à venir"
+    }
+  },
+  "stepHeader": {
+    "progress": "Étape {{step}} sur {{total}}"
+  },
+  "tabBar": {
+    "label": "Navigation principale"
+  }
+}

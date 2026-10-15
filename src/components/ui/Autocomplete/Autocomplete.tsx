@@ -1,4 +1,5 @@
 import { type KeyboardEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import { fieldControl, fieldLabel } from "../styles";
 
@@ -33,10 +34,11 @@ function Autocomplete({
   loading = false,
   minChars = 2,
   placeholder,
-  noResultsText = "Aucun résultat",
-  loadingText = "Recherche…",
+  noResultsText,
+  loadingText,
   error,
 }: Props) {
+  const { t } = useTranslation("ui");
   const [focused, setFocused] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -45,6 +47,9 @@ function Autocomplete({
   const errorId = error ? `${id}-error` : undefined;
   const open = focused && !dismissed && value.trim().length >= minChars;
   const showSuggestions = open && !loading && suggestions.length > 0;
+  const loadingStatus = loadingText ?? t("autocomplete.loading");
+  const noResultsStatus = noResultsText ?? t("autocomplete.noResults");
+  const statusText = loading ? loadingStatus : noResultsStatus;
   const activeOptionId =
     showSuggestions && activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined;
 
@@ -136,7 +141,7 @@ function Autocomplete({
       </ul>
       {open && !showSuggestions && (
         <p role="status" className="text-sm text-ink-secondary">
-          {loading ? loadingText : noResultsText}
+          {statusText}
         </p>
       )}
     </div>
