@@ -1,4 +1,23 @@
 {
+  "layout": {
+    "continue": "Continuer"
+  },
+  "name": {
+    "title": "Comment devons-nous vous appeler ?",
+    "label": "Prénom ou pseudonyme",
+    "hint": "Il servira uniquement à personnaliser vos lectures."
+  },
+  "date": {
+    "title": "Quand êtes-vous né(e) ?",
+    "legend": "Date de naissance",
+    "day": "Jour",
+    "month": "Mois",
+    "year": "Année",
+    "dayOrdinal_ordinal_one": "{{count}}er",
+    "dayOrdinal_ordinal_other": "{{count}}",
+    "confirmation": "Date enregistrée : {{day}} {{month}} {{year}}",
+    "invalid": "Cette date n'existe pas ou n'est pas encore passée. Vérifiez le jour et le mois."
+  },
   "time": {
     "question": "Connaissez-vous votre heure de naissance ?",
     "exact": {
