@@ -3,8 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import DateStep from "./DateStep";
-import { emptyBirthDateParts } from "./birthDateParts";
-import type { BirthDateParts } from "./birthDateParts";
+import type { BirthDateParts } from "../../../lib/birthData";
+
+const emptyBirthDateParts: BirthDateParts = { day: null, month: null, year: null };
 
 const today = new Date(2026, 9, 15);
 
@@ -47,7 +48,7 @@ describe("DateStep", () => {
   });
 
   it("keeps Continue disabled while the date is incomplete", () => {
-    renderStatic({ day: "14", month: "3", year: "" });
+    renderStatic({ day: 14, month: 3, year: null });
 
     expect(screen.getByRole("button", { name: "Continuer" })).toBeDisabled();
     expect(screen.queryByText(/Date enregistrée/)).not.toBeInTheDocument();
@@ -68,7 +69,7 @@ describe("DateStep", () => {
   });
 
   it("refuses 31 February", () => {
-    renderStatic({ day: "31", month: "2", year: "1990" });
+    renderStatic({ day: 31, month: 2, year: 1990 });
 
     expect(screen.getByRole("alert")).toHaveTextContent("Cette date n'existe pas");
     expect(screen.getByRole("button", { name: "Continuer" })).toBeDisabled();
@@ -76,7 +77,7 @@ describe("DateStep", () => {
   });
 
   it("refuses 29 February in a non-leap year", () => {
-    renderStatic({ day: "29", month: "2", year: "2023" });
+    renderStatic({ day: 29, month: 2, year: 2023 });
 
     expect(screen.getByRole("alert")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Continuer" })).toBeDisabled();
@@ -86,7 +87,7 @@ describe("DateStep", () => {
     const onChange = vi.fn();
     render(
       <DateStep
-        value={{ day: "14", month: "3", year: "1990" }}
+        value={{ day: 14, month: 3, year: 1990 }}
         onChange={onChange}
         onContinue={vi.fn()}
         onBack={vi.fn()}
@@ -96,6 +97,6 @@ describe("DateStep", () => {
 
     await userEvent.selectOptions(screen.getByLabelText("Mois"), "Avril");
 
-    expect(onChange).toHaveBeenCalledWith({ day: "14", month: "4", year: "1990" });
+    expect(onChange).toHaveBeenCalledWith({ day: 14, month: 4, year: 1990 });
   });
 });

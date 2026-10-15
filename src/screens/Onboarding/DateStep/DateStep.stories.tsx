@@ -2,7 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { fn } from "storybook/test";
 import DateStep from "./DateStep";
-import { emptyBirthDateParts } from "./birthDateParts";
+import type { BirthDateParts } from "../../../lib/birthData";
+
+const emptyBirthDateParts: BirthDateParts = { day: null, month: null, year: null };
 
 const meta = {
   title: "Écrans/Onboarding/DateStep",
@@ -35,18 +37,18 @@ type Story = StoryObj<typeof meta>;
 
 export const Empty: Story = {};
 
-export const Partial: Story = { args: { value: { day: "14", month: "3", year: "" } } };
+export const Partial: Story = { args: { value: { day: 14, month: 3, year: null } } };
 
-export const Filled: Story = { args: { value: { day: "14", month: "3", year: "1990" } } };
+export const Filled: Story = { args: { value: { day: 14, month: 3, year: 1990 } } };
 
 export const InvalidFebruary31: Story = {
-  args: { value: { day: "31", month: "2", year: "1990" } },
+  args: { value: { day: 31, month: 2, year: 1990 } },
 };
 
 export const InvalidNonLeapYear: Story = {
-  args: { value: { day: "29", month: "2", year: "2023" } },
+  args: { value: { day: 29, month: 2, year: 2023 } },
 };
 
 export const DiscoveryMode: Story = {
-  args: { discoveryMode: true, value: { day: "1", month: "8", year: "2001" } },
+  args: { discoveryMode: true, value: { day: 1, month: 8, year: 2001 } },
 };

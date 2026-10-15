@@ -1,4 +1,5 @@
 import type { FormEvent, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import DiscoveryModeBadge from "../../../components/DiscoveryModeBadge";
 import Button from "../../../components/ui/Button/Button";
 import StepHeader from "../../../components/ui/StepHeader/StepHeader";
@@ -13,13 +14,15 @@ interface Props {
   onContinue: () => void;
   canContinue: boolean;
   discoveryMode?: boolean;
+  /** Libellé déjà traduit ; « Continuer » par défaut. */
   continueLabel?: string;
   children: ReactNode;
 }
 
 /**
  * Gabarit commun aux étapes de l'onboarding : barre de retour, pastille « Mode découverte »,
- * « Étape n sur N », titre et bouton « Continuer » en pied.
+ * « Étape n sur N », titre et bouton « Continuer » en pied. Le `<form>` permet de valider
+ * l'étape avec Entrée depuis un champ.
  * Sous-éléments : `${id}-top-bar`, `${id}-header`, `${id}-content`, `${id}-continue`.
  */
 function OnboardingStepLayout({
@@ -31,10 +34,11 @@ function OnboardingStepLayout({
   onContinue,
   canContinue,
   discoveryMode = false,
-  continueLabel = "Continuer",
+  continueLabel,
   children,
 }: Props) {
-  // Un <form> permet de valider l'étape avec Entrée depuis un champ.
+  const { t } = useTranslation("onboarding");
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (canContinue) onContinue();
@@ -59,7 +63,7 @@ function OnboardingStepLayout({
         </div>
       </div>
       <Button id={`${id}-continue`} type="submit" fullWidth disabled={!canContinue}>
-        {continueLabel}
+        {continueLabel ?? t("layout.continue")}
       </Button>
     </form>
   );
