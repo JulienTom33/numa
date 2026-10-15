@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import { focusRing } from "../styles";
 
@@ -18,6 +19,8 @@ const wordmarkClasses: Record<LogoSize, string> = {
 };
 
 function Logo({ id, size = "md", showWordmark = true, onWordmarkClick }: Props) {
+  const { t } = useTranslation();
+  const appName = t("app.name");
   const markSize = markSizes[size];
   const wordmarkClass = cx("font-display font-extrabold text-ink", wordmarkClasses[size]);
 
@@ -28,7 +31,7 @@ function Logo({ id, size = "md", showWordmark = true, onWordmarkClick }: Props) 
         height={markSize}
         viewBox="0 0 32 32"
         role={showWordmark ? undefined : "img"}
-        aria-label={showWordmark ? undefined : "Numa"}
+        aria-label={showWordmark ? undefined : appName}
         aria-hidden={showWordmark ? true : undefined}
       >
         <circle cx="16" cy="16" r="13" className="fill-violet" />
@@ -44,10 +47,10 @@ function Logo({ id, size = "md", showWordmark = true, onWordmarkClick }: Props) 
             aria-haspopup="dialog"
             className={cx(wordmarkClass, "rounded-sm hover:text-violet-ink", focusRing)}
           >
-            Numa
+            {appName}
           </button>
         ) : (
-          <span className={wordmarkClass}>Numa</span>
+          <span className={wordmarkClass}>{appName}</span>
         ))}
     </div>
   );

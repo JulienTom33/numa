@@ -1,8 +1,10 @@
 import DiscoverButton from "./components/DiscoverButton";
 import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
+import { useTranslation } from "react-i18next";
 import { useAnonymousSession } from "./hooks/useAnonymousSession";
 
 function App() {
+  const { t } = useTranslation(["welcome", "common"]);
   const { session, isAnonymous, loading, error, start } = useAnonymousSession();
 
   return (
@@ -11,10 +13,10 @@ function App() {
       className="flex min-h-screen flex-col items-center justify-center gap-4 bg-page px-4 py-8 text-ink sm:px-8"
     >
       <h1 id="app__title--main" className="font-display text-title-lg font-bold">
-        Numa
+        {t("common:app.name")}
       </h1>
       <p id="app__subtitle--main" className="text-sm text-ink-secondary sm:text-base">
-        Lectures astrologiques compréhensibles et transparentes.
+        {t("welcome:subtitle")}
       </p>
 
       {isAnonymous && <DiscoveryModeBadge />}
