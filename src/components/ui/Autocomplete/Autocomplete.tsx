@@ -45,8 +45,9 @@ function Autocomplete({
   const errorId = error ? `${id}-error` : undefined;
   const open = focused && !dismissed && value.trim().length >= minChars;
   const showSuggestions = open && !loading && suggestions.length > 0;
+  const optionId = (suggestion: AutocompleteSuggestion) => `${id}-option-${suggestion.id}`;
   const activeOptionId =
-    showSuggestions && activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined;
+    showSuggestions && activeIndex >= 0 ? optionId(suggestions[activeIndex]) : undefined;
 
   const select = (suggestion: AutocompleteSuggestion) => {
     onSelect(suggestion);
@@ -117,7 +118,7 @@ function Autocomplete({
         {suggestions.map((suggestion, index) => (
           <li
             key={suggestion.id}
-            id={`${id}-option-${index}`}
+            id={optionId(suggestion)}
             role="option"
             aria-selected={index === activeIndex}
             onMouseDown={(event) => event.preventDefault()}
@@ -134,7 +135,8 @@ function Autocomplete({
           </li>
         ))}
       </ul>
-      {open && !showSuggestions && (
+      {/* Une erreur affichée prime : « Aucun résultat » serait trompeur. */}
+      {open && !showSuggestions && !error && (
         <p role="status" className="text-sm text-ink-secondary">
           {loading ? loadingText : noResultsText}
         </p>
