@@ -59,5 +59,6 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/pull-requests.md` | Création de PR, corrections, notifications, interdiction de merge auto |
 | `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |
 | `docs/claude/decision-log.md` | Décisions d'architecture et règles évolutives |
+| `docs/design/handoff.md` | Handoff design → dev : écrans du MVP, tickets, composants, tokens, états, responsive, accessibilité |
 
 Consulter le document spécialisé concerné avant toute tâche touchant à son périmètre.
