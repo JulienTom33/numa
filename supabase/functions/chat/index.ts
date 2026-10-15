@@ -1,4 +1,3 @@
-// Point d'entrée du chat : quota de questions anonymes appliqué côté serveur (#27).
 import { parseAllowedOrigins } from "../_shared/cors.ts";
 import { createHandler } from "../_shared/handler.ts";
 import { createAdminClient, verifySupabaseToken } from "../_shared/supabase.ts";

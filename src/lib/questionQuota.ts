@@ -38,7 +38,7 @@ function isQuotaError(value: unknown): value is QuestionQuotaError {
   return typeof code === "string" && typeof message === "string";
 }
 
-// Les erreurs HTTP de la fonction portent `{ error: { code, message } }` dans le corps.
+/** Les erreurs HTTP de la fonction portent `{ error: { code, message } }` dans le corps. */
 async function toQuotaError(error: unknown): Promise<QuestionQuotaError> {
   if (error instanceof FunctionsHttpError && error.context instanceof Response) {
     const detail = errorField(await error.context.json().catch(() => null));

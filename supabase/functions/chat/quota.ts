@@ -61,7 +61,6 @@ export async function answerWithQuota(
   try {
     answer = await provider.answer(question);
   } catch (error) {
-    // Une erreur fournisseur ne consomme pas de question.
     await store.release(reservationId);
     console.error("provider_error", error instanceof Error ? error.name : typeof error);
     throw new HttpError(

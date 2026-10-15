@@ -41,7 +41,6 @@ export function useQuestionQuota(): UseQuestionQuotaResult {
     if (result.quota) {
       setQuota(result.quota);
     } else if (result.error?.code === "question_quota_exceeded") {
-      // Le serveur a refusé : le compteur local est périmé (autre onglet, autre appareil).
       const latest = await fetchQuestionQuota();
       setQuota(latest.quota);
     }
