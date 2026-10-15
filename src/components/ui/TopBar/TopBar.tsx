@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import IconButton from "../IconButton/IconButton";
 
 interface Props {
@@ -10,11 +11,13 @@ interface Props {
   trailing?: ReactNode;
 }
 
-function TopBar({ id, onBack, backLabel = "Retour", title, leading, trailing }: Props) {
+function TopBar({ id, onBack, backLabel, title, leading, trailing }: Props) {
+  const { t } = useTranslation();
+
   return (
     <header id={id} className="grid h-14 grid-cols-[1fr_auto_1fr] items-center gap-2">
       <div className="flex items-center justify-start gap-2">
-        {onBack && <IconButton id={`${id}-back`} icon="back" label={backLabel} onClick={onBack} />}
+        {onBack && <IconButton id={`${id}-back`} icon="back" label={backLabel ?? t("actions.back")} onClick={onBack} />}
         {leading}
       </div>
       {title ? (

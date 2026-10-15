@@ -45,6 +45,69 @@ Tout élément significatif (conteneur, titre, champ, bouton, lien, item de list
 - Styles partagés (anneau de focus, champs) dans `src/components/ui/styles.ts`.
 - Chaque composant prend un `id` obligatoire fourni par l'écran appelant ; ses sous-éléments en dérivent leurs IDs (`${id}-hint`, `${id}-error`…).
 
+## Internationalisation (i18n)
+
+`i18next` + `react-i18next`. Français seul pour l'instant ; la structure accueille d'autres langues sans changement de code applicatif. Voir `decision-log.md` (2026-10-15, issue #118).
+
+### Règles
+
+- **Aucun texte affiché en dur** dans un composant, un hook ou une lib : tout texte visible ou lu par un lecteur d'écran (contenu JSX, `aria-label`, `placeholder`, `title`, `alt`, messages d'erreur affichés, libellés par défaut des composants UI) passe par `t()`.
+- ESLint (`i18next/no-literal-string`, mode `jsx-text-only`) bloque le texte en dur dans le JSX sur `src/**`, hors tests, stories, `src/test/**` et `src/docs/**`. Les attributs (`aria-label`, `placeholder`…) et les chaînes hors JSX ne sont pas détectés : c'est à la relecture de les vérifier.
+- Exceptions : tests, stories et pages `src/docs/` peuvent contenir du texte en dur ; les composants UI acceptent un libellé passé en prop (fourni traduit par l'écran appelant) et retombent sur une clé `ui` / `common` par défaut.
+
+### Organisation
+
+```
+src/i18n/
+  index.ts                 # init i18next (ressources embarquées, initAsync: false, fallbackLng "fr")
+  resources.ts             # langues supportées, namespaces, namespace par défaut
+  i18next.d.ts             # typage strict des clés (CustomTypeOptions)
+  format.ts                # formatNumber, formatPercent, formatDate (Intl)
+  locales/fr/
+    index.ts               # assemble les namespaces ; type Translations
+    common.json            # partagé : nom de l'app, actions génériques (Fermer, Retour, Envoyer)
+    welcome.json           # écran d'accueil / découverte
+    auth.json              # authentification, session anonyme
+    ui.json                # libellés par défaut des composants src/components/ui
+    astrology.json         # signes, placements (vocabulaire astrologique)
+```
+
+- **Un namespace par écran ou domaine** (`welcome`, `auth`, `onboarding`, `chat`…). Nouveau namespace : créer `locales/fr/<ns>.json` et l'ajouter à l'objet `fr` de `locales/fr/index.ts` (le typage et l'init le prennent en compte automatiquement).
+- Ce qui sert à plusieurs écrans va dans `common` ; le vocabulaire astrologique dans `astrology`.
+
+### Nommage des clés
+
+- camelCase, hiérarchisées par bloc de l'écran : `<bloc>.<élément>` (ex. `discover.start`, `chat.inputPlaceholder`, `stepChecklist.status.done`).
+- Clé décrivant le rôle, pas le texte (`discover.start`, pas `decouvrirSansCompte`).
+- Valeurs d'énumération typées : clé construite par template literal (`` t(`signs.${sign}`) ``), le typage vérifie toutes les combinaisons.
+
+### Utilisation
+
+```tsx
+const { t } = useTranslation("welcome");          // namespace de l'écran
+t("discover.start");                               // clé du namespace
+const { t } = useTranslation(["welcome", "common"]);
+t("common:app.name");                              // autre namespace : préfixe `ns:`, déclaré dans useTranslation
+```
+
+- Hors composant React (lib, hook non-React) : `import i18n from "../i18n"` puis `i18n.t("auth:anonymousSession.notCreated")`.
+- **Typage strict** : une clé ou un namespace inexistant fait échouer `npm run typecheck` (`strictKeyChecks` activé, vérifié par `src/i18n/i18n.test.ts`).
+- **Interpolation** : `"progress": "Étape {{step}} sur {{total}}"` puis `t("stepHeader.progress", { step, total })`. L'échappement HTML est désactivé (React échappe déjà).
+- **Pluriels** : suffixes CLDR `_one` / `_other` (+ `_zero`, `_few`, `_many` selon la langue) et option `count` : `"questions_one": "{{count}} question restante"`, `"questions_other": "{{count}} questions restantes"` puis `t("questions", { count })`. En français, **0 et 1 sont au singulier** (`_one`).
+- **Texte riche** (lien ou balise au milieu d'une phrase) : composant `<Trans>` de `react-i18next`, jamais de concaténation de fragments traduits.
+- **Nombres et dates** : `formatNumber`, `formatPercent`, `formatDate` de `src/i18n/format.ts` avec la langue courante (`const { i18n } = useTranslation(); formatPercent(0.42, i18n.language)`), jamais de format codé en dur (`"42 %"`, `toLocaleDateString("fr-FR")`).
+
+### Tests et Storybook
+
+- `src/test/setup.ts` importe `src/i18n` : les tests RTL rendent les vrais textes français, à rechercher tels quels (`getByRole("button", { name: "Fermer" })`). Aucun wrapper ni mock nécessaire.
+- `.storybook/preview.tsx` importe `src/i18n` : les stories affichent les textes traduits.
+
+### Ajouter une langue (ex. anglais)
+
+1. Créer `src/i18n/locales/en/` avec les mêmes fichiers JSON que `fr/`, et `locales/en/index.ts` : `export const en: Translations = { common, welcome, … };` (le type `Translations` impose les mêmes namespaces et les mêmes clés).
+2. Ajouter `en` à `resources` dans `src/i18n/resources.ts` (`{ fr, en }`).
+3. Choisir la langue : `i18n.changeLanguage("en")` (sélecteur) ou détection (`i18next-browser-languagedetector`), à décider dans le ticket concerné ; mettre à jour l'attribut `lang` de `index.html` / `document.documentElement`.
+
 ## Storybook
 
 - `npm run storybook` (port 6006) ; `npm run build-storybook` exécuté en CI.

@@ -14,7 +14,7 @@ export default defineConfig({
       exclude: [
         "**/*.config.*",
         "src/main.tsx",
-        "src/vite-env.d.ts",
+        "src/**/*.d.ts",
         "src/test/**",
         "dist/**",
         "storybook-static/**",
