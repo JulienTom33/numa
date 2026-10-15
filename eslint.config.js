@@ -11,7 +11,7 @@ const noComments = {
   meta: {
     type: "suggestion",
     messages: {
-      forbidden: "Aucun commentaire hors des fichiers de test (voir docs/claude/development.md).",
+      forbidden: "Aucun commentaire hors JSDoc et fichiers de test (voir docs/claude/development.md).",
     },
     schema: [],
   },
@@ -19,7 +19,8 @@ const noComments = {
     return {
       Program() {
         for (const comment of context.sourceCode.getAllComments()) {
-          if (!allowedDirective.test(comment.value)) {
+          const isJsDoc = comment.type === "Block" && comment.value.startsWith("*");
+          if (!isJsDoc && !allowedDirective.test(comment.value)) {
             context.report({ loc: comment.loc, messageId: "forbidden" });
           }
         }

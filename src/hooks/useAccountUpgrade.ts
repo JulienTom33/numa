@@ -82,7 +82,6 @@ export function useAccountUpgrade(options: UpgradeOptions = {}): UseAccountUpgra
       setError(null);
 
       const { error: linkError } = await linkAnonymousAccountWithProvider(provider, { redirectTo });
-      // En cas de succès le navigateur part chez le fournisseur : rien d'autre à faire ici.
       if (linkError) {
         setError(linkError);
         setStep("idle");

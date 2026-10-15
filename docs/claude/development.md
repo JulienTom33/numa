@@ -26,7 +26,7 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - `useEffect`/`useCallback`/`useMemo` : dependency arrays complètes et exactes.
 - Pas de duplication évitable ; pas d'abstraction créée avant qu'un second usage réel existe.
 - Pas de code mort.
-- **Aucun commentaire dans le code, uniquement dans les fichiers de test** (`*.test.ts(x)`, `src/test/**`). Le nom du code doit suffire ; un « pourquoi » non évident va dans la PR, le `decision-log.md` ou un test. Seules les directives techniques sont tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). Bloqué par la règle ESLint locale `numa/no-comments` dans `npm run lint` ; s'applique aussi au code Deno de `supabase/functions/` (hors ESLint, vérifié en review).
+- **Aucun commentaire dans le code hormis JSDoc** (`/** … */` sur une déclaration) ; commentaires libres uniquement dans les fichiers de test (`*.test.ts(x)`, `src/test/**`). Pas de `//` ni de `/* */` dans le code : le nom du code doit suffire, un « pourquoi » non évident va en JSDoc sur la déclaration concernée, dans la PR ou le `decision-log.md`. Directives techniques tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). Bloqué par la règle ESLint locale `numa/no-comments` dans `npm run lint` ; s'applique aussi au code Deno de `supabase/functions/` (hors ESLint, vérifié en review).
 - **Aucun `console.log`** dans le code poussé. Bloqué par ESLint (`no-console`).
 
 ## IDs HTML
