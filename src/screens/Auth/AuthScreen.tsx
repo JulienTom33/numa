@@ -15,10 +15,6 @@ interface Props {
   onApple: () => void;
   onEmailLink: () => void;
   onSwitchMode: () => void;
-  /**
-   * Le libellé suit la destination du retour (accueil ou « Aujourd'hui » en mode découverte),
-   * choisie par l'appelant.
-   */
   backLabel?: string;
   pendingProvider?: AuthProvider | null;
   errorMessage?: string | null;
@@ -50,12 +46,6 @@ const providerActions: ProviderAction[] = [
   { provider: "email", variant: "soft", idDescriptor: "email-link" },
 ];
 
-/**
- * Écran d'inscription / connexion sans mot de passe.
- *
- * Une seule demande d'authentification à la fois : tant qu'une redirection ou un envoi est en
- * cours (`pendingProvider`), les autres fournisseurs sont désactivés.
- */
 function AuthScreen({
   mode,
   onBack,
