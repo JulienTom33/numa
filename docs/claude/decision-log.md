@@ -14,6 +14,17 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-15 — Lieu de naissance : Open-Meteo Geocoding et fuseau via la base tz (issue #19)
+
+Contexte : l'onboarding (#79) doit proposer des villes dès 2 caractères, enregistrer latitude/longitude et déterminer le fuseau horaire historique applicable à la date de naissance, sans exposer de clé côté client.
+Décision :
+- Géocodage via **Open-Meteo Geocoding API** (`geocoding-api.open-meteo.com/v1/search`), appelée depuis l'Edge Function `geocode` (JWT obligatoire, CORS `ALLOWED_ORIGINS`). Aucune clé requise, résultats localisés en français (`language=fr` : « États-Unis », « Île-de-France »), données GeoNames (CC BY 4.0) incluant pour chaque lieu le **fuseau IANA** déterminé à partir de ses coordonnées : pas de bibliothèque de recherche de fuseau à embarquer. Seules les localités habitées (codes GeoNames `PPL*`) sont renvoyées, 8 par défaut, 10 au maximum ; timeout fournisseur de 5 s. Aucune requête n'est journalisée (la ville de naissance est une donnée personnelle) ; seule la saisie de recherche est transmise au fournisseur, sans identifiant utilisateur.
+- Décalage UTC à la date et l'heure de naissance calculé par une fonction pure (`src/lib/utcOffset.ts`) à partir de la base tz embarquée dans le moteur JavaScript (`Intl.DateTimeFormat`, ICU) : historique et heure d'été inclus (ex. pas d'heure d'été en France en 1975, réintroduite en 1976). Heure répétée (retour à l'heure d'hiver) : première occurrence retenue, statut `ambiguous` ; heure sautée : décalage d'avant le saut, statut `nonexistent`.
+Limites :
+- Conditions Open-Meteo : API gratuite réservée à l'usage non commercial, environ 10 000 appels/jour partagés par adresse IP (les Edge Functions partagent leurs IP de sortie). Avant une mise en production commerciale : abonnement Open-Meteo (clé à ajouter en secret Edge Function) ou bascule vers GeoNames (compte gratuit, usage commercial autorisé). Le fournisseur est isolé dans `supabase/functions/geocode/places.ts`.
+- La précision du décalage dépend de la version de la base tz du navigateur ; avant l'adoption d'une heure légale (Paris avant 1911), la base donne le temps moyen local, arrondi à la minute. Pour les calculs astrologiques côté serveur (#20), recalculer le décalage côté fonction plutôt que de faire confiance à la valeur envoyée par le client.
+Alternatives écartées : GeoNames (compte et nom d'utilisateur à gérer en secret, limite horaire de 1 000 appels) ; Nominatim/OpenStreetMap (pas d'autocomplétion autorisée par sa politique d'usage, pas de fuseau horaire) ; API Google/Mapbox (payantes, clé et facturation) ; bibliothèque de fuseau par coordonnées (`tz-lookup`, `geo-tz`) redondante avec le fuseau fourni par GeoNames.
+
 ## 2026-10-15 — Code serveur : Supabase Edge Functions (issue #98)
 
 Contexte : l'app est un site statique (build Vite servi par Caddy) ; tout code exécuté dans le navigateur est public. Les appels aux API astrologique (#20) et IA (#26), dont les clés doivent rester secrètes, et le quota de questions anonymes (#27), qui ne doit pas être contournable, exigent du code serveur. Constat associé : les policies actuelles de `usage_counters` autorisent l'utilisateur à modifier ou supprimer son propre compteur, donc le quota géré côté client est contournable.
