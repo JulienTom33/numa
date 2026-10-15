@@ -17,6 +17,8 @@ export default defineConfig({
         "src/vite-env.d.ts",
         "src/test/**",
         "dist/**",
+        "storybook-static/**",
+        "supabase/**",
         "scripts/**",
         "src/**/*.stories.tsx",
         "src/docs/**",

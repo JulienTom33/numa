@@ -1,0 +1,14 @@
+{
+  "tasks": {
+    "check": "deno check **/*.ts",
+    "test": "deno test --allow-env"
+  },
+  "fmt": {
+    "lineWidth": 100
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  }
+}

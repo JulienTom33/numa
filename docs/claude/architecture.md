@@ -14,7 +14,25 @@
 L'application est un site statique (build Vite servi par Caddy) : tout code exécuté dans le navigateur est public.
 
 - Les appels aux API astrologique et IA, et toute vérification qui ne doit pas être contournable (quota de questions anonymes, rate limiting), se font côté serveur.
-- **L'emplacement du code serveur n'est pas encore décidé** (piste privilégiée : Supabase Edge Functions dans `supabase/functions/`). Aucun ticket nécessitant une clé secrète ne doit être commencé avant que cette décision soit consignée dans `decision-log.md`.
+- Le code serveur est écrit en **Supabase Edge Functions** (Deno) dans `supabase/functions/` (décision du 2026-10-15, `decision-log.md`).
+
+```
+supabase/functions/
+  deno.json            # tâches check / test, config fmt et lint
+  _shared/             # modules communs, préfixe `_` : jamais déployés comme fonction
+    auth.ts            # authenticate() : appelant (userId, isAnonymous) depuis le JWT
+    cors.ts            # en-têtes CORS limités à ALLOWED_ORIGINS
+    handler.ts         # createHandler() : préflight, méthode, auth, erreurs, CORS
+    http.ts            # json(), HttpError, errorResponse()
+    supabase.ts        # client Supabase côté fonction, vérification du JWT
+  <fonction>/index.ts  # Deno.serve(createHandler({ … }))
+```
+
+- Toute nouvelle fonction passe par `createHandler` (authentification obligatoire) et lève des `HttpError` pour les erreurs attendues.
+- Elle est déclarée dans `supabase/config.toml` (`[functions.<nom>]`, `verify_jwt = true` sauf webhook signé).
+- La logique métier est découpée en fonctions pures testées avec `deno test` (`*_test.ts` à côté du fichier).
+- Côté client : `supabase.functions.invoke("<nom>", { body })`, qui envoie le JWT de la session courante.
+- Limites : 2 s de CPU par requête, 150 s de durée totale (plan Free), 256 Mo de mémoire.
 
 ## Principes
 

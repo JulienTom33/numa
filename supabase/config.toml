@@ -412,3 +412,8 @@ enabled = true
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# Fonctions appelées depuis l'app avec le JWT de la session (compte ou anonyme) :
+# la plateforme rejette toute requête sans JWT valide avant d'exécuter le code.
+[functions.whoami]
+verify_jwt = true

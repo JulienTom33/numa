@@ -5,6 +5,7 @@ coverage
 .git
 .github
 docs
+supabase
 *.md
 .env
 .env.local
