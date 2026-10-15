@@ -40,7 +40,7 @@ Tout élément significatif (conteneur, titre, champ, bouton, lien, item de list
 ## Design system
 
 - Les tokens de la maquette (couleurs, typographie, rayons) sont déclarés une seule fois dans `tailwind.config.ts`. `theme.colors` remplace la palette Tailwind par défaut : seules les couleurs Numa existent. Aucune couleur en dur (`bg-[#…]`).
-- Les écrans suivent la maquette Claude Design (`Astraia.dc.html`) ; chaque écran a son ticket `[Design]`.
+- Les écrans suivent la maquette Claude Design (`Astraia.dc.html`) ; chaque écran a son ticket `[Design]`. Correspondance écran → ticket → composants, états et responsive : `docs/design/handoff.md`.
 - Composants réutilisables dans `src/components/ui/<Composant>/` : `<Composant>.tsx`, `.test.tsx`, `.stories.tsx`. Avant de créer un élément d'interface, vérifier qu'un composant existant ne couvre pas le besoin.
 - Styles partagés (anneau de focus, champs) dans `src/components/ui/styles.ts`.
 - Chaque composant prend un `id` obligatoire fourni par l'écran appelant ; ses sous-éléments en dérivent leurs IDs (`${id}-hint`, `${id}-error`…).
