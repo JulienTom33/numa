@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import Icon from "../Icon/Icon";
 
@@ -13,12 +14,6 @@ interface Props {
   steps: ChecklistStep[];
   completedCount: number;
 }
-
-const statusLabels: Record<StepStatus, string> = {
-  done: "terminé",
-  current: "en cours",
-  pending: "à venir",
-};
 
 const markerClasses: Record<StepStatus, string> = {
   done: "bg-sage text-white",
@@ -38,6 +33,8 @@ function getStatus(index: number, completedCount: number): StepStatus {
 }
 
 function StepChecklist({ id, steps, completedCount }: Props) {
+  const { t } = useTranslation("ui");
+
   return (
     <ol id={id} className="flex flex-col gap-3">
       {steps.map((step, index) => {
@@ -55,7 +52,7 @@ function StepChecklist({ id, steps, completedCount }: Props) {
             </span>
             <span className={labelClasses[status]}>
               {step.label}
-              <span className="sr-only"> ({statusLabels[status]})</span>
+              <span className="sr-only"> ({t(`stepChecklist.status.${status}`)})</span>
             </span>
           </li>
         );
