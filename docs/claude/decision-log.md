@@ -22,6 +22,18 @@ Coût : une review par push sur une PR (≤ 40 tours d'agent), plus au plus 3 co
 Limites : un LLM peut manquer un défaut ou en signaler à tort ; la review humaine reste obligatoire. Le contenu d'une PR peut tenter une injection de prompt : risque limité aux contributeurs ayant un accès en écriture (forks exclus) et aux outils autorisés (lecture seule pour la review, push vers la seule branche de la PR pour la correction). La GitHub App ne peut pas modifier `.github/workflows/`, donc les écarts dans les workflows sont signalés mais pas corrigés. Le workflow n'a pas pu être testé de bout en bout avant configuration des secrets.
 Alternatives écartées : `REQUEST_CHANGES` / `APPROVE` par le bot (bloquerait ou simulerait une décision humaine) ; correction via le `GITHUB_TOKEN` (le push ne relancerait ni CI ni review) ; déclenchement sur `workflow_run` après CI (exécute la version `master` du workflow et complique le lien avec la PR).
 
+## 2026-10-15 — Quota de questions anonymes protégé côté serveur (issue #27)
+
+Contexte : le quota de deux questions anonymes reposait sur `increment_usage_counter`, fonction `security invoker` exécutable par `authenticated`, et sur des policies `insert` / `update` / `delete` de `usage_counters` ouvertes au propriétaire. Une session anonyme pouvait donc remettre son compteur à 0 (`update`), le supprimer (`delete`) ou simplement ne jamais appeler l'incrément : la limite était contournable.
+Décision :
+- `usage_counters` est en lecture seule pour le client (policies d'écriture supprimées, privilèges `insert` / `update` / `delete` révoqués) ; `increment_usage_counter` est supprimée.
+- Le quota anonyme couvre toute la session (ligne `period_start = '-infinity'`), pas une journée.
+- Seule l'Edge Function `chat` (clé secrète, rôle `service_role`) le modifie, via des fonctions `security definer` à `search_path` vide, non exécutables par `anon` / `authenticated` : `reserve_question` (réservation atomique sous verrou de ligne, refus si utilisées + en cours ≥ limite), `commit_question` (après réponse réussie du fournisseur), `release_question` (erreur fournisseur : rien n'est décompté), `question_count` (lecture).
+- Les réservations (`question_reservations`, RLS sans policy) expirent après 5 minutes, au-delà de la durée maximale d'une fonction, pour qu'une exécution interrompue ne bloque pas la session.
+- La limite (2) est définie une seule fois, dans la fonction ; le client lit le compteur via `GET chat` et ne le calcule jamais.
+- Le fournisseur IA est injecté (`QuestionProvider`) : réponse fixe tant que #26 n'est pas livré. Les comptes identifiés ne sont pas soumis à ce quota (rate limiting à traiter avec #26).
+Alternatives écartées : vérification côté client ou via policy RLS (`with check (count <= 2)`) — contournable par suppression de ligne et sans lien avec le succès de l'appel fournisseur ; incrément avant l'appel fournisseur sans réservation — une erreur fournisseur consommerait une question ; incrément après l'appel sans réservation — deux requêtes simultanées dépasseraient la limite.
+
 ## 2026-10-15 — Conversion d'une session anonyme en compte : même user id (issue #15)
 
 Contexte : l'utilisateur produit des données (profil, naissance, thème, conversations) en session anonyme ; à l'inscription, il doit les retrouver sans ressaisie.
