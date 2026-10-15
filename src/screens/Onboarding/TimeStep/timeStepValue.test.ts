@@ -14,9 +14,9 @@ describe("isTimeStepComplete", () => {
 
   it("requires a time and a margin for an approximate time", () => {
     expect(isTimeStepComplete({ precision: "approximate", time: "08:45" })).toBe(false);
-    expect(isTimeStepComplete({ precision: "approximate", margin: "over-2-h" })).toBe(false);
+    expect(isTimeStepComplete({ precision: "approximate", margin: "over_2_h" })).toBe(false);
     expect(
-      isTimeStepComplete({ precision: "approximate", time: "08:45", margin: "over-2-h" }),
+      isTimeStepComplete({ precision: "approximate", time: "08:45", margin: "over_2_h" }),
     ).toBe(true);
   });
 
@@ -28,19 +28,19 @@ describe("isTimeStepComplete", () => {
 describe("withPrecision", () => {
   it("keeps the time when switching from approximate to exact, but drops the margin", () => {
     expect(
-      withPrecision({ precision: "approximate", time: "08:45", margin: "under-30-min" }, "exact"),
+      withPrecision({ precision: "approximate", time: "08:45", margin: "under_30_min" }, "exact"),
     ).toEqual({ precision: "exact", time: "08:45" });
   });
 
   it("keeps time and margin when switching back to approximate", () => {
     expect(
-      withPrecision({ precision: "exact", time: "08:45", margin: "under-30-min" }, "approximate"),
-    ).toEqual({ precision: "approximate", time: "08:45", margin: "under-30-min" });
+      withPrecision({ precision: "exact", time: "08:45", margin: "under_30_min" }, "approximate"),
+    ).toEqual({ precision: "approximate", time: "08:45", margin: "under_30_min" });
   });
 
   it("clears time and margin when the time becomes unknown", () => {
     expect(
-      withPrecision({ precision: "approximate", time: "08:45", margin: "over-2-h" }, "unknown"),
+      withPrecision({ precision: "approximate", time: "08:45", margin: "over_2_h" }, "unknown"),
     ).toEqual({ precision: "unknown" });
   });
 

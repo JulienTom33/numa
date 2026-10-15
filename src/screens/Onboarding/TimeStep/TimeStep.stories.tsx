@@ -53,7 +53,7 @@ export const ApproximateIncomplete: Story = {
 };
 
 export const ApproximateComplete: Story = {
-  args: { value: { precision: "approximate", time: "08:45", margin: "30-min-to-2-h" } },
+  args: { value: { precision: "approximate", time: "08:45", margin: "between_30_min_and_2_h" } },
 };
 
 export const Unknown: Story = { args: { value: { precision: "unknown" } } };

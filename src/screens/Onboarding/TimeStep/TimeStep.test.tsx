@@ -80,7 +80,7 @@ describe("TimeStep", () => {
     expect(onChange).toHaveBeenCalledWith({
       precision: "approximate",
       time: "08:45",
-      margin: "30-min-to-2-h",
+      margin: "between_30_min_and_2_h",
     });
   });
 
@@ -106,7 +106,7 @@ describe("TimeStep", () => {
   });
 
   it("clears the entered time when switching to unknown", async () => {
-    const onChange = renderStep({ precision: "approximate", time: "08:45", margin: "over-2-h" });
+    const onChange = renderStep({ precision: "approximate", time: "08:45", margin: "over_2_h" });
 
     await userEvent.click(screen.getByText("Heure inconnue"));
 
