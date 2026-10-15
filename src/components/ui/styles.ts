@@ -3,6 +3,10 @@ import { cx } from "../../lib/cx";
 export const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-ink";
 
+// Pour les étiquettes qui enveloppent un input natif masqué (radio, case à cocher).
+export const focusWithinRing =
+  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-violet-ink";
+
 export const fieldLabel = "font-display text-sm font-semibold text-ink";
 
 const fieldBase =
