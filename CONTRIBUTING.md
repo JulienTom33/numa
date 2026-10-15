@@ -26,9 +26,9 @@ npm run dev
 | Variable | Publique | Description |
 |---|---|---|
 | `VITE_SUPABASE_URL` | Oui | URL du projet Supabase (`Project Settings > API > Project URL`). |
-| `VITE_SUPABASE_ANON_KEY` | Oui | Clé publique anonyme Supabase. Sûre à exposer : les droits réels sont appliqués par les policies RLS. |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Oui | Clé publishable Supabase (`sb_publishable_…`). Sûre à exposer : les droits réels sont appliqués par les policies RLS. |
 
-Les variables secrètes (ex. `SUPABASE_SERVICE_ROLE_KEY`) ne sont jamais utilisées côté client, jamais commitées, et ne figurent pas dans `.env.example`. Voir `docs/claude/security.md` et `docs/claude/supabase.md`.
+Les clés secrètes (`sb_secret_…`) ne sont jamais utilisées côté client, jamais commitées, et ne figurent pas dans `.env.example`. Voir `docs/claude/security.md` et `docs/claude/supabase.md`.
 
 ## Scripts disponibles
 

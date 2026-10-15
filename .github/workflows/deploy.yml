@@ -16,6 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Vérifier la clé Supabase publishable
+        env:
+          KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          # Bloque le déploiement plutôt que publier une app sans clé, ou avec la clé secrète dans le bundle.
+          if [[ "$KEY" != sb_publishable_* ]]; then
+            echo "::error::Variable GitHub VITE_SUPABASE_PUBLISHABLE_KEY absente ou invalide (doit commencer par sb_publishable_)."
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
 
       - name: Configurer SSH
@@ -40,7 +50,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "cat > /opt/numa/.env" <<EOF
           SITE_ADDRESS=${{ secrets.SITE_ADDRESS }}
           VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_PUBLISHABLE_KEY=${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
           EOF
 
       - name: Build et redémarrage des conteneurs

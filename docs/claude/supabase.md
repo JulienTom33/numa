@@ -33,18 +33,18 @@
 ## Clés API
 
 - Supabase remplace les clés `anon` / `service_role` (JWT) par des clés `sb_publishable_…` (client) et `sb_secret_…` (serveur). **Les anciennes clés cessent de fonctionner fin 2026.**
-- Client : clé publishable (actuellement encore `VITE_SUPABASE_ANON_KEY`, migration à faire).
-- Fonctions : `SUPABASE_PUBLISHABLE_KEYS` / `SUPABASE_SECRET_KEYS` (JSON, clé `default`), fournies par la plateforme ; `_shared/supabase.ts` se replie sur l'ancienne variable tant qu'elle existe.
+- Client : clé publishable dans `VITE_SUPABASE_PUBLISHABLE_KEY` (migration faite dans #101). Les anciennes clés du projet sont à désactiver dans le dashboard (Settings → API Keys → Legacy API Keys) une fois la prod vérifiée.
+- Fonctions : `SUPABASE_PUBLISHABLE_KEYS` / `SUPABASE_SECRET_KEYS` (JSON, clé `default`), fournies par la plateforme ; `_shared/supabase.ts` se replie sur `SUPABASE_ANON_KEY` pour la stack locale.
 - Une clé API n'est jamais envoyée en `Authorization: Bearer` (ce n'est pas un JWT) : en-tête `apikey` uniquement.
 
 ## Environnements
 
 - **Local** : stack Supabase locale via `supabase start` (config versionnée dans `supabase/config.toml`). Utilisé pour le développement et testé en CI par le job `supabase-migrations` (`supabase start` + `supabase db reset`).
 - **Staging** et **Production** : projets Supabase dédiés (dashboard Supabase), un par environnement. Jamais de partage de projet entre staging et prod.
-- Chaque environnement a son propre jeu de variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, ...) injecté via les secrets GitHub Actions / la config d'hébergement OVH — jamais commité.
+- Chaque environnement a son propre jeu de variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, ...) injecté via les secrets et variables GitHub Actions / la config d'hébergement OVH — jamais commité.
 
 ## Variables d'environnement : publiques vs secrètes
 
-- **Publiques** (préfixe `VITE_`, exposées au bundle client) : `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`. Sûres à exposer : les droits réels sont appliqués par les policies RLS.
-- **Secrètes** (jamais préfixées `VITE_`, jamais côté client) : ex. `SUPABASE_SERVICE_ROLE_KEY`, utilisée uniquement dans du code serveur (Edge Functions, jobs n8n) pour bypasser RLS quand nécessaire. Stockées en secrets GitHub Actions / variables d'environnement serveur, jamais dans `.env` commité ni dans `.env.example` avec une vraie valeur.
+- **Publiques** (préfixe `VITE_`, exposées au bundle client) : `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_…`). Sûres à exposer : les droits réels sont appliqués par les policies RLS.
+- **Secrètes** (jamais préfixées `VITE_`, jamais côté client) : clé `sb_secret_…` (`SUPABASE_SECRET_KEYS` dans les Edge Functions), utilisée uniquement dans du code serveur pour bypasser RLS quand nécessaire. Stockées en secrets GitHub Actions / variables d'environnement serveur, jamais dans `.env` commité ni dans `.env.example` avec une vraie valeur.
 - Voir `.env.example` à la racine pour le gabarit des variables publiques.

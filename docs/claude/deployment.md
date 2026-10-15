@@ -25,9 +25,14 @@ Configurés dans Settings → Secrets and variables → Actions (environnement `
 | `SSH_PRIVATE_KEY` | Clé privée SSH dédiée au déploiement (jamais celle d'un compte personnel) |
 | `SITE_ADDRESS` | Domaine ou sous-domaine sslip.io servi par Caddy |
 | `VITE_SUPABASE_URL` | URL du projet Supabase (build-time, injectée dans le bundle) |
-| `VITE_SUPABASE_ANON_KEY` | Clé anonyme Supabase (build-time, injectée dans le bundle) |
 
-Ces variables ne sont jamais commitées : elles vivent uniquement dans les secrets GitHub et dans `/opt/numa/.env` sur le serveur (généré par le workflow à chaque déploiement).
+Variable GitHub Actions (non secrète, la valeur est publique dans le bundle) :
+
+| Variable | Contenu |
+|---|---|
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Clé publishable Supabase `sb_publishable_…` (build-time, injectée dans le bundle). Le workflow refuse de déployer si elle est absente ou ne commence pas par `sb_publishable_`. |
+
+Ces valeurs ne sont jamais commitées : elles vivent dans les secrets et variables GitHub et dans `/opt/numa/.env` sur le serveur (généré par le workflow à chaque déploiement).
 
 ## Déploiement
 
