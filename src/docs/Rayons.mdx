@@ -1,0 +1,20 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Fondations/Rayons" />
+
+# Rayons
+
+| Token | Valeur | Usage |
+|---|---|---|
+| `rounded-field` | 13 px | Champs de saisie, listes |
+| `rounded-button` | 14 px | Boutons |
+| `rounded-card` | 16 px | Cartes, encarts |
+| `rounded-sheet` | 22 px | Bottom sheets (coins supérieurs) |
+| `rounded-full` | — | Badges, pilules, avatar, interrupteur |
+
+<div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+  <div className="h-16 w-24 rounded-field border border-line bg-white" />
+  <div className="h-16 w-24 rounded-button bg-coral" />
+  <div className="h-16 w-24 rounded-card border border-line bg-white" />
+  <div className="h-16 w-24 rounded-t-sheet bg-surface" />
+</div>

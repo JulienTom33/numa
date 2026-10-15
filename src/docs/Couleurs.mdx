@@ -1,0 +1,24 @@
+import { Meta, ColorPalette, ColorItem } from "@storybook/addon-docs/blocks";
+import tailwindConfig from "../../tailwind.config";
+
+export const colors = tailwindConfig.theme.colors;
+export const scale = (group) =>
+  typeof group === "string" ? { DEFAULT: group } : group;
+
+<Meta title="Fondations/Couleurs" />
+
+# Couleurs
+
+Seules ces couleurs existent dans l'app : `tailwind.config.ts` remplace la palette Tailwind par défaut.
+Usage : `bg-coral`, `text-violet-ink`, `border-line`, `bg-sage-soft`…
+
+<ColorPalette>
+  <ColorItem title="Neutres" subtitle="page, surface, white, line" colors={{ page: colors.page, surface: colors.surface, white: colors.white, line: colors.line }} />
+  <ColorItem title="Encre" subtitle="ink, ink-secondary, ink-muted" colors={scale(colors.ink)} />
+  <ColorItem title="Corail" subtitle="Action principale" colors={scale(colors.coral)} />
+  <ColorItem title="Violet" subtitle="Identité Numa, sélection" colors={scale(colors.violet)} />
+  <ColorItem title="Ciel" subtitle="Information, Lune" colors={scale(colors.sky)} />
+  <ColorItem title="Or" subtitle="Avertissement, Soleil" colors={scale(colors.gold)} />
+  <ColorItem title="Sauge" subtitle="Succès, compte actif" colors={scale(colors.sage)} />
+  <ColorItem title="Voile" subtitle="Fond des bottom sheets" colors={{ overlay: colors.overlay }} />
+</ColorPalette>

@@ -16,3 +16,6 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+storybook-static
+*storybook.log

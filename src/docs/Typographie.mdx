@@ -1,0 +1,39 @@
+import { Meta, Typeset } from "@storybook/addon-docs/blocks";
+
+<Meta title="Fondations/Typographie" />
+
+# Typographie
+
+Polices auto-hébergées via `@fontsource-variable` (aucun appel à Google Fonts).
+
+## Manrope — `font-display`
+
+Titres, boutons, onglets. Graisses 500 à 800.
+
+<Typeset
+  fontFamily='"Manrope Variable", sans-serif'
+  fontSizes={["10.5px", "16px", "18px", "22px", "26px"]}
+  fontWeight={700}
+  sampleText="Votre thème astral, lu simplement."
+/>
+
+## Inter — `font-sans` (défaut)
+
+Texte courant. Graisses 400 à 700.
+
+<Typeset
+  fontFamily='"Inter Variable", sans-serif'
+  fontSizes={["12px", "14px", "16px"]}
+  fontWeight={400}
+  sampleText="Numa construit ses lectures à partir de vos données de naissance."
+/>
+
+| Usage | Classes |
+|---|---|
+| Titre d'écran (accueil) | `font-display text-title-lg font-bold` |
+| Titre d'étape | `font-display text-title font-bold` |
+| Titre de carte / sheet | `font-display text-title-sm font-bold` |
+| Bouton | `font-display text-base font-bold` |
+| Libellé d'onglet | `font-display text-tab font-semibold` |
+| Texte courant | `text-sm` / `text-base` |
+| Texte secondaire | `text-sm text-ink-secondary` |
