@@ -1,26 +1,11 @@
 import {
   buildDiscordMessage,
+  isNotificationEventType,
   sendDiscordNotification,
-  type NotificationEventType,
 } from "../src/lib/discordNotify";
-
-const EVENT_TYPES: NotificationEventType[] = [
-  "pr_opened",
-  "pr_updated",
-  "pr_changes_requested",
-  "pr_merged",
-  "ci_started",
-  "ci_success",
-  "ci_failure",
-  "ticket_status",
-];
 
 function requireEnv(name: string): string {
   return process.env[name] ?? "";
-}
-
-function isNotificationEventType(value: string): value is NotificationEventType {
-  return (EVENT_TYPES as string[]).includes(value);
 }
 
 async function main(): Promise<void> {
