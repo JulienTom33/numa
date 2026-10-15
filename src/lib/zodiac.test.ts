@@ -4,8 +4,8 @@ import { getSignLabel, ZODIAC_SIGNS } from "./zodiac";
 describe("zodiac", () => {
   it("lists the 12 signs in zodiac order", () => {
     expect(ZODIAC_SIGNS).toHaveLength(12);
-    expect(ZODIAC_SIGNS[0].value).toBe("aries");
-    expect(ZODIAC_SIGNS[11].value).toBe("pisces");
+    expect(ZODIAC_SIGNS[0]).toBe("aries");
+    expect(ZODIAC_SIGNS[11]).toBe("pisces");
   });
 
   it("returns the French label of a sign", () => {

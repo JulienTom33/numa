@@ -1,4 +1,5 @@
 import { type KeyboardEvent, type ReactNode, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import IconButton from "../IconButton/IconButton";
 
@@ -27,9 +28,10 @@ function BottomSheet({
   title,
   children,
   footer,
-  closeLabel = "Fermer",
+  closeLabel,
   aboveTabBar = false,
 }: Props) {
+  const { t } = useTranslation();
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = `${id}-title`;
 
@@ -87,7 +89,7 @@ function BottomSheet({
           <h2 id={titleId} className="text-title-sm font-bold text-ink">
             {title}
           </h2>
-          <IconButton id={`${id}-close`} icon="close" label={closeLabel} onClick={onClose} />
+          <IconButton id={`${id}-close`} icon="close" label={closeLabel ?? t("actions.close")} onClick={onClose} />
         </div>
         <div className="text-sm text-ink-secondary">{children}</div>
         {footer && <div className="flex flex-col gap-3">{footer}</div>}

@@ -1,4 +1,5 @@
 import type { FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import Icon from "../Icon/Icon";
 import { focusRing } from "../styles";
@@ -19,11 +20,12 @@ function ChatInput({
   value,
   onChange,
   onSubmit,
-  label = "Votre question",
-  placeholder = "Posez votre question à Numa…",
-  sendLabel = "Envoyer",
+  label,
+  placeholder,
+  sendLabel,
   disabled = false,
 }: Props) {
+  const { t } = useTranslation(["ui", "common"]);
   const message = value.trim();
   const canSend = !disabled && message.length > 0;
 
@@ -39,13 +41,13 @@ function ChatInput({
       className="flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-4 pr-1.5 focus-within:border-violet focus-within:ring-2 focus-within:ring-violet/30"
     >
       <label htmlFor={id} className="sr-only">
-        {label}
+        {label ?? t("chat.inputLabel")}
       </label>
       <input
         id={id}
         type="text"
         value={value}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("chat.inputPlaceholder")}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-muted focus:outline-none disabled:cursor-not-allowed"
@@ -53,7 +55,7 @@ function ChatInput({
       <button
         id={`${id}-send`}
         type="submit"
-        aria-label={sendLabel}
+        aria-label={sendLabel ?? t("common:actions.send")}
         disabled={!canSend}
         className={cx(
           "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-coral text-white transition-colors hover:bg-coral-hover",

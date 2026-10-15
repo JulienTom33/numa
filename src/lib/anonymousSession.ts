@@ -1,4 +1,5 @@
 import type { PostgrestError } from "@supabase/supabase-js";
+import i18n from "../i18n";
 import { supabase } from "./supabaseClient";
 
 export interface AnonymousSessionError {
@@ -16,7 +17,7 @@ function toSessionError(error: { message: string } | PostgrestError | null): Ano
 export async function startAnonymousSession(): Promise<{ error: AnonymousSessionError | null }> {
   const { data, error } = await supabase.auth.signInAnonymously();
   if (error || !data.user) {
-    return { error: toSessionError(error) ?? { message: "Session anonyme non créée." } };
+    return { error: toSessionError(error) ?? { message: i18n.t("auth:anonymousSession.notCreated") } };
   }
 
   const { error: profileError } = await supabase

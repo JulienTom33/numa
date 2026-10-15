@@ -14,6 +14,18 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-15 — Internationalisation : react-i18next (issue #118)
+
+Contexte : les textes de l'interface étaient écrits en dur dans les composants (review du mainteneur : « il va falloir mettre en place du i18n pour des trad »). Plusieurs écrans sont en cours (#105, #108–#112) : sans infrastructure commune, chaque écran aurait accumulé de nouvelles chaînes à migrer.
+Décision : `i18next` + `react-i18next`.
+- Français seul pour l'instant (`lng` et `fallbackLng` : `fr`), structure prête pour l'anglais (un dossier `locales/<langue>/` typé par `Translations`).
+- Ressources JSON embarquées dans le bundle (aucun chargement réseau, init synchrone `initAsync: false`) : volume faible, pas de flash de clés au démarrage, rendu immédiat en test et dans Storybook.
+- Un namespace par écran ou domaine (`common`, `welcome`, `auth`, `ui`, `astrology`…).
+- Typage strict des clés via `CustomTypeOptions` (`strictKeyChecks`) : une clé inexistante casse le typecheck.
+- Nombres et dates via `Intl` avec la langue courante (`src/i18n/format.ts`).
+- Règle ESLint `i18next/no-literal-string` (mode `jsx-text-only`) en erreur sur `src/**` hors tests, stories et `src/docs/**`.
+Alternatives écartées : `react-intl` / FormatJS (syntaxe ICU plus lourde pour les traducteurs, typage des clés moins direct) ; LinguiJS (étape de compilation des catalogues et macros supplémentaires) ; dictionnaire maison (pluriels, interpolation et changement de langue à réimplémenter). Chargement des traductions par HTTP (`i18next-http-backend`) écarté tant qu'il n'y a qu'une ou deux langues.
+
 ## 2026-10-15 — Review automatique des PR par Claude en CI (issue #116)
 
 Contexte : le mainteneur est seul à relire les PR. Une première passe automatique doit vérifier les conventions du dépôt et faire corriger les écarts avant la review humaine, sans jamais remplacer celle-ci.
