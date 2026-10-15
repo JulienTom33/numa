@@ -14,7 +14,6 @@ interface Props {
   onContinue: () => void;
   onBack: () => void;
   discoveryMode?: boolean;
-  /** Injectable pour des tests et stories déterministes (années proposées, dates futures). */
   today?: Date;
 }
 
@@ -51,11 +50,6 @@ function toSelectValue(part: number | null): string {
   return part === null ? "" : String(part);
 }
 
-/**
- * Étape 2 : date de naissance en trois listes Jour / Mois / Année.
- * Les 31 jours restent proposés quel que soit le mois : une combinaison impossible est
- * signalée explicitement plutôt que corrigée en silence.
- */
 function DateStep({ value, onChange, onContinue, onBack, discoveryMode, today = new Date() }: Props) {
   const { t, i18n } = useTranslation("onboarding");
   const months = useMemo(() => monthOptions(i18n.language), [i18n.language]);

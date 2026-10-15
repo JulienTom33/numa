@@ -14,17 +14,10 @@ interface Props {
   onContinue: () => void;
   canContinue: boolean;
   discoveryMode?: boolean;
-  /** Libellé déjà traduit ; « Continuer » par défaut. */
   continueLabel?: string;
   children: ReactNode;
 }
 
-/**
- * Gabarit commun aux étapes de l'onboarding : barre de retour, pastille « Mode découverte »,
- * « Étape n sur N », titre et bouton « Continuer » en pied. Le `<form>` permet de valider
- * l'étape avec Entrée depuis un champ.
- * Sous-éléments : `${id}-top-bar`, `${id}-header`, `${id}-content`, `${id}-continue`.
- */
 function OnboardingStepLayout({
   id,
   step,
