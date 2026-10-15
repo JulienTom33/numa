@@ -18,6 +18,7 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 - Workflow Git : une branche `issue-<id>-<slug>` par ticket, créée depuis `master`, PR vers `master`. Voir `docs/claude/git-workflow.md`.
 - Toute modification passe par une pull request. **Aucun merge automatique, jamais.** Voir `docs/claude/pull-requests.md`.
 - Tout nouveau fichier de logique ou composant significatif est accompagné de son test **dans la même PR**. Voir `docs/claude/development.md`.
+- Aucun texte affiché en dur : tout passe par `t()` (react-i18next), clés dans `src/i18n/locales/fr/<namespace>.json`. Voir `docs/claude/development.md` (Internationalisation).
 - Aucun secret, clé privée ou donnée personnelle commité. Voir `docs/claude/security.md`.
 - RLS obligatoire sur toute table Supabase exposée à des données utilisateur. Voir `docs/claude/supabase.md`.
 - Code serveur = Supabase Edge Functions (`supabase/functions/`). Toute clé d'API astrologique ou IA y reste, jamais dans le bundle client (`VITE_*`). Voir `docs/claude/architecture.md`.

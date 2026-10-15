@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 
 interface Props {
@@ -9,11 +10,13 @@ interface Props {
 }
 
 function StepHeader({ id, step, total, title, subtitle }: Props) {
+  const { t } = useTranslation("ui");
+
   return (
     <div id={id} className="flex flex-col gap-3">
       <div className="flex flex-col gap-2">
         <p className="font-display text-xs font-semibold text-ink-secondary">
-          Étape {step} sur {total}
+          {t("stepHeader.progress", { step, total })}
         </p>
         <div aria-hidden="true" className="flex gap-1">
           {Array.from({ length: total }, (_, index) => (

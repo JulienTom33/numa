@@ -5,6 +5,7 @@
 - **React** : composants fonctionnels, TypeScript strict (pas de `any`).
 - **TypeScript** : typage strict activé sur tout le code applicatif.
 - **Tailwind CSS** : styling utilitaire, pas de CSS custom sauf nécessité justifiée.
+- **i18n** : `i18next` + `react-i18next`, ressources embarquées dans `src/i18n/`. Voir `development.md` (section Internationalisation).
 - **Supabase** : Auth, base PostgreSQL, RLS. Voir `supabase.md`.
 - **OVH** : hébergement/déploiement de l'application.
 - **n8n** : non utilisé pour l'instant (voir `decision-log.md`, issue #44). Hors chemin critique par principe — jamais pour Auth, chat ou calcul astrologique. À installer en Docker sur OVH seulement si un besoin asynchrone concret apparaît.
