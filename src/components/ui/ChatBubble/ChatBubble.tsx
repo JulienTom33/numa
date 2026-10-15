@@ -24,7 +24,6 @@ const bubbleClasses: Record<ChatAuthor, string> = {
   numa: "mr-auto rounded-bl-md border border-line bg-white text-ink",
 };
 
-// Classes littérales pour que Tailwind les génère.
 const typingDotDelays = [
   "[animation-delay:0ms]",
   "[animation-delay:150ms]",

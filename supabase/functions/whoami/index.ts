@@ -1,4 +1,3 @@
-// Fonction de vérification de bout en bout : authentification, CORS et déploiement.
 import { parseAllowedOrigins } from "../_shared/cors.ts";
 import { createHandler } from "../_shared/handler.ts";
 import { json } from "../_shared/http.ts";

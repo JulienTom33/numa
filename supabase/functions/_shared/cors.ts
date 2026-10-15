@@ -14,7 +14,6 @@ export function corsHeaders(req: Request, allowedOrigins: string[], methods: str
     Vary: "Origin",
   });
 
-  // Seules les origines listées reçoivent l'en-tête : le navigateur bloque les autres.
   const origin = req.headers.get("Origin");
   if (origin && allowedOrigins.includes(origin)) {
     headers.set("Access-Control-Allow-Origin", origin);

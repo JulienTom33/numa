@@ -11,7 +11,6 @@ export interface UseAnonymousSessionResult {
   start: () => Promise<void>;
 }
 
-/** Rattache la session Supabase courante (persistée par le SDK) et pilote la création de session anonyme. */
 export function useAnonymousSession(): UseAnonymousSessionResult {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);

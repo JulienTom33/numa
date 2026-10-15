@@ -10,8 +10,6 @@ interface Props {
 function AppShell({ id, screenKey, children, tabBar }: Props) {
   const scrollRef = useRef<HTMLElement>(null);
 
-  // Le conteneur de défilement est partagé entre les écrans : sans remise à zéro, un nouvel
-  // écran s'ouvrirait à la position de défilement du précédent.
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [screenKey]);
@@ -26,7 +24,6 @@ function AppShell({ id, screenKey, children, tabBar }: Props) {
         >
           {children}
         </main>
-        {/* La barre d'onglets réserve elle-même la zone système inférieure ; sans elle, le cadre s'en charge. */}
         {tabBar ?? <div aria-hidden="true" className="pb-[env(safe-area-inset-bottom)]" />}
       </div>
     </div>

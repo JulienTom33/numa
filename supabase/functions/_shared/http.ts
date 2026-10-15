@@ -23,7 +23,6 @@ export function errorResponse(error: unknown, headers?: HeadersInit): Response {
     );
   }
 
-  // Seul le type d'erreur est journalisé : un message tiers peut contenir des données personnelles.
   console.error("unexpected_error", error instanceof Error ? error.name : typeof error);
   return json(
     { error: { code: "internal_error", message: "Une erreur inattendue est survenue." } },

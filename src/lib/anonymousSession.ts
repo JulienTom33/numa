@@ -1,7 +1,6 @@
 import type { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "./supabaseClient";
 
-/** Nombre de questions autorisées avant inscription. */
 export const ANONYMOUS_QUESTION_LIMIT = 2;
 
 export interface AnonymousSessionError {
@@ -12,10 +11,6 @@ function toSessionError(error: { message: string } | PostgrestError | null): Ano
   return error ? { message: error.message } : null;
 }
 
-/**
- * Crée une session anonyme Supabase et rattache un profil applicatif au user_id créé.
- * L'insertion du profil est idempotente (upsert) : un retry après échec réseau ne duplique rien.
- */
 export async function startAnonymousSession(): Promise<{ error: AnonymousSessionError | null }> {
   const { data, error } = await supabase.auth.signInAnonymously();
   if (error || !data.user) {
@@ -29,10 +24,6 @@ export async function startAnonymousSession(): Promise<{ error: AnonymousSession
   return { error: toSessionError(profileError) };
 }
 
-/**
- * Incrémente de façon atomique le compteur de questions anonymes du jour via la fonction
- * Postgres `increment_usage_counter` (évite une course lecture-puis-écriture côté client).
- */
 export async function incrementAnonymousQuestionCount(): Promise<{
   count: number | null;
   error: AnonymousSessionError | null;

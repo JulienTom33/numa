@@ -25,9 +25,9 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - Props de composant typées via `interface Props`.
 - `useEffect`/`useCallback`/`useMemo` : dependency arrays complètes et exactes.
 - Pas de duplication évitable ; pas d'abstraction créée avant qu'un second usage réel existe.
-- Pas de code mort, pas de commentaire expliquant le "quoi" (le nom du code doit suffire) — commentaire seulement si le "pourquoi" est non évident.
-- **Aucun `console.log`, aucun commentaire `TODO`/`FIXME`/`XXX` dans le code poussé** (sauf commentaire "pourquoi" ci-dessus). Bloqué par ESLint (`no-console`, `no-warning-comments`) dans `npm run lint`.
-- Exception : commentaires libres autorisés dans les fichiers de test (`*.test.ts(x)`, `src/test/**`) et fichiers de config (`*.config.ts`, `*.config.js`, `.env*`, `package.json`, etc.) — `no-warning-comments` désactivé sur ces fichiers dans `eslint.config.js`.
+- Pas de code mort.
+- **Aucun commentaire dans le code, uniquement dans les fichiers de test** (`*.test.ts(x)`, `src/test/**`). Le nom du code doit suffire ; un « pourquoi » non évident va dans la PR, le `decision-log.md` ou un test. Seules les directives techniques sont tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). Bloqué par la règle ESLint locale `numa/no-comments` dans `npm run lint` ; s'applique aussi au code Deno de `supabase/functions/` (hors ESLint, vérifié en review).
+- **Aucun `console.log`** dans le code poussé. Bloqué par ESLint (`no-console`).
 
 ## IDs HTML
 
