@@ -8,9 +8,17 @@ interface Props {
   onOpenSpace: () => void;
   onBack?: () => void;
   resendCooldownSeconds?: number;
+  sendErrorMessage?: string | null;
 }
 
-function MagicLinkScreen({ onSend, onResend, onOpenSpace, onBack, resendCooldownSeconds }: Props) {
+function MagicLinkScreen({
+  onSend,
+  onResend,
+  onOpenSpace,
+  onBack,
+  resendCooldownSeconds,
+  sendErrorMessage,
+}: Props) {
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [lastEmail, setLastEmail] = useState("");
 
@@ -32,7 +40,14 @@ function MagicLinkScreen({ onSend, onResend, onOpenSpace, onBack, resendCooldown
     );
   }
 
-  return <MagicLinkRequestScreen onSend={handleSend} onBack={onBack} defaultEmail={lastEmail} />;
+  return (
+    <MagicLinkRequestScreen
+      onSend={handleSend}
+      onBack={onBack}
+      defaultEmail={lastEmail}
+      errorMessage={sendErrorMessage}
+    />
+  );
 }
 
 export default MagicLinkScreen;

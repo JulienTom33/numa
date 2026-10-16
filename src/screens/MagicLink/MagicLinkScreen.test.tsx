@@ -35,6 +35,22 @@ describe("MagicLinkScreen", () => {
     ).toBeInTheDocument();
   });
 
+  it("forwards the send error message to the request screen", async () => {
+    const onSend = vi.fn().mockRejectedValue(new Error("rate_limited"));
+    render(
+      <MagicLinkScreen
+        onSend={onSend}
+        onResend={vi.fn()}
+        onOpenSpace={vi.fn()}
+        sendErrorMessage="Trop de tentatives."
+      />,
+    );
+
+    await sendLink("lea@example.fr");
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Trop de tentatives.");
+  });
+
   it("returns to the request screen with the address prefilled", async () => {
     render(<MagicLinkScreen onSend={vi.fn()} onResend={vi.fn()} onOpenSpace={vi.fn()} />);
 

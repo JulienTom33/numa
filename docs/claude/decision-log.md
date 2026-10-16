@@ -14,6 +14,12 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Inscription et connexion : un seul état d'auth, conversion signalée par user id (issue #14)
+
+Contexte : les écrans d'auth (#75, #76) doivent créer un compte ou s'y connecter, sans perdre les données d'une session anonyme (#15), et l'écran Migration (#86) doit savoir qu'une conversion vient d'aboutir, y compris quand le lien est ouvert dans un autre onglet.
+Décision : hook `useAuth()` instancié une fois dans `App` et passé au parcours `AuthFlow`. En session anonyme, l'inscription appelle les fonctions de `accountUpgrade.ts` (même user id) ; la connexion à un compte existant utilise `signInWithOtp` / `signInWithOAuth` après un avertissement (pas de fusion). La conversion en cours est mémorisée par user id dans `localStorage` ; `converted` = utilisateur courant non anonyme avec ce même id. Lien magique avec `shouldCreateUser: true` en inscription comme en connexion, pour ne pas révéler si une adresse a un compte.
+Alternatives écartées : `useAccountUpgrade` dans le parcours (sa méthode `upgrade` ne renvoie pas le résultat de l'appel, nécessaire à `MagicLinkScreen`) ; détection de la conversion par transition en mémoire (perdue au rechargement et dans l'onglet ouvert par le lien) ; `shouldCreateUser: false` en connexion (erreur distincte pour une adresse inconnue).
+
 ## 2026-10-16 — Moteur astrologique : Astronomy Engine en local (issue #50)
 
 Statut : **décidée** le 2026-10-16 par le mainteneur.

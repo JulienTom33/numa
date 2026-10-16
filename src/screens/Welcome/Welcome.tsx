@@ -9,9 +9,10 @@ interface Props {
   onSignUp: () => void;
   onSignIn: () => void;
   onDiscover: () => void;
+  discoverError?: string | null;
 }
 
-function Welcome({ onSignUp, onSignIn, onDiscover }: Props) {
+function Welcome({ onSignUp, onSignIn, onDiscover, discoverError = null }: Props) {
   const { t } = useTranslation(["welcome", "common"]);
   const [aboutOpen, setAboutOpen] = useState(false);
   const closeAbout = () => setAboutOpen(false);
@@ -41,6 +42,11 @@ function Welcome({ onSignUp, onSignIn, onDiscover }: Props) {
         <TextLink id="welcome__link--discover" onClick={onDiscover} className="mt-2">
           {t("discover.start")}
         </TextLink>
+        {discoverError && (
+          <p id="welcome__error--discover" role="alert" className="text-center text-sm text-coral-ink">
+            {discoverError}
+          </p>
+        )}
         <p id="welcome__text--account-later" className="text-center text-sm text-ink-secondary">
           {t("account.later")}
         </p>

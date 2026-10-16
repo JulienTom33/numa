@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import AppShell from "./components/AppShell/AppShell";
-import DiscoverButton from "./components/DiscoverButton";
 import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
 import EmptyState from "./components/ui/EmptyState/EmptyState";
 import OnboardingFlow from "./features/onboarding/OnboardingFlow";
@@ -8,32 +7,38 @@ import OnboardingLoading from "./features/onboarding/OnboardingLoading";
 import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus";
 import TabBar from "./components/ui/TabBar/TabBar";
 import { useTranslation } from "react-i18next";
+import AuthFlow, { type AuthFlowDestination } from "./features/auth/AuthFlow";
 import { useAnonymousSession } from "./hooks/useAnonymousSession";
+import { useAuth } from "./hooks/useAuth";
+import type { AuthMode } from "./lib/auth";
 import { useMainTabs, type MainTab } from "./navigation/mainTabs";
+import Welcome from "./screens/Welcome/Welcome";
 
 function App() {
-  const { t } = useTranslation(["welcome", "common"]);
-  const { session, isAnonymous, loading, error, start } = useAnonymousSession();
+  const { t } = useTranslation(["common", "auth"]);
+  const { session, isAnonymous, error, start } = useAnonymousSession();
   const [activeTab, setActiveTab] = useState<MainTab>("today");
   const tabItems = useMainTabs();
   const onboarding = useOnboardingStatus(session?.user.id ?? null);
+  const auth = useAuth();
+  const [authMode, setAuthMode] = useState<AuthMode | null>(auth.redirectError ? "signin" : null);
+  const exitAuth = useCallback((destination: AuthFlowDestination) => {
+    setAuthMode(null);
+    if (destination === "today") setActiveTab("today");
+  }, []);
+
+  if (authMode) {
+    return <AuthFlow initialMode={authMode} auth={auth} onExit={exitAuth} />;
+  }
 
   if (!session) {
     return (
-      <AppShell id="app__shell--root" screenKey="welcome">
-        <div
-          id="app__screen--welcome"
-          className="flex min-h-full flex-col items-center justify-center gap-4 px-4 py-8"
-        >
-          <h1 id="app__title--main" className="font-display text-title-lg font-bold">
-            {t("common:app.name")}
-          </h1>
-          <p id="app__subtitle--main" className="text-sm text-ink-secondary">
-            {t("welcome:subtitle")}
-          </p>
-          <DiscoverButton onClick={start} loading={loading} error={error} />
-        </div>
-      </AppShell>
+      <Welcome
+        onSignUp={() => setAuthMode("signup")}
+        onSignIn={() => setAuthMode("signin")}
+        onDiscover={start}
+        discoverError={error ? t("auth:anonymousSession.notCreated") : null}
+      />
     );
   }
 
