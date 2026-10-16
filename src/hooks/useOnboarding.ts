@@ -168,7 +168,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     if (!canContinue) {
       return false;
     }
-    if (step === ONBOARDING_STEP_COUNT) {
+    if (step === ONBOARDING_STEP_COUNT && birthDataId !== null) {
       return true;
     }
     if (userId === null) {
@@ -176,7 +176,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
       return false;
     }
 
-    const nextStep = (step + 1) as OnboardingStep;
+    const nextStep = Math.min(step + 1, ONBOARDING_STEP_COUNT) as OnboardingStep;
     setSaving(true);
     setErrorCode(null);
 
@@ -200,7 +200,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     setStep(nextStep);
     setSaving(false);
     return true;
-  }, [canContinue, step, userId, data]);
+  }, [canContinue, step, birthDataId, userId, data]);
 
   const back = useCallback(() => {
     setErrorCode(null);

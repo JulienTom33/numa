@@ -42,7 +42,7 @@ supabase/functions/
 
 - Edge Function `geocode` : `POST { query, limit? }` (2 à 100 caractères, 1 à 10 résultats, 8 par défaut) → `{ places: [{ id, name, region, country, countryCode, label, latitude, longitude, timezone }] }`. Liste vide si aucun résultat. Erreurs : `invalid_body`, `invalid_query`, `invalid_limit` (400), `provider_unavailable` (502), `provider_timeout` (504). Aucun secret requis.
 - Client : `searchPlaces(query, { signal, limit })` dans `src/lib/placeSearch.ts` (type `SearchPlaces`, injectable dans l'écran) ; ne lève jamais, renvoie `{ places, error }` avec un code typé (`PlaceSearchErrorCode`).
-- Décalage UTC à la naissance : `resolveUtcOffset({ date, time }, timezone)` dans `src/lib/utcOffset.ts`, `formatUtcOffset()` pour l'affichage. Choix du fournisseur et limites : `decision-log.md`.
+- Décalage UTC à la naissance : `resolveUtcOffset({ date, time }, timezone, longitude)` dans `src/lib/utcOffset.ts` (longitude facultative : avant l'heure légale, heure locale moyenne du lieu, statut `localMeanTime`), `formatUtcOffset()` pour l'affichage. Choix du fournisseur et limites : `decision-log.md`.
 
 ## Principes
 

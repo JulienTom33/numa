@@ -190,6 +190,22 @@ describe("useOnboarding", () => {
     expect(result.current.error).toBe("Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.");
   });
 
+  it("finalises from the summary when a resumed draft was never completed", async () => {
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step: 5, data: COMPLETE_DATA }, birthDataId: null, error: null });
+    const { result } = await renderLoaded();
+
+    let finished = false;
+    await act(async () => {
+      finished = await result.current.next();
+    });
+
+    expect(finished).toBe(true);
+    expect(saveOnboardingDraft).toHaveBeenCalledWith(USER_ID, { step: 5, data: COMPLETE_DATA });
+    expect(completeOnboarding).toHaveBeenCalledTimes(1);
+    expect(result.current.step).toBe(5);
+    expect(result.current.birthDataId).toBe("bd-1");
+  });
+
   it("goes back and only jumps to steps whose previous steps are filled", async () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({
       draft: { step: 5, data: COMPLETE_DATA },

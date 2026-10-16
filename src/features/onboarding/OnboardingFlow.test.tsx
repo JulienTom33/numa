@@ -1,0 +1,208 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { BirthPlace, OnboardingData } from "../../lib/birthData";
+import { completeOnboarding, loadOnboardingDraft, saveOnboardingDraft } from "../../lib/onboardingStore";
+import type { PlaceSuggestion } from "../../lib/placeSearch";
+import type { PlaceSearch } from "../../screens/Onboarding/PlaceStep/placeSearchAdapter";
+import OnboardingFlow from "./OnboardingFlow";
+
+vi.mock("../../lib/supabaseClient", () => ({ supabase: {} }));
+
+vi.mock("../../lib/onboardingStore", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../lib/onboardingStore")>()),
+  loadOnboardingDraft: vi.fn(),
+  saveOnboardingDraft: vi.fn(),
+  completeOnboarding: vi.fn(),
+}));
+
+const TODAY = new Date(2026, 9, 15, 12, 0);
+
+const bordeaux: PlaceSuggestion = {
+  id: "bordeaux-fr",
+  name: "Bordeaux",
+  region: "Gironde",
+  country: "France",
+  countryCode: "FR",
+  label: "Bordeaux, Gironde, France",
+  latitude: 44.84,
+  longitude: -0.58,
+  timezone: "Europe/Paris",
+};
+
+const LYON: BirthPlace = { label: "Lyon, France", latitude: 45.76, longitude: 4.83, timezone: "Europe/Paris" };
+
+const COMPLETE_DATA: OnboardingData = {
+  firstName: "Émile",
+  birthDate: "1990-03-12",
+  birthTime: { precision: "approximate", time: "08:45", margin: "under_30_min" },
+  birthPlace: LYON,
+};
+
+interface RenderOptions {
+  discoveryMode?: boolean;
+  onExit?: () => void;
+  search?: PlaceSearch;
+}
+
+function renderFlow({ discoveryMode = false, onExit, search = vi.fn<PlaceSearch>().mockResolvedValue([bordeaux]) }: RenderOptions = {}) {
+  const onComplete = vi.fn();
+  render(
+    <OnboardingFlow
+      userId="user-1"
+      discoveryMode={discoveryMode}
+      onComplete={onComplete}
+      onExit={onExit}
+      search={search}
+      today={TODAY}
+    />,
+  );
+  return { onComplete, search };
+}
+
+function mockDraft(step: 1 | 2 | 3 | 4 | 5, data: OnboardingData, birthDataId: string | null = null) {
+  vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step, data }, birthDataId, error: null });
+}
+
+describe("OnboardingFlow", () => {
+  beforeEach(() => {
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
+    vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: null });
+    vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: "bd-1", error: null });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("shows a loading state while the draft is loaded", async () => {
+    renderFlow();
+
+    expect(screen.getByRole("status")).toHaveTextContent("Chargement de votre parcours…");
+    expect(await screen.findByRole("heading", { name: "Comment devons-nous vous appeler ?" })).toBeInTheDocument();
+  });
+
+  it("walks through the five steps and ends the journey", async () => {
+    const user = userEvent.setup({ delay: null });
+    const { onComplete, search } = renderFlow();
+
+    await user.type(await screen.findByLabelText("Prénom ou pseudonyme"), "Émile");
+    await user.click(screen.getByRole("button", { name: "Continuer" }));
+
+    expect(await screen.findByRole("heading", { name: "Quand êtes-vous né(e) ?" })).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("Jour"), "12");
+    await user.selectOptions(screen.getByLabelText("Mois"), "Mars");
+    await user.selectOptions(screen.getByLabelText("Année"), "1990");
+    await user.click(screen.getByRole("button", { name: "Continuer" }));
+
+    expect(await screen.findByRole("heading", { name: "À quelle heure êtes-vous né(e) ?" })).toBeInTheDocument();
+    expect(screen.getByText("Étape 3 sur 5")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continuer" })).toBeDisabled();
+    await user.click(screen.getByRole("radio", { name: /Heure exacte/ }));
+    await user.type(screen.getByLabelText("Heure de naissance"), "14:30");
+    await user.click(screen.getByRole("button", { name: "Continuer" }));
+
+    expect(await screen.findByRole("heading", { name: "Où êtes-vous né(e) ?" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continuer" })).toBeDisabled();
+    await user.type(screen.getByRole("combobox", { name: "Ville de naissance" }), "Bor");
+    await user.click(await screen.findByRole("option", { name: /Bordeaux/ }));
+    expect(search).toHaveBeenCalledWith("Bor", expect.any(AbortSignal));
+    await user.click(screen.getByRole("button", { name: "Continuer" }));
+
+    expect(await screen.findByRole("heading", { name: "Vérifiez vos informations" })).toBeInTheDocument();
+    expect(completeOnboarding).toHaveBeenCalledTimes(1);
+    expect(saveOnboardingDraft).toHaveBeenLastCalledWith("user-1", {
+      step: 5,
+      data: {
+        firstName: "Émile",
+        birthDate: "1990-03-12",
+        birthTime: { precision: "exact", time: "14:30", margin: null },
+        birthPlace: bordeaux,
+      },
+    });
+    expect(document.getElementById("summary-step__value--birth-time")).toHaveTextContent("14:30");
+    expect(document.getElementById("summary-step__value--birth-place")).toHaveTextContent("Bordeaux, Gironde, France");
+
+    await user.click(screen.getByRole("button", { name: "Valider" }));
+
+    await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
+  }, 15000);
+
+  it("resumes a saved draft and lets the user edit a field from the summary", async () => {
+    const user = userEvent.setup({ delay: null });
+    mockDraft(5, COMPLETE_DATA, "bd-1");
+    renderFlow();
+
+    expect(await screen.findByRole("heading", { name: "Vérifiez vos informations" })).toBeInTheDocument();
+    expect(document.getElementById("summary-step__value--first-name")).toHaveTextContent("Émile");
+    expect(document.getElementById("summary-step__value--birth-date")).toHaveTextContent("12 mars 1990");
+    expect(document.getElementById("summary-step__value--birth-time")).toHaveTextContent("Vers 08:45 (marge < 30 min)");
+    expect(screen.getByText(/Votre heure est approximative/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Modifier : Heure de naissance" }));
+
+    expect(screen.getByRole("heading", { name: "À quelle heure êtes-vous né(e) ?" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: /Heure approximative/ })).toBeChecked();
+    expect(screen.getByLabelText("Heure approximative")).toHaveValue("08:45");
+  });
+
+  it("goes back to the previous step and only offers an exit on the first step", async () => {
+    const user = userEvent.setup({ delay: null });
+    const onExit = vi.fn();
+    mockDraft(2, { ...COMPLETE_DATA, birthDate: null });
+    renderFlow({ onExit });
+
+    await screen.findByRole("heading", { name: "Quand êtes-vous né(e) ?" });
+    await user.click(screen.getByRole("button", { name: "Retour" }));
+
+    expect(screen.getByRole("heading", { name: "Comment devons-nous vous appeler ?" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Retour" }));
+    expect(onExit).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the back button on the first step without exit", async () => {
+    renderFlow();
+
+    await screen.findByRole("heading", { name: "Comment devons-nous vous appeler ?" });
+
+    expect(screen.queryByRole("button", { name: "Retour" })).not.toBeInTheDocument();
+  });
+
+  it("shows the discovery mode badge for an anonymous session", async () => {
+    renderFlow({ discoveryMode: true });
+
+    expect(await screen.findByText("Mode découverte")).toBeInTheDocument();
+  });
+
+  it("stays on the step and shows the error when saving fails", async () => {
+    const user = userEvent.setup({ delay: null });
+    vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: "Enregistrement impossible." });
+    renderFlow();
+
+    await user.type(await screen.findByLabelText("Prénom ou pseudonyme"), "Émile");
+    await user.click(screen.getByRole("button", { name: "Continuer" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Enregistrement impossible.");
+    expect(screen.getByRole("heading", { name: "Comment devons-nous vous appeler ?" })).toBeInTheDocument();
+  });
+
+  it("does not end the journey when the final validation fails", async () => {
+    const user = userEvent.setup({ delay: null });
+    mockDraft(5, COMPLETE_DATA);
+    vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: null, error: "Finalisation impossible." });
+    const { onComplete } = renderFlow();
+
+    await user.click(await screen.findByRole("button", { name: "Valider" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Finalisation impossible.");
+    expect(onComplete).not.toHaveBeenCalled();
+  });
+
+  it("shows the load error and starts from the first step", async () => {
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "Reprise impossible." });
+    renderFlow();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Reprise impossible.");
+    expect(screen.getByText("Étape 1 sur 5")).toBeInTheDocument();
+  });
+});
