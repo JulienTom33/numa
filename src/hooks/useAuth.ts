@@ -48,14 +48,6 @@ function deriveStatus(loading: boolean, session: Session | null): AuthStatus {
   return session.user.is_anonymous ? "anonymous" : "authenticated";
 }
 
-/**
- * Source unique de l'état d'authentification : restaure la session persistée au chargement,
- * suit `onAuthStateChange`, et expose les actions du parcours inscription / connexion.
- * En session anonyme, l'inscription rattache l'identité au même user id (#15) ; la connexion à un
- * compte existant remplace la session anonyme sans fusionner ses données.
- * `converted` passe à `true` quand une conversion anonyme → compte aboutit, même après
- * rechargement ou dans un autre onglet, jusqu'à l'appel de `acknowledgeConversion`.
- */
 export function useAuth(options: UseAuthOptions = {}): UseAuthResult {
   const redirectTo = options.redirectTo ?? defaultAuthRedirectUrl();
   const [session, setSession] = useState<Session | null>(null);

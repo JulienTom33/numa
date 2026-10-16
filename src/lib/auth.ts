@@ -66,12 +66,10 @@ function toAuthFlowError(code: AuthFlowErrorCode): AuthFlowError {
   return { code, retryable: RETRYABLE.has(code) };
 }
 
-/** Convertit une erreur de conversion de compte (#15) en erreur du parcours d'authentification. */
 export function fromUpgradeError(error: UpgradeError): AuthFlowError {
   return toAuthFlowError(CODE_BY_UPGRADE_ERROR[error.code]);
 }
 
-/** Normalise une erreur Supabase Auth : seul un code est conservé, jamais le message technique. */
 export function mapSupabaseAuthError(error: AuthError): AuthFlowError {
   if (error.code && PROVIDER_UNAVAILABLE_AUTH_CODES.has(error.code)) {
     return toAuthFlowError("provider_unavailable");
@@ -83,12 +81,10 @@ function mapOptionalError(error: AuthError | null): AuthFlowError | null {
   return error ? mapSupabaseAuthError(error) : null;
 }
 
-/** URL de retour des liens magiques et des redirections OAuth : la racine de l'application. */
 export function defaultAuthRedirectUrl(): string {
   return `${window.location.origin}/`;
 }
 
-/** Envoie un lien magique de connexion (le compte est créé s'il n'existe pas encore). */
 export async function sendMagicLink(
   email: string,
   options: AuthRequestOptions = {},
@@ -100,7 +96,6 @@ export async function sendMagicLink(
   return { error: mapOptionalError(error) };
 }
 
-/** Redirige vers le fournisseur OAuth pour se connecter ou créer un compte. */
 export async function signInWithProvider(
   provider: OAuthProvider,
   options: AuthRequestOptions = {},
@@ -112,7 +107,6 @@ export async function signInWithProvider(
   return { error: mapOptionalError(error) };
 }
 
-/** Rattache une adresse email à l'utilisateur anonyme courant, sans changer son user id (#15). */
 export async function sendUpgradeLink(
   email: string,
   options: AuthRequestOptions = {},
@@ -121,7 +115,6 @@ export async function sendUpgradeLink(
   return { error: result.error ? fromUpgradeError(result.error) : null };
 }
 
-/** Renvoie le lien de confirmation de la conversion anonyme → compte (#15). */
 export async function resendUpgradeLink(
   email: string,
   options: AuthRequestOptions = {},
@@ -130,7 +123,6 @@ export async function resendUpgradeLink(
   return { error: error ? fromUpgradeError(error) : null };
 }
 
-/** Rattache un fournisseur OAuth à l'utilisateur anonyme courant, sans changer son user id (#15). */
 export async function linkProvider(
   provider: OAuthProvider,
   options: AuthRequestOptions = {},
@@ -141,19 +133,16 @@ export async function linkProvider(
   return { error: error ? fromUpgradeError(error) : null };
 }
 
-/** Ferme la session courante (locale et côté Supabase). */
 export async function signOut(): Promise<{ error: AuthFlowError | null }> {
   const { error } = await supabase.auth.signOut();
   return { error: mapOptionalError(error) };
 }
 
-/** Lit l'erreur placée par Supabase Auth dans l'URL de retour (lien magique, OAuth, confirmation). */
 export function readAuthRedirectError(url: string): AuthFlowError | null {
   const error = readUpgradeRedirectError(url);
   return error ? fromUpgradeError(error) : null;
 }
 
-/** Retire de l'URL courante les paramètres d'erreur d'authentification, sans recharger la page. */
 export function clearAuthRedirectError(): void {
   const url = new URL(window.location.href);
   const hash = new URLSearchParams(url.hash.replace(/^#/, ""));
@@ -165,7 +154,6 @@ export function clearAuthRedirectError(): void {
   window.history.replaceState(window.history.state, "", url.toString());
 }
 
-/** Mémorise qu'une conversion anonyme → compte est en cours pour cet utilisateur (survit au rechargement). */
 export function markPendingConversion(userId: string): void {
   try {
     window.localStorage.setItem(PENDING_CONVERSION_STORAGE_KEY, userId);
@@ -174,7 +162,6 @@ export function markPendingConversion(userId: string): void {
   }
 }
 
-/** Lit l'user id de la conversion en cours, ou `null`. */
 export function readPendingConversion(): string | null {
   try {
     return window.localStorage.getItem(PENDING_CONVERSION_STORAGE_KEY);
@@ -183,7 +170,6 @@ export function readPendingConversion(): string | null {
   }
 }
 
-/** Oublie la conversion en cours (terminée et prise en compte, ou abandonnée). */
 export function clearPendingConversion(): void {
   try {
     window.localStorage.removeItem(PENDING_CONVERSION_STORAGE_KEY);
