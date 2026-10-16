@@ -14,6 +14,17 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Ascendant, MC et maisons codés sur Astronomy Engine (issue #126) — proposition, à valider
+
+Contexte : Astronomy Engine (MIT, retenu par #50) fournit le temps sidéral et l'obliquité mais ni ascendant, ni MC, ni maisons. Swiss Ephemeris (AGPL) est refusé comme dépendance.
+Décision (proposée) : module pur `supabase/functions/_shared/astrology/` (`computeAngles`, `computeHouses`), dépendance `npm:astronomy-engine@2.1.19` épinglée dans `supabase/functions/deno.json`.
+- Entrée : instant UTC déjà résolu (la conversion heure locale → UTC reste dans `src/lib/utcOffset.ts`, #125), latitude, longitude est.
+- RAMC = temps sidéral apparent de Greenwich (`SiderealTime`) × 15 + longitude ; obliquité vraie (`e_tilt().tobl`) ; MC et ascendant par les formules de Meeus (*Astronomical Algorithms*, chap. 13 et 14).
+- Systèmes : Placidus (itération sur la trisection des semi-arcs, tolérance 10⁻⁹°), Porphyre, Égales, Signes entiers.
+- **Défaut proposé : Placidus.** **Repli proposé : Porphyre** quand |latitude| ≥ 90° − ε (cercles polaires, Placidus indéfini) ou si l'itération ne converge pas ; le résultat porte `system: "porphyry"` et `fallback: { from: "placidus", reason }`. Même comportement que Swiss Ephemeris (refus de Placidus, Porphyre en secours).
+- Validation : écarts ≤ 0,12″ avec Swiss Ephemeris 2.10.03 (calculé hors dépôt) sur P1–P5, 66° N, 70° N, 70° S et un ascendant à 0° Bélier ; références figées dans `houses_test.ts`.
+Alternatives écartées : Swiss Ephemeris ou un portage (AGPL) ; Koch, Regiomontanus, Campanus (non demandés pour le MVP, ajoutables plus tard) ; repli sur maisons égales (Porphyre conserve MC et ascendant comme cuspides 10 et 1, plus proche de Placidus).
+
 ## 2026-10-15 — Internationalisation : react-i18next (issue #118)
 
 Contexte : les textes de l'interface étaient écrits en dur dans les composants (review du mainteneur : « il va falloir mettre en place du i18n pour des trad »). Plusieurs écrans sont en cours (#105, #108–#112) : sans infrastructure commune, chaque écran aurait accumulé de nouvelles chaînes à migrer.
