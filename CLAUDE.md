@@ -57,7 +57,7 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/git-workflow.md` | Branches, labels, démarrage d'un ticket |
 | `docs/claude/development.md` | Commandes, qualité, tests, conventions de code, IDs HTML |
 | `docs/claude/supabase.md` | Auth, sessions anonymes, PostgreSQL, migrations, RLS |
-| `docs/claude/ai-astrology.md` | API astrologique, IA, contexte structuré, règles éditoriales |
+| `docs/claude/ai-astrology.md` | Calcul astrologique (Astronomy Engine), IA, contexte structuré, règles éditoriales |
 | `docs/claude/security.md` | Secrets, données personnelles, rate limiting, logs |
 | `docs/claude/pull-requests.md` | Création de PR, corrections, notifications, interdiction de merge auto |
 | `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |

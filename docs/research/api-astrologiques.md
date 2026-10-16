@@ -8,12 +8,30 @@ Conventions :
 - Les tarifs et quotas sont ceux affichés le jour de l'étude ; ils peuvent changer sans préavis.
 - Les tests pratiques ont été exécutés hors dépôt (scratchpad local) ; aucun script ni aucune clé n'est versionné.
 
-## Synthèse
+## Décision (2026-10-16, mainteneur)
 
-| | Recommandation |
+- **Fournisseur retenu : Astronomy Engine** (`astronomy-engine`, MIT), exécuté localement dans une Edge Function.
+- Raisons :
+  - gratuit et sans quota ;
+  - licence MIT, sans contrainte pour Numa ;
+  - aucune donnée de naissance envoyée à un tiers ;
+  - JS pur, sans WASM ni fichier d'éphémérides ;
+  - précision mesurée ≤ 3″ sur le Soleil et la Lune ;
+  - ascendant et MC identiques à Swiss Ephemeris à 0,1″ près.
+- **Swiss Ephemeris n'est pas retenu** : l'AGPL est refusée et la licence professionnelle n'est pas prise. Il peut servir de référence pour valider les calculs, uniquement dans des tests exécutés hors dépôt, sans dépendance dans le projet.
+- Conséquences :
+  - **Maisons** : Placidus et tout autre système de maisons sont à coder nous-mêmes à partir de formules publiques, puis à valider sur les profils de référence P1–P5. Maisons égales et signe entier : dérivées directement de l'ascendant.
+  - **Latitudes polaires** : le repli est à définir, car Placidus n'y est pas défini.
+  - **Secours** : aucune API hébergée n'est retenue. Une réévaluation reste possible plus tard, après mesure sur P1–P5 avec un compte de test.
+
+La synthèse et l'analyse ci-dessous décrivent l'étude telle qu'elle a été soumise. Elle proposait Swiss Ephemeris en principal, sous réserve de la licence.
+
+## Synthèse de l'étude
+
+| | Recommandation initiale |
 |---|---|
-| **Principal (proposé)** | **Swiss Ephemeris** (bibliothèque C de référence d'Astrodienst) via le portage WebAssembly `sweph-wasm`, exécuté dans une Edge Function. Écart mesuré avec la NASA/JPL : ≤ 0,3″ sur le Soleil et la Lune. Maisons Placidus et 24 autres systèmes. Aucun quota, aucune donnée envoyée à un tiers. **Condition : choisir la licence** (AGPL-3.0 pour tout Numa, ou licence professionnelle à 700 CHF). |
-| **Secours** | **Astronomy Engine** (MIT) : écart mesuré ≤ 3″ sur le Soleil et la Lune, ascendant et MC identiques à Swiss Ephemeris (≤ 0,1″). Ne calcule pas les maisons : seules les maisons égales et signe entier sont simples à coder ; Placidus serait à implémenter et à tester. C'est l'option à retenir si la licence de Swiss Ephemeris est refusée. |
+| **Principal (proposé, non retenu)** | **Swiss Ephemeris** (bibliothèque C de référence d'Astrodienst) via le portage WebAssembly `sweph-wasm`, exécuté dans une Edge Function. Écart mesuré avec la NASA/JPL : ≤ 0,3″ sur le Soleil et la Lune. Maisons Placidus et 24 autres systèmes. Aucun quota, aucune donnée envoyée à un tiers. **Condition : choisir la licence** (AGPL-3.0 pour tout Numa, ou licence professionnelle à 700 CHF). |
+| **Secours (proposé, retenu comme principal)** | **Astronomy Engine** (MIT) : écart mesuré ≤ 3″ sur le Soleil et la Lune, ascendant et MC identiques à Swiss Ephemeris (≤ 0,1″). Ne calcule pas les maisons : seules les maisons égales et signe entier sont simples à coder ; Placidus serait à implémenter et à tester. C'est l'option à retenir si la licence de Swiss Ephemeris est refusée. |
 | **API hébergées** | Non recommandées pour le MVP : clé et facturation, envoi des données de naissance à un tiers hors UE, restrictions de stockage incompatibles avec #22 (Prokerala), conditions muettes sur le stockage (AstrologyAPI, FreeAstrologyAPI), fuseau passé en décalage numérique (FreeAstrologyAPI) donc historique à gérer de notre côté. Aucune n'a pu être testée sans clé. |
 
 ## Options étudiées
@@ -135,14 +153,16 @@ Degrés tronqués à la minute.
 
 ## Impact sur les tickets liés
 
+Écrit avant la décision. Avec Astronomy Engine retenu, seules les mentions d'Astronomy Engine s'appliquent. Swiss Ephemeris reste une référence de test hors dépôt.
+
 - **#20 (thème natal)** : calcul dans une Edge Function avec la bibliothèque retenue ; entrée en UT recalculée côté serveur (fuseau IANA + `resolveUtcOffset`, cf. entrée #19 du journal) ; pour les dates antérieures à l'heure légale du pays, décalage = longitude / 15 ; enregistrer `engine` (`swiss-ephemeris 2.10.03` / `sweph-wasm 2.6.9`, fichiers `*_18.se1`) ou `astronomy-engine 2.1.19`, le système de maisons et le statut horaire (`exact`, `ambiguous`, `nonexistent`, heure inconnue) comme niveau de confiance. Aspects et transits en fonctions pures testées (`deno test`). Le jeu P1–P5 et les valeurs ci-dessus servent de tests de non-régression (tolérance proposée : 1″ pour Swiss, 5″ pour Astronomy Engine).
 - **#22 (cache)** : avec une bibliothèque embarquée, aucune contrainte contractuelle sur le stockage ; clé de cache = données de naissance normalisées (UT, lat, lon, heure connue ou non) + version du moteur + version des fichiers d'éphémérides + système de maisons. Le recalcul étant presque gratuit (≈ 1 ms), le cache sert surtout à figer un résultat affiché et à tracer sa version.
 - **#80 (ascendant)** : ascendant calculé seulement si l'heure est connue ; si l'heure est `ambiguous`, proposer les deux ascendants possibles ; si l'heure est inconnue, ne rien calculer et passer à la variante « déclaré ». Un écart d'une minute d'heure de naissance déplace l'ascendant d'environ 0,25° : les écarts avec l'ascendant déclaré peuvent venir de l'heure saisie.
-- **`docs/claude/ai-astrology.md`** et entrée #98 du journal (« calcul délégué à l'API externe, cf. #50 ») : à mettre à jour si la proposition est validée (calcul local dans la fonction, et non API externe).
+- **`docs/claude/ai-astrology.md`** et entrée #98 du journal (« calcul délégué à l'API externe, cf. #50 ») : mis à jour le 2026-10-16. Le calcul est désormais local, dans une Edge Function avec Astronomy Engine, et non plus confié à une API externe.
 
-## Décisions à prendre par le mainteneur
+## Points ouverts
 
-1. Licence : publier Numa sous AGPL-3.0 (Swiss Ephemeris gratuit), acheter la licence professionnelle (700 CHF), ou renoncer à Swiss Ephemeris au profit d'Astronomy Engine (MIT, maisons Placidus à coder ou maisons égales / signe entier seulement).
+1. Licence : tranchée le 2026-10-16. Astronomy Engine (MIT) est retenu, Swiss Ephemeris est écarté (voir « Décision »).
 2. Système de maisons par défaut (Placidus usuel en astrologie occidentale ; Placidus est indéfini aux latitudes polaires, prévoir un repli).
 3. Politique d'affichage en cas d'heure inconnue ou ambiguë (#80, #20).
-4. Abandonner ou non toute API hébergée ; si une API est envisagée plus tard, créer un compte de test pour mesurer son exactitude sur P1–P5 avant toute décision.
+4. Aucune API hébergée n'est retenue pour l'instant. Si une API est envisagée plus tard, créer un compte de test pour mesurer son exactitude sur P1–P5 avant toute décision.
