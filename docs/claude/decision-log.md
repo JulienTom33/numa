@@ -14,6 +14,12 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Cache des thèmes nataux en base (issue #22)
+
+Contexte : éviter de recalculer un thème identique à chaque appel de `natal-chart`.
+Décision : les résultats du calcul sont stockés dans `natal_charts` (autorisé car le calcul est local, #50 : aucune donnée envoyée à un tiers). Clé SHA-256 de l'entrée normalisée + version du moteur + version du schéma ; purge des anciennes entrées du même `birth_data_id` à l'écriture ; écriture réservée au service role ; les erreurs ne sont jamais mises en cache. Les lignes `natal_charts` préexistantes (jamais écrites par le code) sont supprimées par la migration.
+Alternatives écartées : cache mémoire de l'Edge Function (non partagé entre instances, perdu à chaque démarrage) ; écriture par le client (un utilisateur pourrait forger un thème).
+
 ## 2026-10-16 — Tailwind CSS 4, configuration CSS-first (issue #133)
 
 Contexte : après #123, les 7 vulnérabilités `npm audit` restantes (5 élevées, 2 modérées, dépendances de dev) venaient toutes de la chaîne Tailwind 3 (`chokidar`, `micromatch`, `braces`, `fast-glob`, `postcss-nested`, `postcss-selector-parser`).

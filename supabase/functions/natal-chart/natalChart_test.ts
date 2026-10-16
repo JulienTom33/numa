@@ -1,13 +1,41 @@
 import { assertEquals } from "jsr:@std/assert@1";
 import type { Caller } from "../_shared/auth.ts";
 import { createHandler } from "../_shared/handler.ts";
+import type { ChartCache } from "./cache.ts";
 import { createNatalChartHandler } from "./natalChart.ts";
+import type { NatalChart } from "./types.ts";
 import type { BirthDataRow } from "./store.ts";
 import { type BirthDataStore, toBirthInput } from "./store.ts";
 
+interface MemoryCache {
+  cache: ChartCache;
+  entries: Map<string, NatalChart>;
+  saves: string[];
+}
+
+function memoryCache(): MemoryCache {
+  const entries = new Map<string, NatalChart>();
+  const saves: string[] = [];
+  const cache: ChartCache = {
+    find: (birthDataId, key) => Promise.resolve(entries.get(`${birthDataId}:${key}`) ?? null),
+    save: (_userId, birthDataId, key, chart) => {
+      saves.push(key);
+      for (const existing of [...entries.keys()]) {
+        if (existing.startsWith(`${birthDataId}:`)) entries.delete(existing);
+      }
+      entries.set(`${birthDataId}:${key}`, chart);
+      return Promise.resolve();
+    },
+  };
+  return { cache, entries, saves };
+}
+
 const USER_ID = "11111111-1111-1111-1111-111111111111";
 
+const BIRTH_DATA_ID = "99999999-9999-9999-9999-999999999999";
+
 const ROW: BirthDataRow = {
+  id: BIRTH_DATA_ID,
   birth_date: "1975-06-15",
   birth_time: "14:30:00",
   time_precision: "exact",
@@ -22,18 +50,18 @@ function storeReturning(row: BirthDataRow | null) {
   const store: BirthDataStore = {
     findLatest: (token, userId) => {
       calls.push({ token, userId });
-      return Promise.resolve(row ? toBirthInput(row) : null);
+      return Promise.resolve(row ? { id: row.id, birth: toBirthInput(row) } : null);
     },
   };
   return { store, calls };
 }
 
-function handlerFor(store: BirthDataStore) {
+function handlerFor(store: BirthDataStore, cache: ChartCache = memoryCache().cache) {
   return createHandler({
     methods: ["GET", "POST"],
     allowedOrigins: ["http://localhost:5173"],
     verifyToken: (token) => Promise.resolve(token === "valid" ? { sub: USER_ID } : null),
-    handle: createNatalChartHandler({ store }),
+    handle: createNatalChartHandler({ store, cache }),
   });
 }
 
@@ -129,7 +157,7 @@ Deno.test("progress=1 : phases reelles dans l'ordre puis theme identique au mode
     { phase: "reading" },
   ]);
   const plain = await (await handler(request(authorized))).json();
-  assertEquals(events[events.length - 1], plain);
+  assertEquals((events[events.length - 1] as { chart: unknown }).chart, plain.chart);
 });
 
 Deno.test("progress=1 : erreurs d'authentification et 404 restent des reponses JSON", async () => {
@@ -150,4 +178,76 @@ Deno.test("progress=1 : donnees invalides signalees par un evenement d'erreur", 
     { phase: "validation" },
     { error: { code: "invalid_birth_data", message: "invalid_birth_data" } },
   ]);
+});
+
+Deno.test("cache : 1er appel calcule et enregistre, 2e appel renvoie le theme stocke", async () => {
+  const memory = memoryCache();
+  const handler = handlerFor(storeReturning(ROW).store, memory.cache);
+  const first = await (await handler(request(authorized))).json();
+  const second = await (await handler(request(authorized))).json();
+  assertEquals(first.cached, false);
+  assertEquals(second.cached, true);
+  assertEquals(second.chart, first.chart);
+  assertEquals(memory.saves.length, 1);
+});
+
+Deno.test("cache : une modification de naissance change la cle et purge l'ancienne entree", async () => {
+  const memory = memoryCache();
+  await handlerFor(storeReturning(ROW).store, memory.cache)(request(authorized));
+  const modified = { ...ROW, birth_time: "15:30:00" };
+  const response = await handlerFor(storeReturning(modified).store, memory.cache)(
+    request(authorized),
+  );
+  assertEquals((await response.json()).cached, false);
+  assertEquals(memory.saves.length, 2);
+  assertEquals(memory.saves[0] === memory.saves[1], false);
+  assertEquals(memory.entries.size, 1);
+});
+
+Deno.test("cache : les erreurs de calcul ne sont jamais enregistrees", async () => {
+  const memory = memoryCache();
+  const handler = handlerFor(
+    storeReturning({ ...ROW, timezone: "Mars/Olympus" }).store,
+    memory.cache,
+  );
+  assertEquals((await handler(request(authorized))).status, 422);
+  await readEvents(await handler(new Request(PROGRESS_URL, authorized)));
+  assertEquals(memory.saves.length, 0);
+  assertEquals(memory.entries.size, 0);
+});
+
+Deno.test("cache : une panne du cache n'empeche pas le calcul", async () => {
+  const failing: ChartCache = {
+    find: () => Promise.reject(new Error("down")),
+    save: () => Promise.reject(new Error("down")),
+  };
+  const response = await handlerFor(storeReturning(ROW).store, failing)(request(authorized));
+  assertEquals(response.status, 200);
+  assertEquals((await response.json()).cached, false);
+});
+
+Deno.test("cache : ecritures concurrentes identiques, une seule entree", async () => {
+  const memory = memoryCache();
+  const handler = handlerFor(storeReturning(ROW).store, memory.cache);
+  const responses = await Promise.all([handler(request(authorized)), handler(request(authorized))]);
+  const bodies = await Promise.all(responses.map((response) => response.json()));
+  assertEquals(bodies[0].chart, bodies[1].chart);
+  assertEquals(memory.entries.size, 1);
+});
+
+Deno.test("cache : progress=1 sur un hit emet les phases puis le theme stocke", async () => {
+  const memory = memoryCache();
+  const handler = handlerFor(storeReturning(ROW).store, memory.cache);
+  await readEvents(await handler(new Request(PROGRESS_URL, authorized)));
+  const events = await readEvents(await handler(new Request(PROGRESS_URL, authorized)));
+  assertEquals(events.slice(0, -1).map((event) => event.phase), [
+    "validation",
+    "timezone",
+    "positions",
+    "ascendant",
+    "houses_aspects",
+    "reading",
+  ]);
+  assertEquals(events[events.length - 1].cached, true);
+  assertEquals(memory.saves.length, 1);
 });
