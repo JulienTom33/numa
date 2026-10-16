@@ -10,9 +10,10 @@ interface Props {
   onSend: (email: string) => Promise<void> | void;
   onBack?: () => void;
   defaultEmail?: string;
+  errorMessage?: string | null;
 }
 
-function MagicLinkRequestScreen({ onSend, onBack, defaultEmail = "" }: Props) {
+function MagicLinkRequestScreen({ onSend, onBack, defaultEmail = "", errorMessage = null }: Props) {
   const { t } = useTranslation("auth");
   const [email, setEmail] = useState(defaultEmail);
   const [touched, setTouched] = useState(false);
@@ -76,7 +77,7 @@ function MagicLinkRequestScreen({ onSend, onBack, defaultEmail = "" }: Props) {
 
         {sendFailed && (
           <Callout id="magic-link-request__callout--error" tone="error">
-            {t("magicLink.request.sendError")}
+            {errorMessage ?? t("magicLink.request.sendError")}
           </Callout>
         )}
 

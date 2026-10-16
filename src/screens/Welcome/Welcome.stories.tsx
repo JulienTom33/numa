@@ -23,6 +23,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const DiscoverError: Story = {
+  args: { discoverError: "Session anonyme non créée." },
+};
+
 export const AboutSheetOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -132,6 +132,16 @@ describe("MagicLinkRequestScreen", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
+  it("shows the caller's error message when sending fails", async () => {
+    const onSend = vi.fn().mockRejectedValue(new Error("rate_limited"));
+    render(<MagicLinkRequestScreen onSend={onSend} errorMessage="Trop de tentatives." />);
+
+    await userEvent.type(getEmailInput(), "lea@example.fr");
+    await userEvent.click(getSendButton());
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Trop de tentatives.");
+  });
+
   it("prefills the address", () => {
     render(<MagicLinkRequestScreen onSend={vi.fn()} defaultEmail="lea@example.fr" />);
 
