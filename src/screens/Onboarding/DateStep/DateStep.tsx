@@ -12,8 +12,10 @@ interface Props {
   value: BirthDateParts;
   onChange: (value: BirthDateParts) => void;
   onContinue: () => void;
-  onBack: () => void;
+  onBack?: () => void;
   discoveryMode?: boolean;
+  error?: string | null;
+  saving?: boolean;
   today?: Date;
 }
 
@@ -50,7 +52,7 @@ function toSelectValue(part: number | null): string {
   return part === null ? "" : String(part);
 }
 
-function DateStep({ value, onChange, onContinue, onBack, discoveryMode, today = new Date() }: Props) {
+function DateStep({ value, onChange, onContinue, onBack, discoveryMode, error, saving, today = new Date() }: Props) {
   const { t, i18n } = useTranslation("onboarding");
   const months = useMemo(() => monthOptions(i18n.language), [i18n.language]);
   const { isoDate } = validateBirthDateParts(value, today);
@@ -67,6 +69,8 @@ function DateStep({ value, onChange, onContinue, onBack, discoveryMode, today = 
       onContinue={onContinue}
       canContinue={isoDate !== null}
       discoveryMode={discoveryMode}
+      error={error}
+      saving={saving}
     >
       <fieldset id="date-step__fieldset--birth-date" className="flex flex-col gap-4">
         <legend className="sr-only">{t("date.legend")}</legend>

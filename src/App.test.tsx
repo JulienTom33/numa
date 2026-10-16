@@ -1,7 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+import { EMPTY_ONBOARDING_DATA } from "./lib/birthData";
+import { loadOnboardingDraft } from "./lib/onboardingStore";
 import { supabase } from "./lib/supabaseClient";
 
 vi.mock("./lib/supabaseClient", () => ({
@@ -14,6 +16,11 @@ vi.mock("./lib/supabaseClient", () => ({
   },
 }));
 
+vi.mock("./lib/onboardingStore", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./lib/onboardingStore")>()),
+  loadOnboardingDraft: vi.fn(),
+}));
+
 function mockAnonymousSession() {
   vi.mocked(supabase.auth.getSession).mockResolvedValue({
     data: { session: { user: { id: "user-1", is_anonymous: true } } },
@@ -24,6 +31,14 @@ afterEach(() => {
   vi.clearAllMocks();
   vi.mocked(supabase.auth.getSession).mockResolvedValue({ data: { session: null } } as never);
   window.history.replaceState(null, "", "/");
+});
+
+beforeEach(() => {
+  vi.mocked(loadOnboardingDraft).mockResolvedValue({
+    draft: { step: 5, data: EMPTY_ONBOARDING_DATA },
+    birthDataId: "bd-1",
+    error: null,
+  });
 });
 
 describe("App", () => {
@@ -109,5 +124,30 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "Mon thème" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("button", { name: "Aujourd'hui" })).not.toHaveAttribute("aria-current");
     expect(content.scrollTop).toBe(0);
+  });
+
+  it("starts the onboarding for a session whose onboarding is not finished", async () => {
+    mockAnonymousSession();
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Comment devons-nous vous appeler ?" })).toBeInTheDocument();
+    expect(screen.getByText("Étape 1 sur 5")).toBeInTheDocument();
+    expect(screen.getByText("Mode découverte")).toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Navigation principale" })).not.toBeInTheDocument();
+  });
+
+  it("resumes the onboarding at the saved step", async () => {
+    mockAnonymousSession();
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({
+      draft: { step: 2, data: { ...EMPTY_ONBOARDING_DATA, firstName: "Émile" } },
+      birthDataId: null,
+      error: null,
+    });
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Quand êtes-vous né(e) ?" })).toBeInTheDocument();
   });
 });
