@@ -1,7 +1,5 @@
 import type { Config } from "tailwindcss";
 
-// Tokens de la maquette Claude Design (Astraia.dc.html). `colors` remplace la palette Tailwind
-// par défaut pour qu'aucune couleur hors design system ne soit utilisable.
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx,mdx}", "./.storybook/**/*.{ts,tsx}"],
   theme: {

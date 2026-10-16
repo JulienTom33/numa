@@ -14,7 +14,6 @@ export type AccountUpgradeStep = "idle" | "submitting" | "confirmation_sent" | "
 
 export interface UseAccountUpgradeResult {
   step: AccountUpgradeStep;
-  /** Adresse soumise, conservée pour permettre le renvoi du lien sans ressaisie. */
   email: string | null;
   error: UpgradeError | null;
   upgrade: (email: string) => Promise<void>;
@@ -82,7 +81,6 @@ export function useAccountUpgrade(options: UpgradeOptions = {}): UseAccountUpgra
       setError(null);
 
       const { error: linkError } = await linkAnonymousAccountWithProvider(provider, { redirectTo });
-      // En cas de succès le navigateur part chez le fournisseur : rien d'autre à faire ici.
       if (linkError) {
         setError(linkError);
         setStep("idle");

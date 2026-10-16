@@ -1,28 +1,63 @@
+import { useState } from "react";
+import AppShell from "./components/AppShell/AppShell";
 import DiscoverButton from "./components/DiscoverButton";
 import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
+import EmptyState from "./components/ui/EmptyState/EmptyState";
+import TabBar from "./components/ui/TabBar/TabBar";
 import { useTranslation } from "react-i18next";
 import { useAnonymousSession } from "./hooks/useAnonymousSession";
+import { useMainTabs, type MainTab } from "./navigation/mainTabs";
 
 function App() {
   const { t } = useTranslation(["welcome", "common"]);
   const { session, isAnonymous, loading, error, start } = useAnonymousSession();
+  const [activeTab, setActiveTab] = useState<MainTab>("today");
+  const tabItems = useMainTabs();
+
+  if (!session) {
+    return (
+      <AppShell id="app__shell--root" screenKey="welcome">
+        <div
+          id="app__screen--welcome"
+          className="flex min-h-full flex-col items-center justify-center gap-4 px-4 py-8"
+        >
+          <h1 id="app__title--main" className="font-display text-title-lg font-bold">
+            {t("common:app.name")}
+          </h1>
+          <p id="app__subtitle--main" className="text-sm text-ink-secondary">
+            {t("welcome:subtitle")}
+          </p>
+          <DiscoverButton onClick={start} loading={loading} error={error} />
+        </div>
+      </AppShell>
+    );
+  }
+
+  const tab = tabItems.find((item) => item.key === activeTab) ?? tabItems[0];
 
   return (
-    <main
-      id="app__main--root"
-      className="flex min-h-screen flex-col items-center justify-center gap-4 bg-page px-4 py-8 text-ink sm:px-8"
+    <AppShell
+      id="app__shell--root"
+      screenKey={activeTab}
+      tabBar={
+        <TabBar
+          id="app__tabbar--main"
+          items={tabItems}
+          activeKey={activeTab}
+          onSelect={setActiveTab}
+        />
+      }
     >
-      <h1 id="app__title--main" className="font-display text-title-lg font-bold">
-        {t("common:app.name")}
-      </h1>
-      <p id="app__subtitle--main" className="text-sm text-ink-secondary sm:text-base">
-        {t("welcome:subtitle")}
-      </p>
-
-      {isAnonymous && <DiscoveryModeBadge />}
-
-      {!session && <DiscoverButton onClick={start} loading={loading} error={error} />}
-    </main>
+      <div id={`app__screen--${tab.key}`} className="flex flex-col items-center gap-2 px-4 pt-6">
+        {isAnonymous && <DiscoveryModeBadge />}
+        <EmptyState
+          id={`app__placeholder--${tab.key}`}
+          icon={tab.icon}
+          title={tab.label}
+          description={t("common:comingSoon")}
+        />
+      </div>
+    </AppShell>
   );
 }
 

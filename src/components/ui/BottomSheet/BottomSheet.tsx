@@ -71,7 +71,7 @@ function BottomSheet({
     <div
       className={cx(
         "fixed inset-x-0 top-0 z-40 flex items-end justify-center",
-        aboveTabBar ? "bottom-16" : "bottom-0",
+        aboveTabBar ? "bottom-[calc(4rem+env(safe-area-inset-bottom))]" : "bottom-0",
       )}
     >
       <div aria-hidden="true" onClick={onClose} className="absolute inset-0 bg-overlay" />
