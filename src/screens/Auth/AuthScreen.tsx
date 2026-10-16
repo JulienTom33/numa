@@ -4,9 +4,10 @@ import Callout from "../../components/ui/Callout/Callout";
 import Icon from "../../components/ui/Icon/Icon";
 import TextLink from "../../components/ui/TextLink/TextLink";
 import TopBar from "../../components/ui/TopBar/TopBar";
+import type { AuthMode } from "../../lib/auth";
 import ProviderIcon, { type AuthProvider } from "./ProviderIcon";
 
-export type AuthMode = "signup" | "signin";
+export type { AuthMode };
 
 interface Props {
   mode: AuthMode;
@@ -18,6 +19,7 @@ interface Props {
   backLabel?: string;
   pendingProvider?: AuthProvider | null;
   errorMessage?: string | null;
+  noticeMessage?: string | null;
 }
 
 type BenefitKey = "natalChart" | "devices" | "history" | "preferences";
@@ -56,6 +58,7 @@ function AuthScreen({
   backLabel,
   pendingProvider = null,
   errorMessage = null,
+  noticeMessage = null,
 }: Props) {
   const { t } = useTranslation(["auth", "common"]);
   const handlers: Record<AuthProvider, () => void> = {
@@ -103,6 +106,12 @@ function AuthScreen({
               </li>
             ))}
           </ul>
+        )}
+
+        {noticeMessage && (
+          <Callout id="auth-screen__callout--notice" tone="warning">
+            {noticeMessage}
+          </Callout>
         )}
 
         {errorMessage && (

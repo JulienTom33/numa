@@ -26,7 +26,7 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - `useEffect`/`useCallback`/`useMemo` : dependency arrays complètes et exactes.
 - Pas de duplication évitable ; pas d'abstraction créée avant qu'un second usage réel existe.
 - Pas de code mort.
-- **Aucun commentaire dans le code**, sauf un JSDoc (`/** … */`) placé juste avant une **fonction ou un hook exporté** pour documenter son API. Interdits : `//`, `/* */`, JSDoc sur une constante, une prop, un type ou une fonction interne. Commentaires libres uniquement dans les fichiers de test (`*.test.ts(x)`, `src/test/**`). Le nom du code doit suffire ; un « pourquoi » non évident va dans la PR ou le `decision-log.md`. Directives techniques tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). Bloqué par la règle ESLint locale `numa/no-comments` dans `npm run lint` ; s'applique aussi au code Deno de `supabase/functions/` (hors ESLint, vérifié en review).
+- **Aucun commentaire dans le code, JSDoc compris** : ni `//`, ni `/* */`, ni `/** */`, ni `{/* */}`. Commentaires libres uniquement dans les fichiers de test (`*.test.ts(x)`, `src/test/**`). Le nom du code doit suffire ; un « pourquoi » non évident va dans la PR ou le `decision-log.md`. Seules les directives techniques sont tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). S'applique aussi au code Deno de `supabase/functions/`. La règle ESLint locale `numa/no-comments` tolère encore les JSDoc de fonction exportée : elle sera durcie avec le retrait des commentaires existants (#134) ; en attendant, n'en ajouter aucun.
 - **Aucun `console.log`** dans le code poussé. Bloqué par ESLint (`no-console`).
 
 ## IDs HTML

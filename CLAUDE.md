@@ -18,7 +18,7 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 - Workflow Git : une branche `issue-<id>-<slug>` par ticket, créée depuis `master`, PR vers `master`. Voir `docs/claude/git-workflow.md`.
 - Toute modification passe par une pull request. **Aucun merge automatique, jamais.** Voir `docs/claude/pull-requests.md`.
 - Tout nouveau fichier de logique ou composant significatif est accompagné de son test **dans la même PR**. Voir `docs/claude/development.md`.
-- **Aucun commentaire dans le code**, sauf JSDoc sur une fonction ou un hook exporté ; commentaires libres uniquement dans les fichiers de test. Règle ESLint `numa/no-comments`. Voir `docs/claude/development.md`.
+- **Aucun commentaire dans le code, JSDoc compris** ; commentaires libres uniquement dans les fichiers de test. Règle ESLint `numa/no-comments` (encore tolérante aux JSDoc de fonction exportée jusqu'à #134). Voir `docs/claude/development.md`.
 - Aucun texte affiché en dur : tout passe par `t()` (react-i18next), clés dans `src/i18n/locales/fr/<namespace>.json`. Voir `docs/claude/development.md` (Internationalisation).
 - Aucun secret, clé privée ou donnée personnelle commité. Voir `docs/claude/security.md`.
 - RLS obligatoire sur toute table Supabase exposée à des données utilisateur. Voir `docs/claude/supabase.md`.
@@ -57,11 +57,12 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/git-workflow.md` | Branches, labels, démarrage d'un ticket |
 | `docs/claude/development.md` | Commandes, qualité, tests, conventions de code, IDs HTML |
 | `docs/claude/supabase.md` | Auth, sessions anonymes, PostgreSQL, migrations, RLS |
-| `docs/claude/ai-astrology.md` | API astrologique, IA, contexte structuré, règles éditoriales |
+| `docs/claude/ai-astrology.md` | Calcul astrologique (Astronomy Engine), IA, contexte structuré, règles éditoriales |
 | `docs/claude/security.md` | Secrets, données personnelles, rate limiting, logs |
 | `docs/claude/pull-requests.md` | Création de PR, corrections, notifications, interdiction de merge auto |
 | `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |
 | `docs/claude/decision-log.md` | Décisions d'architecture et règles évolutives |
+| `docs/research/api-astrologiques.md` | Comparatif des moteurs et API astrologiques, profils de référence, mesures (#50) |
 | `docs/design/handoff.md` | Handoff design → dev : écrans du MVP, tickets, composants, tokens, états, responsive, accessibilité |
 
 Consulter le document spécialisé concerné avant toute tâche touchant à son périmètre.
