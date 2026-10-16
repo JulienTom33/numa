@@ -6,6 +6,8 @@ import type { BirthPlace, OnboardingData } from "../../lib/birthData";
 import { completeOnboarding, loadOnboardingDraft, saveOnboardingDraft } from "../../lib/onboardingStore";
 import { fetchComputedAscendant } from "../../lib/natalChart";
 import { streamNatalChart } from "../../lib/natalChartProgress";
+import { fetchNatalChartSummary } from "../../lib/natalChartSummary";
+import { completeSummary } from "../../screens/ChartSummary/chartSummaryFixtures";
 import type { PlaceSuggestion } from "../../lib/placeSearch";
 import type { PlaceSearch } from "../../screens/Onboarding/PlaceStep/placeSearchAdapter";
 import OnboardingFlow from "./OnboardingFlow";
@@ -13,6 +15,8 @@ import OnboardingFlow from "./OnboardingFlow";
 vi.mock("../../lib/supabaseClient", () => ({ supabase: {} }));
 
 vi.mock("../../lib/natalChart", () => ({ fetchComputedAscendant: vi.fn() }));
+
+vi.mock("../../lib/natalChartSummary", () => ({ fetchNatalChartSummary: vi.fn() }));
 
 vi.mock("../../lib/natalChartProgress", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../lib/natalChartProgress")>()),
@@ -81,7 +85,8 @@ function mockDraft(
 
 describe("OnboardingFlow", () => {
   beforeEach(() => {
-  vi.mocked(streamNatalChart).mockResolvedValue(null);
+    vi.mocked(streamNatalChart).mockResolvedValue(null);
+    vi.mocked(fetchNatalChartSummary).mockResolvedValue({ summary: completeSummary, error: null });
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
     vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: null });
     vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: "bd-1", error: null });
@@ -152,6 +157,7 @@ describe("OnboardingFlow", () => {
     expect(await screen.findByText("Scorpion à 14°")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Voir mon thème" }));
 
+    await user.click(await screen.findByRole("button", { name: "Découvrir mon espace" }));
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
     expect(saveOnboardingDraft).toHaveBeenLastCalledWith(
       "user-1",
@@ -242,6 +248,7 @@ describe("OnboardingFlow", () => {
     await user.click(screen.getByRole("radio", { name: /Garder mon ascendant/ }));
     await user.click(screen.getByRole("button", { name: "Voir mon thème" }));
 
+    await user.click(await screen.findByRole("button", { name: "Découvrir mon espace" }));
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
     expect(saveOnboardingDraft).toHaveBeenLastCalledWith(
       "user-1",

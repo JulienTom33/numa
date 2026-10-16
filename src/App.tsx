@@ -55,7 +55,7 @@ function App() {
         userId={session.user.id}
         discoveryMode={isAnonymous}
         onComplete={() => {
-          setActiveTab("theme");
+          setActiveTab("today");
           onboarding.markCompleted();
         }}
       />

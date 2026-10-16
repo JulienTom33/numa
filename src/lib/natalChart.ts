@@ -49,7 +49,7 @@ function isConfidence(value: unknown): value is NatalChartConfidence {
   return value === "high" || value === "medium" || value === "low";
 }
 
-async function toErrorCode(error: unknown): Promise<NatalChartErrorCode> {
+export async function toErrorCode(error: unknown): Promise<NatalChartErrorCode> {
   if (!(error instanceof FunctionsHttpError)) {
     return "network_error";
   }

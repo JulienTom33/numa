@@ -1,4 +1,63 @@
 {
+  "summary": {
+    "title": "Votre profil astrologique",
+    "titleWithName": "Votre profil astrologique, {{name}}",
+    "intro": "Voici les trois repères principaux de votre thème. Ce sont des pistes de lecture, pas des certitudes.",
+    "loading": "Préparation de votre profil…",
+    "retry": "Réessayer",
+    "trioLabel": "Soleil, Lune et Ascendant",
+    "degree": "{{degree}}°",
+    "ascendantUnavailable": "Non calculé",
+    "moonToConfirm": "À confirmer",
+    "explanations": {
+      "title": "Ce que cela pourrait vouloir dire",
+      "sun": "Votre Soleil en {{sign}} décrirait plutôt votre identité de fond, ce qui vous anime et vous fait avancer. C'est une tendance parmi d'autres, pas un portrait figé.",
+      "moon": "Votre Lune en {{sign}} évoquerait plutôt votre monde intérieur : la façon dont vous ressentez les choses et ce qui vous rassure, sans que cela s'applique en toute situation.",
+      "moonUncertain": "Votre Lune est proche d'un changement de signe : elle pourrait être en {{from}} ou en {{to}}. Avec une heure de naissance plus précise, nous pourrions trancher.",
+      "ascendant": "Votre Ascendant en {{sign}} pourrait refléter la première impression que vous donnez et votre manière d'aborder de nouvelles situations, parmi d'autres facettes de vous.",
+      "ascendantMissing": "Votre Ascendant n'a pas été calculé : il dépend de l'heure exacte de naissance, que nous n'avons pas. Si vous la retrouvez (acte de naissance, carnet de santé), vous pourrez la renseigner plus tard."
+    },
+    "notes": {
+      "title": "À savoir sur votre calcul",
+      "unknown_time": "Sans heure de naissance, l'Ascendant et les maisons ne peuvent pas être calculés, et la position de la Lune est estimée à midi.",
+      "approximate_time": "Votre heure de naissance est approximative : l'Ascendant peut varier d'un signe à l'autre selon l'heure réelle.",
+      "ambiguous_local_time": "À l'heure et au lieu indiqués, l'horloge est passée deux fois par la même heure (changement d'heure) : nous avons dû choisir l'une des deux possibilités, ce qui peut décaler l'Ascendant.",
+      "nonexistent_local_time": "L'heure indiquée n'a pas existé à cette date (changement d'heure) : nous l'avons ajustée, ce qui peut décaler l'Ascendant.",
+      "local_mean_time": "À cette date, l'heure légale n'était pas encore standardisée : nous avons utilisé l'heure solaire locale.",
+      "polar_fallback": "À cette latitude, le système de maisons habituel ne peut pas être calculé : nous avons utilisé un système de repli.",
+      "moon_sign_uncertain": "La Lune change de signe au cours de la période d'incertitude de votre heure de naissance : son signe reste à confirmer."
+    },
+    "method": {
+      "title": "Méthode",
+      "zodiac": "Zodiaque",
+      "zodiacValue": "Tropical",
+      "zodiacHelp": "Le zodiaque tropical place le début du Bélier à l'équinoxe de printemps. C'est le plus utilisé en astrologie occidentale.",
+      "zodiacHelpLabel": "Qu'est-ce que le zodiaque tropical ?",
+      "houses": "Maisons",
+      "housesHelp": "Les maisons découpent le ciel en 12 secteurs liés aux domaines de vie. Elles dépendent de l'heure et du lieu de naissance.",
+      "housesHelpLabel": "Que sont les maisons ?",
+      "housesUnavailable": "Non calculées",
+      "housesSystems": {
+        "placidus": "Placidus",
+        "porphyry": "Porphyre",
+        "equal": "Maisons égales",
+        "whole-sign": "Signes entiers"
+      },
+      "timeQuality": "Qualité de l'heure",
+      "timeQualityHelp": "Plus l'heure de naissance est précise, plus l'Ascendant et les maisons sont fiables.",
+      "timeQualityHelpLabel": "Pourquoi la qualité de l'heure compte-t-elle ?",
+      "quality": {
+        "high": "Heure exacte",
+        "medium": "Heure approximative",
+        "low": "Heure inconnue"
+      },
+      "computedAt": "Calculé le",
+      "engine": "Moteur de calcul",
+      "engineValue": "{{name}} {{version}}"
+    },
+    "understandLink": "Comprendre mon thème",
+    "discover": "Découvrir mon espace"
+  },
   "progress": {
     "title": "Calcul de votre thème",
     "ringLabel": "Progression du calcul",
