@@ -124,7 +124,13 @@ La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de 
 ## CI
 
 - Workflow `.github/workflows/ci.yml`, deux jobs :
-  - `quality` : `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`.
+  - `quality` : `npm audit --omit=dev --audit-level=high`, `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run build-storybook`.
   - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis exécute les tests pgTAP (`supabase test db`).
 - Déclenchement : PR vers `master` et push sur `master` (couvre la CI post-merge).
 - `master` est protégée côté GitHub (check `quality` obligatoire, branche à jour, PR obligatoire ; aucune approbation exigée) — voir `pull-requests.md`.
+
+## Audit des dépendances
+
+- Étape bloquante du job `quality` : `npm audit --omit=dev --audit-level=high`. Une vulnérabilité haute ou critique dans une dépendance de production (code embarqué dans le bundle servi) fait échouer la CI.
+- Les dépendances de développement (Vite, Vitest, Tailwind, Storybook…) ne bloquent pas la CI : lancer `npm audit` complet avant toute PR qui touche `package.json` et justifier les vulnérabilités restantes dans la PR ou `decision-log.md`.
+- Corriger d'abord avec `npm audit fix` (sans `--force`). Une montée de version majeure se fait à la main, après lecture des notes de migration, jamais via `npm audit fix --force`.
