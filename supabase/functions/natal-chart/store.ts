@@ -2,10 +2,16 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import type { BirthInput } from "./types.ts";
 
 export interface BirthDataStore {
-  findLatest(accessToken: string, userId: string): Promise<BirthInput | null>;
+  findLatest(accessToken: string, userId: string): Promise<BirthRecord | null>;
+}
+
+export interface BirthRecord {
+  id: string;
+  birth: BirthInput;
 }
 
 export interface BirthDataRow {
+  id: string;
   birth_date: string;
   birth_time: string | null;
   time_precision: BirthInput["timePrecision"];
@@ -52,14 +58,14 @@ export function createSupabaseBirthDataStore(): BirthDataStore {
       const { data, error } = await client
         .from("birth_data")
         .select(
-          "birth_date, birth_time, time_precision, time_margin, timezone, latitude, longitude",
+          "id, birth_date, birth_time, time_precision, time_margin, timezone, latitude, longitude",
         )
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle<BirthDataRow>();
       if (error) throw new Error("birth_data_read_failed");
-      return data ? toBirthInput(data) : null;
+      return data ? { id: data.id, birth: toBirthInput(data) } : null;
     },
   };
 }
