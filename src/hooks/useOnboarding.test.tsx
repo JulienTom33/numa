@@ -118,6 +118,7 @@ describe("useOnboarding", () => {
     expect(result.current.step).toBe(2);
     expect(saveOnboardingDraft).toHaveBeenLastCalledWith(USER_ID, {
       step: 2,
+      ascendant: { source: null, declaredSign: null },
       data: expect.objectContaining({ firstName: "Émile" }),
     });
 
@@ -158,7 +159,9 @@ describe("useOnboarding", () => {
       finished = await result.current.next();
     });
     expect(finished).toBe(true);
-    expect(saveOnboardingDraft).toHaveBeenCalledTimes(4);
+    expect(result.current.step).toBe(6);
+    expect(saveOnboardingDraft).toHaveBeenCalledTimes(5);
+    expect(completeOnboarding).toHaveBeenCalledTimes(1);
   });
 
   it("stays on the step and reports the error when saving fails", async () => {
@@ -190,9 +193,33 @@ describe("useOnboarding", () => {
     expect(result.current.error).toBe("Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.");
   });
 
-  it("finalises from the summary when a resumed draft was never completed", async () => {
-    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step: 5, data: COMPLETE_DATA }, birthDataId: null, error: null });
+  it("moves from the summary to the ascendant step without finalising again", async () => {
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step: 5, data: COMPLETE_DATA }, birthDataId: "bd-1", error: null });
     const { result } = await renderLoaded();
+
+    await act(async () => {
+      await result.current.next();
+    });
+
+    expect(saveOnboardingDraft).toHaveBeenCalledWith(USER_ID, {
+      step: 6,
+      data: COMPLETE_DATA,
+      ascendant: { source: null, declaredSign: null },
+    });
+    expect(completeOnboarding).not.toHaveBeenCalled();
+    expect(result.current.step).toBe(6);
+  });
+
+  it("blocks the ascendant step until the choice is complete, then finalises with it", async () => {
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step: 6, data: COMPLETE_DATA }, birthDataId: "bd-1", error: null });
+    const { result } = await renderLoaded();
+    expect(result.current.canContinue).toBe(false);
+
+    act(() => result.current.setAscendant({ source: "declared", declaredSign: null }));
+    expect(result.current.canContinue).toBe(false);
+
+    act(() => result.current.setAscendant({ source: "declared", declaredSign: "leo" }));
+    expect(result.current.canContinue).toBe(true);
 
     let finished = false;
     await act(async () => {
@@ -200,10 +227,24 @@ describe("useOnboarding", () => {
     });
 
     expect(finished).toBe(true);
-    expect(saveOnboardingDraft).toHaveBeenCalledWith(USER_ID, { step: 5, data: COMPLETE_DATA });
+    expect(saveOnboardingDraft).toHaveBeenCalledWith(USER_ID, {
+      step: 6,
+      data: COMPLETE_DATA,
+      ascendant: { source: "declared", declaredSign: "leo" },
+    });
     expect(completeOnboarding).toHaveBeenCalledTimes(1);
-    expect(result.current.step).toBe(5);
-    expect(result.current.birthDataId).toBe("bd-1");
+  });
+
+  it("restores the saved ascendant choice when resuming", async () => {
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({
+      draft: { step: 6, data: COMPLETE_DATA, ascendant: { source: "computed", declaredSign: null } },
+      birthDataId: "bd-1",
+      error: null,
+    });
+    const { result } = await renderLoaded();
+
+    expect(result.current.ascendant).toEqual({ source: "computed", declaredSign: null });
+    expect(result.current.canContinue).toBe(true);
   });
 
   it("goes back and only jumps to steps whose previous steps are filled", async () => {

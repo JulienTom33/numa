@@ -1,13 +1,20 @@
+import { EMPTY_ASCENDANT_CHOICE, type AscendantChoice, type AscendantSource } from "./ascendant";
 import { normalizeBirthTime, TIME_MARGINS, type OnboardingData, type TimeMargin, type TimePrecision } from "./birthData";
 import { supabase } from "./supabaseClient";
+import { ZODIAC_SIGNS, type ZodiacSign } from "./zodiac";
 
-export type OnboardingStep = 1 | 2 | 3 | 4 | 5;
+export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6;
 
 export const ONBOARDING_STEP_COUNT = 5;
+
+export const SUMMARY_STEP = 5;
+
+export const ASCENDANT_STEP = 6;
 
 export interface OnboardingDraft {
   step: OnboardingStep;
   data: OnboardingData;
+  ascendant?: AscendantChoice;
 }
 
 export interface OnboardingDraftRow {
@@ -22,15 +29,17 @@ export interface OnboardingDraftRow {
   latitude: number | string | null;
   longitude: number | string | null;
   timezone: string | null;
+  ascendant_source: string | null;
+  declared_ascendant_sign: string | null;
 }
 
 export type OnboardingStoreErrorCode = "save_failed" | "load_failed";
 
 const DRAFT_COLUMNS =
-  "user_id, current_step, first_name, birth_date, birth_time, time_precision, time_margin, birth_place, latitude, longitude, timezone";
+  "user_id, current_step, first_name, birth_date, birth_time, time_precision, time_margin, birth_place, latitude, longitude, timezone, ascendant_source, declared_ascendant_sign";
 
 function toStep(value: number): OnboardingStep {
-  return Math.min(Math.max(Math.trunc(value), 1), ONBOARDING_STEP_COUNT) as OnboardingStep;
+  return Math.min(Math.max(Math.trunc(value), 1), ASCENDANT_STEP) as OnboardingStep;
 }
 
 function toPrecision(value: string | null): TimePrecision | null {
@@ -41,10 +50,20 @@ function toMargin(value: string | null): TimeMargin | null {
   return TIME_MARGINS.find((margin) => margin === value) ?? null;
 }
 
+function toSource(value: string | null): AscendantSource | null {
+  return value === "computed" || value === "declared" ? value : null;
+}
+
+function toSign(value: string | null): ZodiacSign | null {
+  return ZODIAC_SIGNS.find((sign) => sign === value) ?? null;
+}
+
 export function draftToRow(userId: string, draft: OnboardingDraft): OnboardingDraftRow {
   const { data } = draft;
   const birthTime = normalizeBirthTime(data.birthTime);
   const firstName = data.firstName.trim();
+  const ascendant = draft.ascendant ?? EMPTY_ASCENDANT_CHOICE;
+  const declared = ascendant.source === "declared" && ascendant.declaredSign !== null;
   return {
     user_id: userId,
     current_step: draft.step,
@@ -57,6 +76,8 @@ export function draftToRow(userId: string, draft: OnboardingDraft): OnboardingDr
     latitude: data.birthPlace?.latitude ?? null,
     longitude: data.birthPlace?.longitude ?? null,
     timezone: data.birthPlace?.timezone ?? null,
+    ascendant_source: declared ? "declared" : ascendant.source === "computed" ? "computed" : null,
+    declared_ascendant_sign: declared ? ascendant.declaredSign : null,
   };
 }
 
@@ -81,6 +102,7 @@ export function rowToDraft(row: OnboardingDraftRow): OnboardingDraft {
           }
         : null,
     },
+    ascendant: { source: toSource(row.ascendant_source), declaredSign: toSign(row.declared_ascendant_sign) },
   };
 }
 

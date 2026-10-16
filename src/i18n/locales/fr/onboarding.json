@@ -121,5 +121,37 @@
     "save_failed": "Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.",
     "load_failed": "Votre saisie précédente n'a pas pu être récupérée. Vous pouvez reprendre depuis le début.",
     "missing_session": "Votre session a expiré. Rechargez la page pour reprendre votre saisie."
+  },
+  "ascendant": {
+    "title": "Votre ascendant",
+    "continue": "Voir mon thème",
+    "computed": {
+      "intro": "Selon nos calculs, votre ascendant est",
+      "value": "{{sign}} à {{degree}}°",
+      "loading": "Calcul de votre ascendant…",
+      "retry": "Réessayer",
+      "edit": "Ce n'est pas exact ? Modifier"
+    },
+    "declared": {
+      "question": "Connaissez-vous déjà votre ascendant ?",
+      "yes": "Oui",
+      "no": "Non",
+      "signLabel": "Votre ascendant",
+      "advice": "Pas de souci : nous recommandons de laisser Numa le calculer à partir de votre heure et de votre lieu de naissance.",
+      "backToComputed": "Revenir au calcul de Numa"
+    },
+    "mismatch": {
+      "warning": "Numa a calculé {{computed}}, alors que vous indiquez {{declared}}. Une seule version sera conservée.",
+      "question": "Quelle version souhaitez-vous conserver ?",
+      "keep": "Garder mon ascendant",
+      "useComputed": "Utiliser le calcul"
+    },
+    "errors": {
+      "unauthenticated": "Votre session a expiré. Rechargez la page pour reprendre.",
+      "birth_data_not_found": "Vos informations de naissance sont introuvables. Revenez au récapitulatif pour les valider.",
+      "invalid_birth_data": "Vos informations de naissance semblent invalides. Revenez au récapitulatif pour les corriger.",
+      "network_error": "Le calcul n'a pas pu aboutir. Vérifiez votre connexion et réessayez.",
+      "internal_error": "Le calcul de votre ascendant a rencontré un problème. Réessayez dans un instant."
+    }
   }
 }
