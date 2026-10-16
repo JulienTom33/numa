@@ -136,7 +136,9 @@ Deno.test("progress=1 : erreurs d'authentification et 404 restent des reponses J
   const unauthenticated = await handlerFor(storeReturning(ROW).store)(new Request(PROGRESS_URL));
   assertEquals(unauthenticated.status, 401);
   await unauthenticated.body?.cancel();
-  const missing = await handlerFor(storeReturning(null).store)(new Request(PROGRESS_URL, authorized));
+  const missing = await handlerFor(storeReturning(null).store)(
+    new Request(PROGRESS_URL, authorized),
+  );
   assertEquals(missing.status, 404);
   await missing.body?.cancel();
 });
