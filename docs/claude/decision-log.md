@@ -14,6 +14,12 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Edge Function natal-chart : calcul local du thème natal (issue #20) — décidée
+
+Contexte : #20 demande le calcul serveur du thème natal à partir de `birth_data` ; #50 impose le calcul local (Astronomy Engine), #125 le décalage UTC et #126 l'ascendant, le MC et les maisons.
+Décision : `supabase/functions/natal-chart/` (`verify_jwt = true`) lit la dernière ligne `birth_data` de l'appelant avec un client portant son JWT (RLS respectée, `user_id` issu du JWT, jamais du corps), recalcule l'instant UTC côté serveur et renvoie `{ chart }` (contrat dans `ai-astrology.md`). Rien n'est stocké (cache = #22). Positions géocentriques apparentes (aberration comprise) dans l'écliptique vrai de la date, Soleil à Pluton ; aspects majeurs à orbes fixes (conjonction 8°, sextile 5°, carré 7°, trigone 8°, opposition 8°). Confiance : `high` heure exacte, `medium` heure approximative ou exacte mais ambiguë/inexistante, `low` heure inconnue (midi local, ni ascendant ni maisons, Lune signalée si elle change de signe sur la journée). `utcOffset.ts` et `legalMeanTime.ts` sont copiés dans `supabase/functions/_shared/time/` (sans commentaires) : le bundle des Edge Functions se limite à `supabase/functions/`, un import de `src/` n'y est pas garanti ; `parity_test.ts` échoue si la copie diverge de `src/lib/` (hors commentaires et mise en forme). `deno task test` reçoit `--allow-read=../..` pour ce test.
+Alternatives écartées : import relatif de `src/lib/` (non garanti au déploiement, et imports sans extension incompatibles avec Deno) ; ajouter un paquet partagé (surcoût pour deux fichiers) ; appeler le front pour obtenir l'UTC (le décalage doit être recalculé côté serveur).
+Écarts mesurés (P1–P4, Swiss arrondi à la minute) : Soleil, Lune, ascendant et MC à moins de 1′ ; P5 (midi, UT 11:00) : Soleil et Lune dans la tolérance, Lune Cancer vers Lion sur la journée.
 ## 2026-10-16 — Ascendant, MC et maisons codés sur Astronomy Engine (issue #126) — décidée
 
 Contexte : Astronomy Engine (MIT, retenu par #50) fournit le temps sidéral et l'obliquité mais ni ascendant, ni MC, ni maisons. Swiss Ephemeris (AGPL) est refusé comme dépendance.

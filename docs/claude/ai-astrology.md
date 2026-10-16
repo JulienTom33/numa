@@ -7,6 +7,25 @@
 - Swiss Ephemeris (AGPL) n'est jamais une dépendance du projet. Il ne sert que de référence de validation dans des tests exécutés hors dépôt.
 - Chaque thème enregistre la version du moteur ; l'heure inconnue ou ambiguë est signalée.
 
+## Edge Function `natal-chart`
+
+Entrée : `GET` ou `POST` sans corps utile, JWT obligatoire (session anonyme comprise). Les données viennent de la dernière ligne `birth_data` de l'appelant, lue avec son JWT (RLS) ; aucun identifiant n'est lu dans la requête. Rien n'est stocké (cache : #22).
+
+Sortie `200` : `{ chart }`, schéma versionné (`schemaVersion: 1`).
+
+- `engine` : `{ name: "astronomy-engine", version }` ; `confidence` : `high` | `medium` | `low`.
+- `birth` : données utilisées ; `instant` : `utc`, `offsetMinutes`, `offsetSeconds` (temps moyen local seulement), `status` (`exact`, `ambiguous`, `nonexistent`, `localMeanTime`), `localTimeUsed` (12:00 si l'heure est inconnue).
+- `bodies` : Soleil, Lune, Mercure à Pluton, avec `longitude` écliptique vraie de la date (0–360), `sign`, `degreeInSign`, `retrograde`, `speed` (°/jour), `house` (null sans maisons).
+- `angles` (`ascendant`, `midheaven`) et `houses` (`requestedSystem`, `system`, `fallback`, `cusps`) : présents seulement si l'heure est exacte ou approximative, sinon `null`. Placidus par défaut, repli Porphyre aux latitudes polaires ou sans convergence (`fallback` renseigné).
+- `aspects` : conjonction (orbe 8°), sextile (5°), carré (7°), trigone (8°), opposition (8°) entre les dix corps, triés par orbe croissant.
+- `moonSignChange` : `{ from, to }` si la Lune change de signe sur la journée locale (heure inconnue) ou dans la marge de l'heure approximative (±30 min, ±2 h, ±6 h pour « plus de 2 h »), sinon `null`.
+- `warnings` : `unknown_time`, `approximate_time`, `ambiguous_local_time`, `nonexistent_local_time`, `local_mean_time`, `polar_fallback`, `moon_sign_uncertain`. Le front les traduit ; la fonction n'envoie aucun texte.
+
+Confiance : `high` = heure exacte non ambiguë ; `medium` = heure approximative, ou exacte mais ambiguë/inexistante (une heure d'écart déplace l'ascendant d'environ 11°) ; `low` = heure inconnue.
+
+Erreurs : `{ error: { code, message } }` avec `message` égal au code. `401 unauthenticated` / `invalid_token`, `404 birth_data_not_found`, `405 method_not_allowed`, `422 invalid_birth_data` (date, fuseau ou coordonnées invalides), `500 internal_error`.
+
+Le décalage UTC est calculé par `_shared/time/` (copie de `src/lib/utcOffset.ts` et `legalMeanTime.ts`, contrôlée par `natal-chart/parity_test.ts`) ; toute modification de `src/lib/` doit être répercutée dans la copie.
 ## Génération IA
 
 - Les lectures textuelles sont générées à partir d'un contexte structuré (données astrologiques calculées + profil utilisateur), pas d'un prompt libre non contrôlé.
