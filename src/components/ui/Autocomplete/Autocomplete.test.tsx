@@ -79,10 +79,10 @@ describe("Autocomplete", () => {
 
     await userEvent.type(input, "Bo");
     await userEvent.keyboard("{ArrowDown}");
-    expect(input).toHaveAttribute("aria-activedescendant", "test__autocomplete--city-option-0");
+    expect(input).toHaveAttribute("aria-activedescendant", "test__autocomplete--city-option-bordeaux");
 
     await userEvent.keyboard("{ArrowDown}{ArrowDown}");
-    expect(input).toHaveAttribute("aria-activedescendant", "test__autocomplete--city-option-0");
+    expect(input).toHaveAttribute("aria-activedescendant", "test__autocomplete--city-option-bordeaux");
 
     await userEvent.keyboard("{ArrowUp}{Enter}");
     expect(onSelect).toHaveBeenCalledWith(cities[1]);
@@ -95,7 +95,7 @@ describe("Autocomplete", () => {
     await userEvent.type(input, "Bo");
     await userEvent.keyboard("{ArrowUp}");
 
-    expect(input).toHaveAttribute("aria-activedescendant", "test__autocomplete--city-option-1");
+    expect(input).toHaveAttribute("aria-activedescendant", "test__autocomplete--city-option-bourges");
   });
 
   it("does nothing on Enter when no suggestion is active", async () => {
@@ -164,5 +164,13 @@ describe("Autocomplete", () => {
       "Sélectionnez une ville dans la liste.",
     );
     expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("hides the no-result status while an error is shown", async () => {
+    render(<Harness suggestions={[]} error="La recherche a échoué." />);
+
+    await userEvent.type(screen.getByRole("combobox"), "Zzz");
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 });
