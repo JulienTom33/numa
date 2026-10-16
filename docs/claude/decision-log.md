@@ -14,6 +14,18 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Proposition : moteur astrologique embarqué (issue #50)
+
+Statut : **proposition, à valider par le mainteneur** (aucun code applicatif livré).
+Contexte : #20 (thème natal), #22 (cache) et #80 (ascendant) exigent un fournisseur de calcul. Comparatif détaillé, sources et mesures : `docs/research/api-astrologiques.md`.
+Proposition :
+- Principal : **Swiss Ephemeris** via `sweph-wasm` (WASM) dans une Edge Function. Écart mesuré avec JPL Horizons ≤ 0,3″ (Soleil, Lune) sur 5 profils de référence ; 25 systèmes de maisons ; aucun quota ni donnée envoyée à un tiers. Condition : licence AGPL-3.0 pour tout Numa ou licence professionnelle Astrodienst (700 CHF).
+- Secours : **Astronomy Engine** (MIT, JS pur). Écart mesuré ≤ 3″ ; ascendant et MC identiques à Swiss Ephemeris (≤ 0,1″) via une formule à coder ; pas de maisons Placidus intégrées.
+- Conversion horaire côté serveur : fuseau IANA + `resolveUtcOffset` ; avant l'heure légale, décalage = longitude / 15 (la base tz donne le LMT de la ville de référence : 2,7° d'erreur d'ascendant mesurée sur un profil de 1879).
+- La version du moteur et des fichiers d'éphémérides est enregistrée avec chaque thème et entre dans la clé de cache (#22).
+Si validée : remplace « appel à une API astrologique externe » dans `ai-astrology.md` et l'entrée #98 (« calcul délégué à l'API externe »).
+Alternatives écartées (proposées) : AstrologyAPI, FreeAstrologyAPI, Prokerala — clé et facturation, données de naissance envoyées à un tiers soumis au droit indien, fuseau en décalage numérique (FreeAstrologyAPI), cache limité à 24 h sans archivage (Prokerala), stockage non traité (autres) ; non testées faute de clé.
+
 ## 2026-10-15 — Internationalisation : react-i18next (issue #118)
 
 Contexte : les textes de l'interface étaient écrits en dur dans les composants (review du mainteneur : « il va falloir mettre en place du i18n pour des trad »). Plusieurs écrans sont en cours (#105, #108–#112) : sans infrastructure commune, chaque écran aurait accumulé de nouvelles chaînes à migrer.
