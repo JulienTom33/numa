@@ -1,0 +1,25 @@
+{
+  "progress": {
+    "title": "Calcul de votre thème",
+    "ringLabel": "Progression du calcul",
+    "duration": "Ce calcul peut prendre quelques secondes.",
+    "current": "Étape en cours : {{step}}",
+    "done": "Calcul terminé",
+    "retry": "Réessayer",
+    "steps": {
+      "validation": "Vérification des données",
+      "timezone": "Fuseau horaire",
+      "positions": "Positions planétaires",
+      "ascendant": "Ascendant",
+      "houses_aspects": "Maisons et aspects",
+      "reading": "Préparation de la lecture"
+    },
+    "errors": {
+      "unauthenticated": "Votre session a expiré. Reconnectez-vous puis réessayez.",
+      "birth_data_not_found": "Nous ne retrouvons pas vos données de naissance. Reprenez l'onboarding pour les saisir à nouveau.",
+      "invalid_birth_data": "Vos données de naissance semblent invalides (date, lieu ou fuseau). Vérifiez-les puis réessayez.",
+      "network_error": "La connexion a échoué. Vérifiez votre réseau puis réessayez.",
+      "internal_error": "Le calcul de votre thème a rencontré un problème. Réessayez dans un instant."
+    }
+  }
+}

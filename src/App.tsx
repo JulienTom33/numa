@@ -50,7 +50,16 @@ function App() {
 
   if (onboarding.status === "loading") return <OnboardingLoading />;
   if (onboarding.status === "required") {
-    return <OnboardingFlow userId={session.user.id} discoveryMode={isAnonymous} onComplete={onboarding.markCompleted} />;
+    return (
+      <OnboardingFlow
+        userId={session.user.id}
+        discoveryMode={isAnonymous}
+        onComplete={() => {
+          setActiveTab("theme");
+          onboarding.markCompleted();
+        }}
+      />
+    );
   }
 
   const tab = tabItems.find((item) => item.key === activeTab) ?? tabItems[0];
