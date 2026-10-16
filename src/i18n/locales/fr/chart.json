@@ -80,5 +80,71 @@
       "network_error": "La connexion a échoué. Vérifiez votre réseau puis réessayez.",
       "internal_error": "Le calcul de votre thème a rencontré un problème. Réessayez dans un instant."
     }
+  },
+  "myChart": {
+    "title": "Mon thème",
+    "intro": "Votre ciel de naissance, expliqué simplement. Ce sont des pistes de lecture, pas des certitudes.",
+    "loading": "Chargement de votre thème…",
+    "retry": "Réessayer",
+    "trioLabel": "Soleil, Lune et Ascendant",
+    "ascendant": {
+      "title": "Ascendant {{sign}}",
+      "titleMissing": "Ascendant",
+      "explanation": "Votre Ascendant en {{sign}} pourrait colorer la manière dont vous abordez les nouvelles situations et l'image que vous renvoyez au premier abord. C'est une piste parmi d'autres, pas un verdict.",
+      "degreeLabel": "Position",
+      "degreeValue": "{{degree}}° {{sign}}",
+      "houseLabel": "Maison",
+      "houseValue": "Maison {{house}}",
+      "houseHelp": "L'Ascendant marque le début de la première maison."
+    },
+    "sky": {
+      "title": "Carte du ciel",
+      "intro": "Les planètes placées dans les 12 signes du zodiaque, telles qu'elles étaient à votre naissance.",
+      "toggle": "Afficher la carte du ciel",
+      "noHouses": "Sans heure de naissance, la carte est tracée sans maisons et sans Ascendant : seules les positions des planètes dans les signes sont affichées, avec la Lune estimée à midi.",
+      "wheel": {
+        "title": "Carte du ciel de naissance",
+        "descriptionWithHouses": "Roue du zodiaque avec les 12 signes, les 12 maisons et les dix planètes placées à leur position réelle. Le tableau ci-dessous donne les mêmes positions en texte.",
+        "descriptionWithoutHouses": "Roue du zodiaque avec les 12 signes et les dix planètes placées à leur position réelle, sans maisons. Le tableau ci-dessous donne les mêmes positions en texte."
+      },
+      "legend": {
+        "title": "Légende",
+        "signs": "Signes",
+        "bodies": "Planètes"
+      },
+      "table": {
+        "caption": "Positions des planètes à la naissance",
+        "body": "Planète",
+        "sign": "Signe",
+        "degree": "Degré",
+        "house": "Maison",
+        "motion": "Mouvement",
+        "retrograde": "Rétrograde",
+        "direct": "Directe",
+        "houseUnknown": "Non calculée"
+      }
+    },
+    "transits": {
+      "title": "Transits actuels",
+      "intro": "Où sont les planètes aujourd'hui, et quels liens elles forment avec votre Soleil, votre Lune et votre Ascendant. Ce sont des repères du moment, pas des prévisions.",
+      "updatedAt": "Ciel du {{date}}",
+      "positionsTitle": "Positions actuelles",
+      "positionValue": "{{sign}} {{degree}}°",
+      "retrograde": "rétrograde",
+      "aspectsTitle": "Aspects principaux",
+      "noAspects": "Aucun lien serré avec vos points natals en ce moment.",
+      "orb": "écart {{orb}}°",
+      "aspects": {
+        "conjunction": "{{planet}} en conjonction avec votre {{point}}",
+        "sextile": "{{planet}} en sextile avec votre {{point}}",
+        "square": "{{planet}} en carré avec votre {{point}}",
+        "trine": "{{planet}} en trigone avec votre {{point}}",
+        "opposition": "{{planet}} en opposition avec votre {{point}}"
+      },
+      "moonSkipped": "Votre Lune natale n'est pas utilisée ici : son signe reste à confirmer.",
+      "ascendantSkipped": "Sans heure de naissance, les liens avec votre Ascendant ne sont pas calculés.",
+      "unavailable": "Les positions actuelles n'ont pas pu être chargées pour le moment.",
+      "retry": "Réessayer"
+    }
   }
 }

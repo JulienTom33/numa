@@ -426,3 +426,6 @@ verify_jwt = true
 
 [functions.natal-chart]
 verify_jwt = true
+
+[functions.current-sky]
+verify_jwt = true

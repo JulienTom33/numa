@@ -3,12 +3,11 @@ import { useTranslation } from "react-i18next";
 import Button from "../../components/ui/Button/Button";
 import Callout from "../../components/ui/Callout/Callout";
 import Card from "../../components/ui/Card/Card";
-import InfoTooltip from "../../components/ui/InfoTooltip/InfoTooltip";
 import PlanetTrio, { type Placement } from "../../components/ui/PlanetTrio/PlanetTrio";
 import TextLink from "../../components/ui/TextLink/TextLink";
 import type { NatalChartSummaryStatus } from "../../hooks/useNatalChartSummary";
-import { formatDate } from "../../i18n/format";
 import type { NatalChartErrorCode } from "../../lib/natalChart";
+import ChartMethodCard from "./ChartMethodCard";
 import type { NatalChartSummary, SummaryPlacement } from "../../lib/natalChartSummary";
 
 interface Props {
@@ -20,7 +19,7 @@ interface Props {
 }
 
 function ChartSummary({ status, summary, errorCode, onRetry, onDiscover }: Props) {
-  const { t, i18n } = useTranslation(["chart", "astrology"]);
+  const { t } = useTranslation(["chart", "astrology"]);
   const methodTitleRef = useRef<HTMLHeadingElement>(null);
 
   if (status === "loading" || !summary) {
@@ -57,7 +56,6 @@ function ChartSummary({ status, summary, errorCode, onRetry, onDiscover }: Props
   const title = summary.firstName
     ? t("summary.titleWithName", { name: summary.firstName })
     : t("summary.title");
-  const computedDate = summary.computedAt ? formatDate(new Date(summary.computedAt), i18n.language, { dateStyle: "long" }) : null;
 
   return (
     <section id="chart-summary__section--root" className="flex flex-col gap-6 px-4 pb-10 pt-12">
@@ -120,67 +118,7 @@ function ChartSummary({ status, summary, errorCode, onRetry, onDiscover }: Props
         </Callout>
       )}
 
-      <Card id="chart-summary__card--method" as="section">
-        <h2
-          id="chart-summary__title--method"
-          ref={methodTitleRef}
-          tabIndex={-1}
-          className="font-display text-base font-bold text-ink outline-hidden"
-        >
-          {t("summary.method.title")}
-        </h2>
-        <dl id="chart-summary__list--method" className="mt-3 flex flex-col gap-3 text-sm">
-          <div className="flex items-center justify-between gap-3">
-            <dt className="flex items-center gap-1 text-ink-secondary">
-              {t("summary.method.zodiac")}
-              <InfoTooltip id="chart-summary__tooltip--zodiac" label={t("summary.method.zodiacHelpLabel")}>
-                {t("summary.method.zodiacHelp")}
-              </InfoTooltip>
-            </dt>
-            <dd id="chart-summary__value--zodiac" className="font-semibold text-ink">
-              {t("summary.method.zodiacValue")}
-            </dd>
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <dt className="flex items-center gap-1 text-ink-secondary">
-              {t("summary.method.houses")}
-              <InfoTooltip id="chart-summary__tooltip--houses" label={t("summary.method.housesHelpLabel")}>
-                {t("summary.method.housesHelp")}
-              </InfoTooltip>
-            </dt>
-            <dd id="chart-summary__value--houses" className="font-semibold text-ink">
-              {summary.houseSystem
-                ? t(`summary.method.housesSystems.${summary.houseSystem}`)
-                : t("summary.method.housesUnavailable")}
-            </dd>
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <dt className="flex items-center gap-1 text-ink-secondary">
-              {t("summary.method.timeQuality")}
-              <InfoTooltip id="chart-summary__tooltip--time-quality" label={t("summary.method.timeQualityHelpLabel")}>
-                {t("summary.method.timeQualityHelp")}
-              </InfoTooltip>
-            </dt>
-            <dd id="chart-summary__value--time-quality" className="font-semibold text-ink">
-              {t(`summary.method.quality.${summary.confidence}`)}
-            </dd>
-          </div>
-          {computedDate && (
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-ink-secondary">{t("summary.method.computedAt")}</dt>
-              <dd id="chart-summary__value--computed-at" className="font-semibold text-ink">
-                {computedDate}
-              </dd>
-            </div>
-          )}
-          <div className="flex items-center justify-between gap-3">
-            <dt className="text-ink-secondary">{t("summary.method.engine")}</dt>
-            <dd id="chart-summary__value--engine" className="font-semibold text-ink">
-              {t("summary.method.engineValue", { name: summary.engine.name, version: summary.engine.version })}
-            </dd>
-          </div>
-        </dl>
-      </Card>
+      <ChartMethodCard idPrefix="chart-summary" summary={summary} titleRef={methodTitleRef} />
 
       <div className="flex flex-col items-center gap-4">
         <TextLink

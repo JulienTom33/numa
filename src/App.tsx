@@ -4,6 +4,7 @@ import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
 import EmptyState from "./components/ui/EmptyState/EmptyState";
 import DiscoveryConsultGate from "./features/discovery/DiscoveryConsultGate";
 import MigrationScreen from "./features/discovery/MigrationScreen";
+import MyChartFlow from "./features/chart/MyChartFlow";
 import OnboardingFlow from "./features/onboarding/OnboardingFlow";
 import OnboardingLoading from "./features/onboarding/OnboardingLoading";
 import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus";
@@ -79,12 +80,16 @@ function App() {
     >
       <div id={`app__screen--${tab.key}`} className="flex flex-col items-center gap-2 px-4 pt-6">
         {isAnonymous && <DiscoveryModeBadge />}
-        <EmptyState
-          id={`app__placeholder--${tab.key}`}
-          icon={tab.icon}
-          title={tab.label}
-          description={t("common:comingSoon")}
-        />
+        {tab.key === "theme" ? (
+          <MyChartFlow />
+        ) : (
+          <EmptyState
+            id={`app__placeholder--${tab.key}`}
+            icon={tab.icon}
+            title={tab.label}
+            description={t("common:comingSoon")}
+          />
+        )}
         {isAnonymous && tab.key === "consult" && (
           <DiscoveryConsultGate onSignUp={() => setAuthMode("signup")} onSignIn={() => setAuthMode("signin")} />
         )}
