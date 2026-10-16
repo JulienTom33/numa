@@ -4,11 +4,15 @@ export type TimeMargin = "under_30_min" | "between_30_min_and_2_h" | "over_2_h";
 
 export const TIME_MARGINS: readonly TimeMargin[] = ["under_30_min", "between_30_min_and_2_h", "over_2_h"];
 
-export const TIME_MARGIN_LABELS: Record<TimeMargin, string> = {
-  under_30_min: "< 30 min",
-  between_30_min_and_2_h: "30 min–2 h",
-  over_2_h: "> 2 h",
-};
+export type FirstNameErrorCode = "required" | "tooLong" | "invalidCharacters";
+
+export type BirthDateErrorCode = "incomplete" | "required" | "invalidFormat" | "nonexistent" | "tooEarly" | "future";
+
+export type BirthTimeErrorCode = "precisionRequired" | "timeRequired" | "invalidFormat" | "marginRequired";
+
+export type BirthPlaceErrorCode = "required";
+
+export type TimeWarningCode = "approximate" | "unknown";
 
 export interface BirthPlace {
   label: string;
@@ -55,16 +59,16 @@ function hasControlCharacter(value: string): boolean {
   });
 }
 
-export function validateFirstName(value: string): string | null {
+export function validateFirstName(value: string): FirstNameErrorCode | null {
   const trimmed = value.trim();
   if (trimmed === "") {
-    return "Indiquez un prénom ou un pseudonyme.";
+    return "required";
   }
   if (trimmed.length > FIRST_NAME_MAX_LENGTH) {
-    return `Votre prénom ne peut pas dépasser ${FIRST_NAME_MAX_LENGTH} caractères.`;
+    return "tooLong";
   }
   if (hasControlCharacter(trimmed)) {
-    return "Votre prénom contient des caractères non autorisés.";
+    return "invalidCharacters";
   }
   return null;
 }
@@ -90,62 +94,62 @@ function isRealDate(year: number, month: number, day: number): boolean {
 export function validateBirthDateParts(
   parts: BirthDateParts,
   today: Date = new Date(),
-): { isoDate: string; error: null } | { isoDate: null; error: string } {
+): { isoDate: string; error: null } | { isoDate: null; error: BirthDateErrorCode } {
   const { day, month, year } = parts;
   if (day === null || month === null || year === null) {
-    return { isoDate: null, error: "Indiquez votre jour, mois et année de naissance." };
+    return { isoDate: null, error: "incomplete" };
   }
   if (!Number.isInteger(day) || !Number.isInteger(month) || !Number.isInteger(year)) {
-    return { isoDate: null, error: "Cette date n'existe pas. Vérifiez le jour et le mois." };
+    return { isoDate: null, error: "nonexistent" };
   }
   const isoDate = `${pad(year, 4)}-${pad(month, 2)}-${pad(day, 2)}`;
   const error = validateBirthDate(isoDate, today);
   return error ? { isoDate: null, error } : { isoDate, error: null };
 }
 
-export function validateBirthDate(value: string | null, today: Date = new Date()): string | null {
+export function validateBirthDate(value: string | null, today: Date = new Date()): BirthDateErrorCode | null {
   if (value === null || value === "") {
-    return "Indiquez votre date de naissance.";
+    return "required";
   }
   const match = ISO_DATE_PATTERN.exec(value);
   if (!match) {
-    return "Cette date n'est pas valide.";
+    return "invalidFormat";
   }
   const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
   if (!isRealDate(year, month, day)) {
-    return "Cette date n'existe pas. Vérifiez le jour et le mois.";
+    return "nonexistent";
   }
   if (year < MIN_BIRTH_YEAR) {
-    return `L'année de naissance doit être postérieure à ${MIN_BIRTH_YEAR - 1}.`;
+    return "tooEarly";
   }
   if (value > toLocalIsoDate(today)) {
-    return "La date de naissance ne peut pas être dans le futur.";
+    return "future";
   }
   return null;
 }
 
-export function validateBirthTime(input: BirthTimeInput): string | null {
+export function validateBirthTime(input: BirthTimeInput): BirthTimeErrorCode | null {
   if (input.precision === null) {
-    return "Indiquez si vous connaissez votre heure de naissance.";
+    return "precisionRequired";
   }
   if (input.precision === "unknown") {
     return null;
   }
   if (input.time === "") {
-    return "Indiquez votre heure de naissance, même approximative.";
+    return "timeRequired";
   }
   if (!TIME_PATTERN.test(input.time)) {
-    return "L'heure doit être au format HH:MM (par exemple 14:30).";
+    return "invalidFormat";
   }
   if (input.precision === "approximate" && input.margin === null) {
-    return "Indiquez la marge d'incertitude de votre heure de naissance.";
+    return "marginRequired";
   }
   return null;
 }
 
-export function validateBirthPlace(place: BirthPlace | null): string | null {
+export function validateBirthPlace(place: BirthPlace | null): BirthPlaceErrorCode | null {
   if (place === null) {
-    return "Choisissez votre ville de naissance dans la liste des suggestions.";
+    return "required";
   }
   return null;
 }
@@ -175,49 +179,13 @@ export interface OnboardingSummary {
   timeWarning: string | null;
 }
 
-const DATE_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-export function formatBirthDate(isoDate: string): string {
+/** Date ISO découpée en jour, mois et année ; `null` si le format n'est pas `AAAA-MM-JJ`. */
+export function parseIsoDate(isoDate: string): { year: number; month: number; day: number } | null {
   const match = ISO_DATE_PATTERN.exec(isoDate);
-  if (!match) {
-    return isoDate;
-  }
-  return DATE_FORMATTER.format(new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))));
+  return match ? { year: Number(match[1]), month: Number(match[2]), day: Number(match[3]) } : null;
 }
 
-export function formatBirthTime(input: BirthTimeInput): string {
-  switch (input.precision) {
-    case "exact":
-      return input.time;
-    case "approximate":
-      return input.margin
-        ? `Vers ${input.time} (marge ${TIME_MARGIN_LABELS[input.margin]})`
-        : `Vers ${input.time}`;
-    case "unknown":
-      return "Heure inconnue";
-    default:
-      return "Non renseignée";
-  }
-}
-
-const TIME_WARNINGS: Record<TimePrecision, string | null> = {
-  exact: null,
-  approximate: "Votre heure est approximative : l'ascendant et les maisons sont donnés à titre indicatif.",
-  unknown: "Sans heure de naissance, l'ascendant et les maisons ne peuvent pas être calculés précisément.",
-};
-
-export function buildOnboardingSummary(data: OnboardingData): OnboardingSummary {
-  return {
-    firstName: data.firstName.trim(),
-    birthDate: data.birthDate ? formatBirthDate(data.birthDate) : "Non renseignée",
-    birthTime: formatBirthTime(data.birthTime),
-    birthPlace: data.birthPlace?.label ?? null,
-    timezone: data.birthPlace?.timezone ?? null,
-    timeWarning: data.birthTime.precision ? TIME_WARNINGS[data.birthTime.precision] : null,
-  };
+/** Avertissement à afficher selon la précision de l'heure : seule une heure exacte n'en a pas. */
+export function timeWarningCode(precision: TimePrecision | null): TimeWarningCode | null {
+  return precision === "approximate" || precision === "unknown" ? precision : null;
 }

@@ -5,8 +5,8 @@ export type PlaceSearch = (query: string, signal: AbortSignal) => Promise<PlaceS
 export class PlaceSearchFailure extends Error {
   readonly code: PlaceSearchErrorCode;
 
-  constructor(code: PlaceSearchErrorCode, message: string) {
-    super(message);
+  constructor(code: PlaceSearchErrorCode) {
+    super(code);
     this.name = "PlaceSearchFailure";
     this.code = code;
   }
@@ -16,7 +16,7 @@ export class PlaceSearchFailure extends Error {
 export function toPlaceSearch(searchPlaces: SearchPlaces): PlaceSearch {
   return async (query, signal) => {
     const result = await searchPlaces(query, { signal });
-    if (result.error) throw new PlaceSearchFailure(result.error.code, result.error.message);
+    if (result.error) throw new PlaceSearchFailure(result.error.code);
     return result.places;
   };
 }

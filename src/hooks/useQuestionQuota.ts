@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { translateQuestionQuotaError, type TranslatedQuestionQuotaError } from "../i18n/messages/questionQuota";
 import {
   askQuestion,
   fetchQuestionQuota,
@@ -10,13 +12,14 @@ import {
 export interface UseQuestionQuotaResult {
   quota: QuestionQuota | null;
   loading: boolean;
-  error: QuestionQuotaError | null;
+  error: TranslatedQuestionQuotaError | null;
   refresh: () => Promise<void>;
   ask: (question: string) => Promise<AskQuestionResult>;
 }
 
 /** Expose le quota de questions anonymes sans jamais le calculer côté client. */
 export function useQuestionQuota(): UseQuestionQuotaResult {
+  const { t } = useTranslation("common");
   const [quota, setQuota] = useState<QuestionQuota | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<QuestionQuotaError | null>(null);
@@ -47,5 +50,7 @@ export function useQuestionQuota(): UseQuestionQuotaResult {
     return result;
   }, []);
 
-  return { quota, loading, error, refresh, ask };
+  const translatedError = useMemo(() => error && translateQuestionQuotaError(error, t), [error, t]);
+
+  return { quota, loading, error: translatedError, refresh, ask };
 }

@@ -9,9 +9,16 @@ export interface QuestionQuota {
   remaining: number;
 }
 
+export type QuestionQuotaErrorCode =
+  | "question_quota_exceeded"
+  | "provider_unavailable"
+  | "invalid_question"
+  | "unauthenticated"
+  | "network_error"
+  | "unknown_error";
+
 export interface QuestionQuotaError {
-  code: string;
-  message: string;
+  code: QuestionQuotaErrorCode;
 }
 
 export interface AskQuestionResult {
@@ -20,9 +27,14 @@ export interface AskQuestionResult {
   error: QuestionQuotaError | null;
 }
 
-const UNKNOWN_ERROR: QuestionQuotaError = {
-  code: "network_error",
-  message: "Le service est momentanément indisponible.",
+const UNREADABLE_ERROR: QuestionQuotaError = { code: "network_error" };
+
+const SERVER_CODES: Partial<Record<string, QuestionQuotaErrorCode>> = {
+  question_quota_exceeded: "question_quota_exceeded",
+  provider_unavailable: "provider_unavailable",
+  invalid_question: "invalid_question",
+  unauthenticated: "unauthenticated",
+  invalid_token: "unauthenticated",
 };
 
 function errorField(body: unknown): unknown {
@@ -30,18 +42,18 @@ function errorField(body: unknown): unknown {
   return (body as Record<string, unknown>).error;
 }
 
-function isQuotaError(value: unknown): value is QuestionQuotaError {
-  if (typeof value !== "object" || value === null) return false;
-  const { code, message } = value as Record<string, unknown>;
-  return typeof code === "string" && typeof message === "string";
+function serverCode(value: unknown): string | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+  const { code } = value as Record<string, unknown>;
+  return typeof code === "string" ? code : undefined;
 }
 
 async function toQuotaError(error: unknown): Promise<QuestionQuotaError> {
   if (error instanceof FunctionsHttpError && error.context instanceof Response) {
-    const detail = errorField(await error.context.json().catch(() => null));
-    if (isQuotaError(detail)) return { code: detail.code, message: detail.message };
+    const code = serverCode(errorField(await error.context.json().catch(() => null)));
+    if (code !== undefined) return { code: SERVER_CODES[code] ?? "unknown_error" };
   }
-  return UNKNOWN_ERROR;
+  return UNREADABLE_ERROR;
 }
 
 /** Lit le compteur de questions depuis le serveur, seule source de vérité. */

@@ -63,6 +63,7 @@ src/i18n/
   resources.ts             # langues supportées, namespaces, namespace par défaut
   i18next.d.ts             # typage strict des clés (CustomTypeOptions)
   format.ts                # formatNumber, formatPercent, formatDate (Intl)
+  messages/                # traduction des codes renvoyés par src/lib (onboarding, auth, questionQuota)
   locales/fr/
     index.ts               # assemble les namespaces ; type Translations
     common.json            # partagé : nom de l'app, actions génériques (Fermer, Retour, Envoyer)
@@ -90,7 +91,8 @@ const { t } = useTranslation(["welcome", "common"]);
 t("common:app.name");                              // autre namespace : préfixe `ns:`, déclaré dans useTranslation
 ```
 
-- Hors composant React (lib, hook non-React) : `import i18n from "../i18n"` puis `i18n.t("auth:anonymousSession.notCreated")`.
+- **Couche domaine (`src/lib/`)** : aucune phrase, ni traduite ni en dur. Elle renvoie des codes typés (`"save_failed"`, `{ code: "rate_limited", retryable }`…) ; le hook ou l'écran consommateur les traduit avec les fonctions de `src/i18n/messages/` (ex. `upgradeErrorMessage(code, t)`, `buildOnboardingSummary(data, t, i18n.language)`), clé construite par template literal pour que le typage couvre chaque code.
+- Hors composant React, si un texte doit vraiment être produit : `import i18n from "../i18n"` puis `i18n.t("auth:anonymousSession.notCreated")`.
 - **Typage strict** : une clé ou un namespace inexistant fait échouer `npm run typecheck` (`strictKeyChecks` activé, vérifié par `src/i18n/i18n.test.ts`).
 - **Interpolation** : `"progress": "Étape {{step}} sur {{total}}"` puis `t("stepHeader.progress", { step, total })`. L'échappement HTML est désactivé (React échappe déjà).
 - **Pluriels** : suffixes CLDR `_one` / `_other` (+ `_zero`, `_few`, `_many` selon la langue) et option `count` : `"questions_one": "{{count}} question restante"`, `"questions_other": "{{count}} questions restantes"` puis `t("questions", { count })`. En français, **0 et 1 sont au singulier** (`_one`).

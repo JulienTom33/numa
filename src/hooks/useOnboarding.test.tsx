@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { BirthPlace, OnboardingData } from "../lib/birthData";
 import { completeOnboarding, loadOnboardingDraft, saveOnboardingDraft } from "../lib/onboardingStore";
-import { MISSING_SESSION_MESSAGE, useOnboarding } from "./useOnboarding";
+import { useOnboarding } from "./useOnboarding";
 
 vi.mock("../lib/supabaseClient", () => ({ supabase: {} }));
 
@@ -69,11 +69,12 @@ describe("useOnboarding", () => {
   });
 
   it("surfaces a load error and lets the user start over", async () => {
-    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "chargement impossible" });
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "load_failed" });
 
     const { result } = await renderLoaded();
 
-    expect(result.current.error).toBe("chargement impossible");
+    expect(result.current.error).toBe("Votre saisie précédente n'a pas pu être récupérée. Vous pouvez reprendre depuis le début.");
+    expect(result.current.errorCode).toBe("load_failed");
     expect(result.current.step).toBe(1);
   });
 
@@ -89,7 +90,8 @@ describe("useOnboarding", () => {
     });
 
     expect(advanced).toBe(false);
-    expect(result.current.error).toBe(MISSING_SESSION_MESSAGE);
+    expect(result.current.error).toBe("Votre session a expiré. Rechargez la page pour reprendre votre saisie.");
+    expect(result.current.errorCode).toBe("missing_session");
     expect(saveOnboardingDraft).not.toHaveBeenCalled();
   });
 
@@ -160,7 +162,7 @@ describe("useOnboarding", () => {
   });
 
   it("stays on the step and reports the error when saving fails", async () => {
-    vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: "enregistrement impossible" });
+    vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: "save_failed" });
     const { result } = await renderLoaded();
 
     act(() => result.current.setFirstName("Émile"));
@@ -171,13 +173,13 @@ describe("useOnboarding", () => {
 
     expect(advanced).toBe(false);
     expect(result.current.step).toBe(1);
-    expect(result.current.error).toBe("enregistrement impossible");
+    expect(result.current.error).toBe("Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.");
     expect(result.current.saving).toBe(false);
   });
 
   it("stays on step 4 when the completion fails", async () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step: 4, data: COMPLETE_DATA }, birthDataId: null, error: null });
-    vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: null, error: "finalisation impossible" });
+    vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: null, error: "save_failed" });
     const { result } = await renderLoaded();
 
     await act(async () => {
@@ -185,7 +187,7 @@ describe("useOnboarding", () => {
     });
 
     expect(result.current.step).toBe(4);
-    expect(result.current.error).toBe("finalisation impossible");
+    expect(result.current.error).toBe("Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.");
   });
 
   it("finalises from the summary when a resumed draft was never completed", async () => {
