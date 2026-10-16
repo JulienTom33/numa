@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { askQuestion, fetchQuestionQuota } from "../lib/questionQuota";
+import { askQuestion, fetchQuestionQuota, type QuestionQuotaError } from "../lib/questionQuota";
 import { useQuestionQuota } from "./useQuestionQuota";
 
 vi.mock("../lib/questionQuota", () => ({
@@ -8,7 +8,7 @@ vi.mock("../lib/questionQuota", () => ({
   fetchQuestionQuota: vi.fn(),
 }));
 
-const EXCEEDED = { code: "question_quota_exceeded", message: "Quota atteint." };
+const EXCEEDED: QuestionQuotaError = { code: "question_quota_exceeded" };
 
 describe("useQuestionQuota", () => {
   afterEach(() => {
@@ -62,7 +62,10 @@ describe("useQuestionQuota", () => {
       await result.current.ask("Question");
     });
 
-    expect(result.current.error).toEqual(EXCEEDED);
+    expect(result.current.error).toEqual({
+      code: "question_quota_exceeded",
+      message: "Vous avez utilisé vos questions gratuites. Créez un compte pour continuer.",
+    });
     expect(result.current.quota).toEqual({ limit: 2, used: 2, remaining: 0 });
   });
 
@@ -71,7 +74,7 @@ describe("useQuestionQuota", () => {
       quota: { limit: 2, used: 1, remaining: 1 },
       error: null,
     });
-    const providerError = { code: "provider_unavailable", message: "Indisponible." };
+    const providerError: QuestionQuotaError = { code: "provider_unavailable" };
     vi.mocked(askQuestion).mockResolvedValue({ answer: null, quota: null, error: providerError });
     const { result } = renderHook(() => useQuestionQuota());
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -80,17 +83,22 @@ describe("useQuestionQuota", () => {
       await result.current.ask("Question");
     });
 
-    expect(result.current.error).toEqual(providerError);
+    expect(result.current.error).toEqual({
+      code: "provider_unavailable",
+      message: "La réponse n'a pas pu être générée. Votre question n'a pas été décomptée.",
+    });
     expect(result.current.quota).toEqual({ limit: 2, used: 1, remaining: 1 });
     expect(fetchQuestionQuota).toHaveBeenCalledTimes(1);
   });
 
   it("exposes a loading error from the server", async () => {
-    const networkError = { code: "network_error", message: "Indisponible." };
+    const networkError: QuestionQuotaError = { code: "network_error" };
     vi.mocked(fetchQuestionQuota).mockResolvedValue({ quota: null, error: networkError });
 
     const { result } = renderHook(() => useQuestionQuota());
 
-    await waitFor(() => expect(result.current.error).toEqual(networkError));
+    await waitFor(() =>
+      expect(result.current.error).toEqual({ code: "network_error", message: "Le service est momentanément indisponible." }),
+    );
   });
 });

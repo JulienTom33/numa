@@ -52,7 +52,7 @@ describe("useAnonymousSession", () => {
   it("surfaces the error from startAnonymousSession without throwing", async () => {
     mockAuthState(null);
     vi.mocked(startAnonymousSession).mockResolvedValue({
-      error: { message: "réseau indisponible" },
+      error: { code: "sign_in_failed", message: "réseau indisponible" },
     });
 
     const { result } = renderHook(() => useAnonymousSession());
@@ -65,10 +65,25 @@ describe("useAnonymousSession", () => {
     expect(result.current.loading).toBe(false);
   });
 
+  it("falls back to the translated message when the error has no detail", async () => {
+    mockAuthState(null);
+    vi.mocked(startAnonymousSession).mockResolvedValue({
+      error: { code: "sign_in_failed", message: null },
+    });
+
+    const { result } = renderHook(() => useAnonymousSession());
+
+    await act(async () => {
+      await result.current.start();
+    });
+
+    expect(result.current.error).toBe("Session anonyme non créée.");
+  });
+
   it("clears a previous error on a successful retry", async () => {
     mockAuthState(null);
     vi.mocked(startAnonymousSession).mockResolvedValueOnce({
-      error: { message: "réseau indisponible" },
+      error: { code: "sign_in_failed", message: "réseau indisponible" },
     });
 
     const { result } = renderHook(() => useAnonymousSession());

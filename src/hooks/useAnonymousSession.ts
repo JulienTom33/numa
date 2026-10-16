@@ -1,5 +1,6 @@
 import type { Session } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { startAnonymousSession } from "../lib/anonymousSession";
 import { supabase } from "../lib/supabaseClient";
 
@@ -12,6 +13,7 @@ export interface UseAnonymousSessionResult {
 }
 
 export function useAnonymousSession(): UseAnonymousSessionResult {
+  const { t } = useTranslation("auth");
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,10 +37,10 @@ export function useAnonymousSession(): UseAnonymousSessionResult {
     const { error: startError } = await startAnonymousSession();
 
     if (startError) {
-      setError(startError.message);
+      setError(startError.message ?? t("anonymousSession.notCreated"));
     }
     setLoading(false);
-  }, []);
+  }, [t]);
 
   return {
     session,

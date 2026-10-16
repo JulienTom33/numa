@@ -26,12 +26,12 @@ describe("toPlaceSearch", () => {
   it("rejects with the service error", async () => {
     const searchPlaces = vi.fn<SearchPlaces>().mockResolvedValue({
       places: null,
-      error: { code: "network_error", message: "Connexion impossible." },
+      error: { code: "network_error" },
     });
 
     const failure = toPlaceSearch(searchPlaces)("Bor", new AbortController().signal);
 
     await expect(failure).rejects.toBeInstanceOf(PlaceSearchFailure);
-    await expect(failure).rejects.toMatchObject({ code: "network_error", message: "Connexion impossible." });
+    await expect(failure).rejects.toMatchObject({ code: "network_error", message: "network_error" });
   });
 });
