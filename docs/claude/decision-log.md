@@ -14,6 +14,17 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Ascendant, MC et maisons codés sur Astronomy Engine (issue #126) — décidée
+
+Contexte : Astronomy Engine (MIT, retenu par #50) fournit le temps sidéral et l'obliquité mais ni ascendant, ni MC, ni maisons. Swiss Ephemeris (AGPL) est refusé comme dépendance.
+Décision (proposée) : module pur `supabase/functions/_shared/astrology/` (`computeAngles`, `computeHouses`), dépendance `npm:astronomy-engine@2.1.19` épinglée dans `supabase/functions/deno.json`.
+- Entrée : instant UTC déjà résolu (la conversion heure locale → UTC reste dans `src/lib/utcOffset.ts`, #125), latitude, longitude est.
+- RAMC = temps sidéral apparent de Greenwich (`SiderealTime`) × 15 + longitude ; obliquité vraie (`e_tilt().tobl`) ; MC et ascendant par les formules de Meeus (*Astronomical Algorithms*, chap. 13 et 14).
+- Systèmes : Placidus (itération sur la trisection des semi-arcs, tolérance 10⁻⁹°), Porphyre, Égales, Signes entiers.
+- **Défaut proposé : Placidus.** **Repli proposé : Porphyre** quand |latitude| ≥ 90° − ε (cercles polaires, Placidus indéfini) ou si l'itération ne converge pas ; le résultat porte `system: "porphyry"` et `fallback: { from: "placidus", reason }`. Même comportement que Swiss Ephemeris (refus de Placidus, Porphyre en secours).
+- Validation : écarts ≤ 0,12″ avec Swiss Ephemeris 2.10.03 (calculé hors dépôt) sur P1–P5, 66° N, 70° N, 70° S et un ascendant à 0° Bélier ; références figées dans `houses_test.ts`.
+Alternatives écartées : Swiss Ephemeris ou un portage (AGPL) ; Koch, Regiomontanus, Campanus (non demandés pour le MVP, ajoutables plus tard) ; repli sur maisons égales (Porphyre conserve MC et ascendant comme cuspides 10 et 1, plus proche de Placidus).
+
 ## 2026-10-16 — Vulnérabilités npm : Vite 6 et Vitest 4, Tailwind 3 conservé (issue #123)
 
 Contexte : `npm audit` remontait 17 vulnérabilités (3 critiques, 9 élevées, 5 modérées), toutes dans des dépendances de développement (`npm audit --omit=dev` : 0). Les critiques venaient de Vitest 2 (`tinypool`, serveur UI, `@vitest/mocker`), les élevées de Vite 5 (`server.fs.deny`, path traversal), de Tailwind 3 (`chokidar` 3 → `micromatch` → `braces`) et de transitifs (`brace-expansion`, `js-yaml`, `source-map-js`).

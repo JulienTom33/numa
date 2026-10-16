@@ -1,4 +1,7 @@
 {
+  "imports": {
+    "astronomy-engine": "npm:astronomy-engine@2.1.19"
+  },
   "tasks": {
     "check": "deno check **/*.ts",
     "test": "deno test --allow-env"
