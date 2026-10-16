@@ -2,6 +2,9 @@ import { useCallback, useState } from "react";
 import AppShell from "./components/AppShell/AppShell";
 import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
 import EmptyState from "./components/ui/EmptyState/EmptyState";
+import OnboardingFlow from "./features/onboarding/OnboardingFlow";
+import OnboardingLoading from "./features/onboarding/OnboardingLoading";
+import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus";
 import TabBar from "./components/ui/TabBar/TabBar";
 import { useTranslation } from "react-i18next";
 import AuthFlow, { type AuthFlowDestination } from "./features/auth/AuthFlow";
@@ -16,6 +19,7 @@ function App() {
   const { session, isAnonymous, error, start } = useAnonymousSession();
   const [activeTab, setActiveTab] = useState<MainTab>("today");
   const tabItems = useMainTabs();
+  const onboarding = useOnboardingStatus(session?.user.id ?? null);
   const auth = useAuth();
   const [authMode, setAuthMode] = useState<AuthMode | null>(auth.redirectError ? "signin" : null);
   const exitAuth = useCallback((destination: AuthFlowDestination) => {
@@ -36,6 +40,11 @@ function App() {
         discoverError={error ? t("auth:anonymousSession.notCreated") : null}
       />
     );
+  }
+
+  if (onboarding.status === "loading") return <OnboardingLoading />;
+  if (onboarding.status === "required") {
+    return <OnboardingFlow userId={session.user.id} discoveryMode={isAnonymous} onComplete={onboarding.markCompleted} />;
   }
 
   const tab = tabItems.find((item) => item.key === activeTab) ?? tabItems[0];

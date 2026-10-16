@@ -2,6 +2,7 @@ import type { FormEvent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import DiscoveryModeBadge from "../../../components/DiscoveryModeBadge";
 import Button from "../../../components/ui/Button/Button";
+import Callout from "../../../components/ui/Callout/Callout";
 import StepHeader from "../../../components/ui/StepHeader/StepHeader";
 import TopBar from "../../../components/ui/TopBar/TopBar";
 
@@ -10,11 +11,13 @@ interface Props {
   step: number;
   totalSteps: number;
   title: string;
-  onBack: () => void;
+  onBack?: () => void;
   onContinue: () => void;
   canContinue: boolean;
   discoveryMode?: boolean;
   continueLabel?: string;
+  error?: string | null;
+  saving?: boolean;
   children: ReactNode;
 }
 
@@ -28,13 +31,15 @@ function OnboardingStepLayout({
   canContinue,
   discoveryMode = false,
   continueLabel,
+  error = null,
+  saving = false,
   children,
 }: Props) {
   const { t } = useTranslation("onboarding");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (canContinue) onContinue();
+    if (canContinue && !saving) onContinue();
   }
 
   return (
@@ -54,8 +59,13 @@ function OnboardingStepLayout({
         <div id={`${id}-content`} className="flex flex-col gap-4">
           {children}
         </div>
+        {error && (
+          <Callout id={`${id}-error`} tone="error">
+            {error}
+          </Callout>
+        )}
       </div>
-      <Button id={`${id}-continue`} type="submit" fullWidth disabled={!canContinue}>
+      <Button id={`${id}-continue`} type="submit" fullWidth disabled={!canContinue} loading={saving}>
         {continueLabel ?? t("layout.continue")}
       </Button>
     </form>
