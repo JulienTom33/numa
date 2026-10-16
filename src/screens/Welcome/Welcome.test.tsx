@@ -43,6 +43,14 @@ describe("Welcome", () => {
     expect(props.onDiscover).toHaveBeenCalledTimes(1);
   });
 
+  it("shows the discovery error when the anonymous session could not start", () => {
+    render(
+      <Welcome onSignUp={vi.fn()} onSignIn={vi.fn()} onDiscover={vi.fn()} discoverError="Session anonyme non créée." />,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Session anonyme non créée.");
+  });
+
   it("opens the « Qui est Numa ? » sheet from the wordmark", async () => {
     renderWelcome();
 
