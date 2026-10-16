@@ -24,6 +24,28 @@ Décision :
 - Contrôle CI bloquant `npm audit --omit=dev --audit-level=high` (voir `development.md`).
 Alternatives écartées : `npm audit fix --force` (Vite 8, Vitest 5 et Tailwind 4 d'un coup ; `@vitejs/plugin-react` 6 exige Vite 8) ; Vite 7 ou 8 (non requis pour corriger, changements de cible navigateur et de bundler) ; Tailwind 4 (configuration CSS-first, `tailwind.config.ts` et tokens à réécrire, rendu à revalider écran par écran : ticket séparé) ; `overrides` npm forçant `postcss-selector-parser` 7 sous Tailwind 3 (majeure non supportée par Tailwind 3, risque de CSS généré différent).
 
+## 2026-10-16 — Moteur astrologique : Astronomy Engine en local (issue #50)
+
+Statut : **décidée** le 2026-10-16 par le mainteneur.
+Contexte : #20 (thème natal), #22 (cache) et #80 (ascendant) exigent un fournisseur de calcul. Comparatif détaillé, sources et mesures : `docs/research/api-astrologiques.md`.
+Décision :
+- **Astronomy Engine** (`astronomy-engine`, MIT, JS pur) exécuté localement dans une Edge Function.
+  - Gratuit, sans quota, sans contrainte de licence pour Numa, aucune donnée de naissance envoyée à un tiers.
+  - Écart mesuré avec JPL Horizons ≤ 3″ (Soleil, Lune) sur 5 profils de référence.
+  - Ascendant et MC calculés par formule depuis le temps sidéral et l'obliquité ; identiques à Swiss Ephemeris à 0,1″ près.
+- Maisons :
+  - Placidus et les autres systèmes sont à coder nous-mêmes à partir de formules publiques, puis à valider sur les profils de référence.
+  - Le repli aux latitudes polaires est à définir.
+- Swiss Ephemeris n'est pas retenu (AGPL refusée). Il ne sert que de référence de validation dans des tests exécutés hors dépôt, sans dépendance du projet.
+- Pas de fournisseur de secours : aucune API hébergée n'est retenue. Réévaluation possible plus tard.
+- Conversion horaire côté serveur :
+  - fuseau IANA + `resolveUtcOffset` ;
+  - avant l'heure légale, décalage = longitude / 15. La base tz donne le LMT de la ville de référence, d'où 2,7° d'erreur d'ascendant mesurée sur un profil de 1879.
+- La version du moteur est enregistrée avec chaque thème et entre dans la clé de cache (#22).
+Alternatives écartées :
+- Swiss Ephemeris via `sweph-wasm` : plus précis (≤ 0,3″), 25 systèmes de maisons, mais AGPL-3.0 imposée à tout Numa, ou licence professionnelle à 700 CHF.
+- AstrologyAPI, FreeAstrologyAPI, Prokerala — clé et facturation, données de naissance envoyées à un tiers soumis au droit indien, fuseau en décalage numérique (FreeAstrologyAPI), cache limité à 24 h sans archivage (Prokerala), stockage non traité (autres) ; non testées faute de clé.
+
 ## 2026-10-15 — Internationalisation : react-i18next (issue #118)
 
 Contexte : les textes de l'interface étaient écrits en dur dans les composants (review du mainteneur : « il va falloir mettre en place du i18n pour des trad »). Plusieurs écrans sont en cours (#105, #108–#112) : sans infrastructure commune, chaque écran aurait accumulé de nouvelles chaînes à migrer.
@@ -84,7 +106,7 @@ Décision : le code serveur est écrit en **Supabase Edge Functions** (Deno), da
 - Les écritures sensibles (compteurs de quota, résultats de calcul, réponses IA) sont faites par les fonctions ; les tables concernées ne seront plus modifiables par le client (à appliquer dans #27).
 - Secrets : variables d'environnement des fonctions (`supabase secrets set`), jamais `VITE_*`. La plateforme fournit `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEYS` et `SUPABASE_SECRET_KEYS`.
 - Clés API : utiliser les nouvelles clés `sb_publishable_…` / `sb_secret_…`. Les clés `anon` / `service_role` cessent de fonctionner fin 2026 (migration du client à faire avant cette date).
-- Contraintes à respecter : 2 s de CPU par requête (les attentes réseau ne comptent pas), 150 s de durée maximale sur le plan Free (400 s sur les plans payants), 256 Mo de mémoire. Les appels IA longs se font en streaming ; aucun calcul astrologique lourd dans la fonction (délégué à l'API externe, cf. #50).
+- Contraintes à respecter : 2 s de CPU par requête (les attentes réseau ne comptent pas), 150 s de durée maximale sur le plan Free (400 s sur les plans payants), 256 Mo de mémoire. Les appels IA longs se font en streaming. Le calcul astrologique est local, dans une Edge Function avec Astronomy Engine (décision du 2026-10-16, #50) : environ 0,2 ms par thème mesuré en local.
 - Socle commun : CORS limité à `ALLOWED_ORIGINS`, erreurs JSON `{ error: { code, message } }` sans détail interne, journalisation sans donnée personnelle.
 - Déploiement : workflow `deploy-functions.yml` sur push `master`, inactif tant que le projet Supabase distant n'est pas configuré.
 Alternatives écartées : API Node conteneurisée sur le VPS OVH (serveur, mises à jour, TLS et supervision supplémentaires à maintenir, vérification des JWT Supabase à réimplémenter) ; Cloudflare Workers (nouveau fournisseur et nouveaux secrets hors de l'écosystème Supabase, sans accès direct au Postgres du projet) ; n8n (hors chemin critique, cf. 2026-09-14).
