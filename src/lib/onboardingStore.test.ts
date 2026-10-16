@@ -38,6 +38,8 @@ const ROW: OnboardingDraftRow = {
   latitude: 45.764043,
   longitude: 4.835659,
   timezone: "Europe/Paris",
+  ascendant_source: null,
+  declared_ascendant_sign: null,
 };
 
 function mockSelect(result: { data: unknown; error: unknown }) {
@@ -76,7 +78,27 @@ describe("draftToRow", () => {
       latitude: null,
       longitude: null,
       timezone: null,
+      ascendant_source: null,
+      declared_ascendant_sign: null,
     });
+  });
+
+  it("stores a declared ascendant with its sign", () => {
+    const row = draftToRow(USER_ID, { step: 6, data: DATA, ascendant: { source: "declared", declaredSign: "leo" } });
+
+    expect(row).toMatchObject({ current_step: 6, ascendant_source: "declared", declared_ascendant_sign: "leo" });
+  });
+
+  it("drops the sign when the computed ascendant is retained", () => {
+    const row = draftToRow(USER_ID, { step: 6, data: DATA, ascendant: { source: "computed", declaredSign: "leo" } });
+
+    expect(row).toMatchObject({ ascendant_source: "computed", declared_ascendant_sign: null });
+  });
+
+  it("never stores a declared source without sign", () => {
+    const row = draftToRow(USER_ID, { step: 6, data: DATA, ascendant: { source: "declared", declaredSign: null } });
+
+    expect(row).toMatchObject({ ascendant_source: null, declared_ascendant_sign: null });
   });
 });
 
@@ -84,7 +106,11 @@ describe("rowToDraft", () => {
   it("maps a Postgres row back to the domain, trimming seconds and parsing numerics", () => {
     expect(
       rowToDraft({ ...ROW, birth_time: "14:30:00", latitude: "45.764043", longitude: "4.835659" }),
-    ).toEqual({ step: 4, data: { ...DATA, firstName: "Émile" } });
+    ).toEqual({
+      step: 4,
+      data: { ...DATA, firstName: "Émile" },
+      ascendant: { source: null, declaredSign: null },
+    });
   });
 
   it("ignores unexpected enum values, a partial place and clamps the step", () => {
@@ -99,7 +125,8 @@ describe("rowToDraft", () => {
         timezone: null,
       }),
     ).toEqual({
-      step: 5,
+      step: 6,
+      ascendant: { source: null, declaredSign: null },
       data: {
         firstName: "",
         birthDate: "1990-03-12",
@@ -107,6 +134,20 @@ describe("rowToDraft", () => {
         birthPlace: null,
       },
     });
+  });
+});
+
+describe("rowToDraft ascendant", () => {
+  it("restores the declared ascendant", () => {
+    const draft = rowToDraft({ ...ROW, current_step: 6, ascendant_source: "declared", declared_ascendant_sign: "virgo" });
+
+    expect(draft.ascendant).toEqual({ source: "declared", declaredSign: "virgo" });
+  });
+
+  it("ignores an unknown sign or source", () => {
+    const draft = rowToDraft({ ...ROW, ascendant_source: "guess", declared_ascendant_sign: "ophiuchus" });
+
+    expect(draft.ascendant).toEqual({ source: null, declaredSign: null });
   });
 });
 

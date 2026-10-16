@@ -1,13 +1,17 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { AscendantChoice } from "../../lib/ascendant";
 import type { BirthPlace, OnboardingData } from "../../lib/birthData";
 import { completeOnboarding, loadOnboardingDraft, saveOnboardingDraft } from "../../lib/onboardingStore";
+import { fetchComputedAscendant } from "../../lib/natalChart";
 import type { PlaceSuggestion } from "../../lib/placeSearch";
 import type { PlaceSearch } from "../../screens/Onboarding/PlaceStep/placeSearchAdapter";
 import OnboardingFlow from "./OnboardingFlow";
 
 vi.mock("../../lib/supabaseClient", () => ({ supabase: {} }));
+
+vi.mock("../../lib/natalChart", () => ({ fetchComputedAscendant: vi.fn() }));
 
 vi.mock("../../lib/onboardingStore", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../lib/onboardingStore")>()),
@@ -60,8 +64,13 @@ function renderFlow({ discoveryMode = false, onExit, search = vi.fn<PlaceSearch>
   return { onComplete, search };
 }
 
-function mockDraft(step: 1 | 2 | 3 | 4 | 5, data: OnboardingData, birthDataId: string | null = null) {
-  vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step, data }, birthDataId, error: null });
+function mockDraft(
+  step: 1 | 2 | 3 | 4 | 5 | 6,
+  data: OnboardingData,
+  birthDataId: string | null = null,
+  ascendant: AscendantChoice = { source: null, declaredSign: null },
+) {
+  vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: { step, data, ascendant }, birthDataId, error: null });
 }
 
 describe("OnboardingFlow", () => {
@@ -69,6 +78,11 @@ describe("OnboardingFlow", () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
     vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: null });
     vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: "bd-1", error: null });
+    vi.mocked(fetchComputedAscendant).mockResolvedValue({
+      ascendant: { sign: "scorpio", degreeInSign: 14.6 },
+      confidence: "high",
+      error: null,
+    });
   });
 
   afterEach(() => {
@@ -113,6 +127,7 @@ describe("OnboardingFlow", () => {
     expect(completeOnboarding).toHaveBeenCalledTimes(1);
     expect(saveOnboardingDraft).toHaveBeenLastCalledWith("user-1", {
       step: 5,
+      ascendant: { source: null, declaredSign: null },
       data: {
         firstName: "Émile",
         birthDate: "1990-03-12",
@@ -125,7 +140,16 @@ describe("OnboardingFlow", () => {
 
     await user.click(screen.getByRole("button", { name: "Valider" }));
 
+    expect(await screen.findByRole("heading", { name: "Votre ascendant" })).toBeInTheDocument();
+    expect(onComplete).not.toHaveBeenCalled();
+    expect(await screen.findByText("Scorpion à 14°")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Voir mon thème" }));
+
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
+    expect(saveOnboardingDraft).toHaveBeenLastCalledWith(
+      "user-1",
+      expect.objectContaining({ step: 6, ascendant: { source: "computed", declaredSign: null } }),
+    );
   }, 15000);
 
   it("resumes a saved draft and lets the user edit a field from the summary", async () => {
@@ -188,14 +212,34 @@ describe("OnboardingFlow", () => {
 
   it("does not end the journey when the final validation fails", async () => {
     const user = userEvent.setup({ delay: null });
-    mockDraft(5, COMPLETE_DATA);
+    mockDraft(6, COMPLETE_DATA, "bd-1", { source: "computed", declaredSign: null });
     vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: null, error: "save_failed" });
     const { onComplete } = renderFlow();
 
-    await user.click(await screen.findByRole("button", { name: "Valider" }));
+    await user.click(await screen.findByRole("button", { name: "Voir mon thème" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Vos informations n'ont pas pu être enregistrées.");
     expect(onComplete).not.toHaveBeenCalled();
+  });
+
+  it("lets a user who declares a different ascendant choose which version to keep", async () => {
+    const user = userEvent.setup({ delay: null });
+    mockDraft(6, { ...COMPLETE_DATA, birthTime: { precision: "exact", time: "14:30", margin: null } }, "bd-1");
+    const { onComplete } = renderFlow();
+
+    await user.click(await screen.findByRole("button", { name: "Ce n'est pas exact ? Modifier" }));
+    await user.click(screen.getByRole("radio", { name: "Oui" }));
+    await user.click(screen.getByRole("radio", { name: "Lion" }));
+
+    expect(screen.getByRole("button", { name: "Voir mon thème" })).toBeDisabled();
+    await user.click(screen.getByRole("radio", { name: /Garder mon ascendant/ }));
+    await user.click(screen.getByRole("button", { name: "Voir mon thème" }));
+
+    await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
+    expect(saveOnboardingDraft).toHaveBeenLastCalledWith(
+      "user-1",
+      expect.objectContaining({ ascendant: { source: "declared", declaredSign: "leo" } }),
+    );
   });
 
   it("shows the load error and starts from the first step", async () => {

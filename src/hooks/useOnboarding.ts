@@ -22,11 +22,14 @@ import {
   type OnboardingData,
   type OnboardingSummary,
 } from "../lib/birthData";
+import { EMPTY_ASCENDANT_CHOICE, type AscendantChoice } from "../lib/ascendant";
 import {
+  ASCENDANT_STEP,
   completeOnboarding,
   loadOnboardingDraft,
   ONBOARDING_STEP_COUNT,
   saveOnboardingDraft,
+  SUMMARY_STEP,
   type OnboardingStep,
 } from "../lib/onboardingStore";
 
@@ -46,6 +49,7 @@ export interface UseOnboardingResult {
   step: OnboardingStep;
   stepCount: number;
   data: OnboardingData;
+  ascendant: AscendantChoice;
   birthDateParts: BirthDateParts;
   errors: OnboardingErrors;
   isStepValid: (step: OnboardingStep) => boolean;
@@ -61,6 +65,7 @@ export interface UseOnboardingResult {
   setBirthDateParts: (parts: BirthDateParts) => void;
   setBirthTime: (input: BirthTimeInput) => void;
   setBirthPlace: (place: BirthPlace | null) => void;
+  setAscendant: (choice: AscendantChoice) => void;
   next: () => Promise<boolean>;
   back: () => void;
   goToStep: (step: OnboardingStep) => void;
@@ -85,6 +90,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
   const [step, setStep] = useState<OnboardingStep>(1);
   const [data, setData] = useState<OnboardingData>(EMPTY_ONBOARDING_DATA);
   const [birthDateParts, setBirthDatePartsState] = useState<BirthDateParts>(EMPTY_DATE_PARTS);
+  const [ascendant, setAscendant] = useState<AscendantChoice>(EMPTY_ASCENDANT_CHOICE);
   const [birthDataId, setBirthDataId] = useState<string | null>(null);
   const [loading, setLoading] = useState(userId !== null);
   const [saving, setSaving] = useState(false);
@@ -109,6 +115,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
       } else if (result.draft) {
         setStep(result.draft.step);
         setData(result.draft.data);
+        setAscendant(result.draft.ascendant ?? EMPTY_ASCENDANT_CHOICE);
         setBirthDatePartsState(isoToParts(result.draft.data.birthDate));
         setBirthDataId(result.birthDataId);
       }
@@ -162,32 +169,31 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     setData((current) => ({ ...current, birthPlace: place }));
   }, []);
 
-  const canContinue = isStepValid(step) && !loading && !saving;
+  const ascendantComplete =
+    ascendant.source !== null && (ascendant.source === "computed" || ascendant.declaredSign !== null);
+  const canContinue = isStepValid(step) && (step !== ASCENDANT_STEP || ascendantComplete) && !loading && !saving;
 
   const next = useCallback(async (): Promise<boolean> => {
     if (!canContinue) {
       return false;
-    }
-    if (step === ONBOARDING_STEP_COUNT && birthDataId !== null) {
-      return true;
     }
     if (userId === null) {
       setErrorCode("missing_session");
       return false;
     }
 
-    const nextStep = Math.min(step + 1, ONBOARDING_STEP_COUNT) as OnboardingStep;
+    const nextStep = Math.min(step + 1, ASCENDANT_STEP) as OnboardingStep;
     setSaving(true);
     setErrorCode(null);
 
-    const { error: saveError } = await saveOnboardingDraft(userId, { step: nextStep, data });
+    const { error: saveError } = await saveOnboardingDraft(userId, { step: nextStep, data, ascendant });
     if (saveError) {
       setErrorCode(saveError);
       setSaving(false);
       return false;
     }
 
-    if (nextStep === ONBOARDING_STEP_COUNT) {
+    if (nextStep === SUMMARY_STEP || step === ASCENDANT_STEP) {
       const completion = await completeOnboarding();
       if (completion.error) {
         setErrorCode(completion.error);
@@ -200,7 +206,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     setStep(nextStep);
     setSaving(false);
     return true;
-  }, [canContinue, step, birthDataId, userId, data]);
+  }, [canContinue, step, userId, data, ascendant]);
 
   const back = useCallback(() => {
     setErrorCode(null);
@@ -224,6 +230,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     step,
     stepCount: ONBOARDING_STEP_COUNT,
     data,
+    ascendant,
     birthDateParts,
     errors,
     isStepValid,
@@ -239,6 +246,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     setBirthDateParts,
     setBirthTime,
     setBirthPlace,
+    setAscendant,
     next,
     back,
     goToStep,

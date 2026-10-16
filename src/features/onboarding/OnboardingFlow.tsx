@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import AppShell from "../../components/AppShell/AppShell";
+import { useComputedAscendant } from "../../hooks/useComputedAscendant";
 import { useOnboarding } from "../../hooks/useOnboarding";
+import AscendantStep from "../../screens/Onboarding/AscendantStep/AscendantStep";
 import { isTimeStepComplete } from "../../screens/Onboarding/TimeStep/timeStepValue";
 import { searchPlaces } from "../../lib/placeSearch";
 import DateStep from "../../screens/Onboarding/DateStep/DateStep";
@@ -10,6 +12,7 @@ import PlaceStep from "../../screens/Onboarding/PlaceStep/PlaceStep";
 import { toPlaceSearch, type PlaceSearch } from "../../screens/Onboarding/PlaceStep/placeSearchAdapter";
 import SummaryStep from "../../screens/Onboarding/SummaryStep/SummaryStep";
 import TimeStep from "../../screens/Onboarding/TimeStep/TimeStep";
+import { ASCENDANT_STEP } from "../../lib/onboardingStore";
 import OnboardingLoading from "./OnboardingLoading";
 import { toBirthTimeInput, toTimeStepValue } from "./timeStepAdapter";
 
@@ -28,6 +31,7 @@ function OnboardingFlow({ userId, discoveryMode, onComplete, onExit, search = de
   const { t } = useTranslation("onboarding");
   const onboarding = useOnboarding({ userId, today });
   const { step, stepCount, data, loading, saving, error, next, back, goToStep } = onboarding;
+  const computedAscendant = useComputedAscendant(step === ASCENDANT_STEP && !loading, onboarding.birthDataId);
 
   if (loading) return <OnboardingLoading />;
 
@@ -35,7 +39,7 @@ function OnboardingFlow({ userId, discoveryMode, onComplete, onExit, search = de
   const handleContinue = () => {
     void next();
   };
-  const handleConfirm = () => {
+  const handleFinish = () => {
     void next().then((finished) => {
       if (finished) onComplete();
     });
@@ -88,7 +92,20 @@ function OnboardingFlow({ userId, discoveryMode, onComplete, onExit, search = de
           />
         </OnboardingStepLayout>
       )}
-      {step === 5 && <SummaryStep {...shared} data={data} onEdit={goToStep} onConfirm={handleConfirm} />}
+      {step === 5 && <SummaryStep {...shared} data={data} onEdit={goToStep} onConfirm={handleContinue} />}
+      {step === ASCENDANT_STEP && (
+        <AscendantStep
+          {...shared}
+          value={onboarding.ascendant}
+          onChange={onboarding.setAscendant}
+          onContinue={handleFinish}
+          computedStatus={computedAscendant.status}
+          computed={computedAscendant.ascendant}
+          computedErrorCode={computedAscendant.errorCode}
+          onRetry={computedAscendant.retry}
+          precise={onboarding.hasPreciseBirthData}
+        />
+      )}
     </AppShell>
   );
 }
