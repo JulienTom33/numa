@@ -14,6 +14,16 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Vulnérabilités npm : Vite 6 et Vitest 4, Tailwind 3 conservé (issue #123)
+
+Contexte : `npm audit` remontait 17 vulnérabilités (3 critiques, 9 élevées, 5 modérées), toutes dans des dépendances de développement (`npm audit --omit=dev` : 0). Les critiques venaient de Vitest 2 (`tinypool`, serveur UI, `@vitest/mocker`), les élevées de Vite 5 (`server.fs.deny`, path traversal), de Tailwind 3 (`chokidar` 3 → `micromatch` → `braces`) et de transitifs (`brace-expansion`, `js-yaml`, `source-map-js`).
+Décision :
+- `npm audit fix` pour les transitifs corrigeables sans montée majeure.
+- Vite 5 → 6.4.4 (première version non vulnérable, branche maintenue) ; Vitest et `@vitest/coverage-v8` 2 → 4.1.12 (première ligne corrigeant tous les avis Vitest, compatible Vite 6). `@vitejs/plugin-react` 4.7 et `@storybook/react-vite` 10.6 acceptent déjà Vite 6. Vitest 4 ne compte plus par défaut les fichiers non chargés par les tests : `coverage.include` (`src/**/*.{ts,tsx}`) rétablit le périmètre précédent.
+- Tailwind CSS reste en 3.4.19 (dernière 3.x). Les 7 vulnérabilités restantes (`tailwindcss`, `chokidar`, `micromatch`, `braces`, `fast-glob`, `postcss-nested`, `postcss-selector-parser` ; 5 élevées, 2 modérées) sont des dénis de service (complexité, récursion) déclenchés par les motifs glob et sélecteurs fournis à l'outil de build. Ces entrées sont celles du dépôt (`tailwind.config.ts`, CSS), rien n'est exposé à un utilisateur ni embarqué dans le bundle. Aucune version corrigée de `braces` n'existe : seul Tailwind 4 retire cette chaîne.
+- Contrôle CI bloquant `npm audit --omit=dev --audit-level=high` (voir `development.md`).
+Alternatives écartées : `npm audit fix --force` (Vite 8, Vitest 5 et Tailwind 4 d'un coup ; `@vitejs/plugin-react` 6 exige Vite 8) ; Vite 7 ou 8 (non requis pour corriger, changements de cible navigateur et de bundler) ; Tailwind 4 (configuration CSS-first, `tailwind.config.ts` et tokens à réécrire, rendu à revalider écran par écran : ticket séparé) ; `overrides` npm forçant `postcss-selector-parser` 7 sous Tailwind 3 (majeure non supportée par Tailwind 3, risque de CSS généré différent).
+
 ## 2026-10-15 — Internationalisation : react-i18next (issue #118)
 
 Contexte : les textes de l'interface étaient écrits en dur dans les composants (review du mainteneur : « il va falloir mettre en place du i18n pour des trad »). Plusieurs écrans sont en cours (#105, #108–#112) : sans infrastructure commune, chaque écran aurait accumulé de nouvelles chaînes à migrer.
