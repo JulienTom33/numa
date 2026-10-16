@@ -14,6 +14,17 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-16 — Tailwind CSS 4, configuration CSS-first (issue #133)
+
+Contexte : après #123, les 7 vulnérabilités `npm audit` restantes (5 élevées, 2 modérées, dépendances de dev) venaient toutes de la chaîne Tailwind 3 (`chokidar`, `micromatch`, `braces`, `fast-glob`, `postcss-nested`, `postcss-selector-parser`).
+Décision :
+- Tailwind 4.3 via `@tailwindcss/vite` ; `postcss.config.js`, `autoprefixer` et `postcss` (dépendance directe) retirés, `tailwind.config.ts` supprimé. `css.postcss: {}` dans `vite.config.ts` empêche Vite de reprendre un `postcss.config.js` d'un dossier parent.
+- Tokens dans `@theme` (`src/index.css`), mêmes noms de classes et mêmes valeurs ; `--color-*: initial` conserve l'absence de palette par défaut. Interlignes de `text-xs/sm/base/lg` redéclarés en `rem` (valeurs v3) au lieu des ratios v4.
+- Comportements v3 conservés dans la CSS : `@source` explicites (mêmes fichiers que l'ancien `content`), `hover:` sans media query `(hover: hover)`, curseur `pointer` sur les boutons, couleur des placeholders (`#9ca3af`, valeur du preflight v3).
+- Classes renommées : `shadow` → `shadow-sm`, `rounded-sm` → `rounded-xs`, `outline-none` → `outline-hidden`, `outline` → `outline-solid`, `has-[:focus-visible]` → `has-focus-visible`.
+- Pages Fondations : les couleurs sont lues depuis `src/index.css` (`?raw`) par `src/docs/themeTokens.ts` ; Vitest traite ce fichier CSS (`test.css.include`) pour que l'import `?raw` ne soit pas vide.
+Alternatives écartées : `@config` sur l'ancien `tailwind.config.ts` (couche de compatibilité, garde la config JS) ; plugin `@tailwindcss/postcss` (inutile, Storybook utilise la config Vite) ; module TS de tokens générant la CSS (étape de build supplémentaire) ; adopter les nouveaux défauts v4 (`hover` limité aux appareils à pointeur, placeholder à 50 % de la couleur du texte) : changement de rendu hors périmètre, à décider séparément.
+
 ## 2026-10-16 — Edge Function natal-chart : calcul local du thème natal (issue #20) — décidée
 
 Contexte : #20 demande le calcul serveur du thème natal à partir de `birth_data` ; #50 impose le calcul local (Astronomy Engine), #125 le décalage UTC et #126 l'ascendant, le MC et les maisons.

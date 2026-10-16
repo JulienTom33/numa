@@ -21,7 +21,7 @@ const toneClasses: Record<TextLinkTone, string> = {
 
 function TextLink({ id, children, href, onClick, tone = "violet", className }: Props) {
   const classes = cx(
-    "rounded-sm font-display font-semibold underline-offset-4 hover:underline",
+    "rounded-xs font-display font-semibold underline-offset-4 hover:underline",
     focusRing,
     toneClasses[tone],
     className,

@@ -50,7 +50,7 @@ function ChatInput({
         placeholder={placeholder ?? t("chat.inputPlaceholder")}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
-        className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-muted focus:outline-none disabled:cursor-not-allowed"
+        className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-muted focus:outline-hidden disabled:cursor-not-allowed"
       />
       <button
         id={`${id}-send`}

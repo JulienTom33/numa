@@ -1,11 +1,78 @@
-@import "@fontsource-variable/manrope";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/manrope" layer(base);
+@import "@fontsource-variable/inter" layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+
+@source "../index.html";
+@source "./**/*.{ts,tsx,mdx}";
+@source "../.storybook/**/*.{ts,tsx}";
+
+@custom-variant hover (&:hover);
+
+@theme {
+  --color-*: initial;
+  --color-page: #EFEAE0;
+  --color-surface: #FFFDF9;
+  --color-white: #FFFFFF;
+  --color-ink: #20243A;
+  --color-ink-secondary: #6D7183;
+  --color-ink-muted: #8C90A0;
+  --color-line: #E8E5E0;
+  --color-coral: #F27D72;
+  --color-coral-hover: #DE6459;
+  --color-coral-disabled: #F2C4BF;
+  --color-coral-soft: #FDEBE9;
+  --color-coral-ink: #C2544A;
+  --color-violet: #9C8ED8;
+  --color-violet-ink: #6E5A99;
+  --color-violet-soft: #F1EEFB;
+  --color-violet-wash: #F4F1FA;
+  --color-sky: #8DC9E8;
+  --color-sky-ink: #3E7997;
+  --color-sky-soft: #EAF5FB;
+  --color-gold: #C9A85E;
+  --color-gold-ink: #8A6A1F;
+  --color-gold-soft: #FDF3DC;
+  --color-sage: #A8C6A1;
+  --color-sage-ink: #5C7A56;
+  --color-sage-soft: #EFF6ED;
+  --color-overlay: rgb(32 36 58 / 0.35);
+
+  --font-display: "Manrope Variable", Manrope, system-ui, sans-serif;
+  --font-sans: "Inter Variable", Inter, system-ui, sans-serif;
+
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-tab: 10.5px;
+  --text-tab--line-height: 14px;
+  --text-title-sm: 18px;
+  --text-title-sm--line-height: 24px;
+  --text-title: 22px;
+  --text-title--line-height: 28px;
+  --text-title-lg: 26px;
+  --text-title-lg--line-height: 32px;
+
+  --radius-field: 13px;
+  --radius-button: 14px;
+  --radius-card: 16px;
+  --radius-sheet: 22px;
+
+  --container-app: 390px;
+}
 
 @layer base {
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
   body {
     @apply bg-page font-sans text-ink antialiased;
   }

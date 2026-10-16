@@ -39,7 +39,9 @@ Tout élément significatif (conteneur, titre, champ, bouton, lien, item de list
 
 ## Design system
 
-- Les tokens de la maquette (couleurs, typographie, rayons) sont déclarés une seule fois dans `tailwind.config.ts`. `theme.colors` remplace la palette Tailwind par défaut : seules les couleurs Numa existent. Aucune couleur en dur (`bg-[#…]`).
+- Tailwind CSS 4, configuration CSS-first : plugin Vite `@tailwindcss/vite` (pas de PostCSS ni de `tailwind.config.ts`). Les tokens de la maquette (couleurs, typographie, rayons, `max-w-app`) sont déclarés une seule fois dans le bloc `@theme` de `src/index.css`. `--color-*: initial` retire la palette Tailwind par défaut : seules les couleurs Numa existent. Aucune couleur en dur (`bg-[#…]`).
+- Fichiers scannés : listés explicitement par `@source` dans `src/index.css` (`index.html`, `src/**/*.{ts,tsx,mdx}`, `.storybook/**/*.{ts,tsx}`). Un nouveau dossier contenant des classes doit y être ajouté.
+- Nommage v4 : `rounded-sm` (4 px) et `rounded-xs` (2 px), `shadow-sm` (ombre légère), `outline-hidden` (et non `outline-none`) pour masquer l'outline au focus. `ring-*` s'accompagne toujours d'une couleur (`ring-violet/30`) : la couleur par défaut est `currentColor`. `hover:` s'applique à tout survol (variante redéfinie, comme en v3).
 - Les écrans suivent la maquette Claude Design (`Astraia.dc.html`) ; chaque écran a son ticket `[Design]`. Correspondance écran → ticket → composants, états et responsive : `docs/design/handoff.md`.
 - Composants réutilisables dans `src/components/ui/<Composant>/` : `<Composant>.tsx`, `.test.tsx`, `.stories.tsx`. Avant de créer un élément d'interface, vérifier qu'un composant existant ne couvre pas le besoin.
 - Styles partagés (anneau de focus, champs) dans `src/components/ui/styles.ts`.
@@ -114,7 +116,7 @@ t("common:app.name");                              // autre namespace : préfixe
 
 - `npm run storybook` (port 6006) ; `npm run build-storybook` exécuté en CI.
 - Tout nouveau composant de `src/components/ui/` a une story par variante et par état (désactivé, chargement, erreur, vide…).
-- Les pages « Fondations » (couleurs, typographie, rayons) sont dans `src/docs/` ; les couleurs y sont lues depuis `tailwind.config.ts`.
+- Les pages « Fondations » (couleurs, typographie, rayons) sont dans `src/docs/` ; les couleurs y sont lues depuis le bloc `@theme` de `src/index.css` via `src/docs/themeTokens.ts` (import `?raw`).
 - L'addon a11y signale les violations d'accessibilité de chaque story : à corriger avant PR.
 
 ## Couverture

@@ -4,7 +4,7 @@ Document de passation entre la maquette et l'implémentation (issue #42). Il dit
 
 Sources de vérité, par ordre de priorité :
 
-1. **Code du design system** : `tailwind.config.ts` (tokens), `src/components/ui/` (composants), Storybook (`npm run storybook`).
+1. **Code du design system** : le bloc `@theme` de `src/index.css` (tokens), `src/components/ui/` (composants), Storybook (`npm run storybook`).
 2. **Tickets `[Design]`** (#72 à #94, label `design`) : contenu et critères d'acceptation de chaque écran.
 3. **Maquette** : voir ci-dessous.
 
@@ -102,13 +102,13 @@ Le détail de chaque variante et état est visible dans les stories ; ce tableau
 
 ## Tokens
 
-Les tokens sont déclarés **une seule fois** dans `tailwind.config.ts`. Ne pas recopier de valeur ailleurs : utiliser les classes Tailwind correspondantes. Valeurs et rendus dans Storybook, section « Fondations » :
+Les tokens sont déclarés **une seule fois** dans le bloc `@theme` de `src/index.css`. Ne pas recopier de valeur ailleurs : utiliser les classes Tailwind correspondantes. Valeurs et rendus dans Storybook, section « Fondations » :
 
-- Couleurs : `src/docs/Couleurs.mdx` (lit directement `tailwind.config.ts`).
+- Couleurs : `src/docs/Couleurs.mdx` (lit directement le bloc `@theme` de `src/index.css`).
 - Typographie : `src/docs/Typographie.mdx`.
 - Rayons : `src/docs/Rayons.mdx`.
 
-Noms des tokens disponibles (les valeurs sont dans `tailwind.config.ts`) :
+Noms des tokens disponibles (les valeurs sont dans le bloc `@theme` de `src/index.css`) :
 
 | Famille | Tokens | Exemple de classe |
 |---|---|---|
@@ -128,7 +128,7 @@ Noms des tokens disponibles (les valeurs sont dans `tailwind.config.ts`) :
 Règles :
 
 - `theme.colors` remplace la palette Tailwind : aucune autre couleur n'existe. Aucune valeur en dur (`bg-[#…]`).
-- Tout nouveau token passe par `tailwind.config.ts` et par la page « Fondations » concernée, dans le même ticket.
+- Tout nouveau token passe par le bloc `@theme` de `src/index.css` et par la page « Fondations » concernée, dans le même ticket.
 - Les tokens sont considérés définitifs pour le MVP sauf correction issue de la maquette finale (voir [À fournir par le design](#à-fournir-par-le-design)).
 
 ## États par écran
@@ -217,6 +217,6 @@ Assets attendus du design : voir la section suivante.
 - [ ] Clarification du libellé « Modifier mon thème » du profil : lecture ou édition (#88).
 - [ ] Remplacement de la roue simplifiée par une vraie carte du ciel (#87) : maquette de la carte.
 - [ ] Assets exportables : logo (SVG, déclinaisons), icône d'application et favicon, illustrations éventuelles (`EmptyState`, accueil), images de partage.
-- [ ] Validation de la correspondance écran → composants proposée ci-dessus, et signalement de tout écart entre la maquette finale et les tokens de `tailwind.config.ts`.
+- [ ] Validation de la correspondance écran → composants proposée ci-dessus, et signalement de tout écart entre la maquette finale et les tokens du bloc `@theme` de `src/index.css`.
 
 Quand un élément est fourni : cocher la case, ajouter le lien ou le fichier ici et dans le ticket `[Design]` concerné.
