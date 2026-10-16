@@ -37,6 +37,10 @@ const KNOWN_ERRORS: readonly NatalChartErrorCode[] = [
   "internal_error",
 ];
 
+export function toKnownErrorCode(code: unknown): NatalChartErrorCode {
+  return KNOWN_ERRORS.find((known) => known === code) ?? "internal_error";
+}
+
 function isSign(value: unknown): value is ZodiacSign {
   return ZODIAC_SIGNS.some((sign) => sign === value);
 }
@@ -51,7 +55,7 @@ async function toErrorCode(error: unknown): Promise<NatalChartErrorCode> {
   }
   try {
     const body = (await error.context.json()) as { error?: { code?: unknown } };
-    return KNOWN_ERRORS.find((code) => code === body.error?.code) ?? "internal_error";
+    return toKnownErrorCode(body.error?.code);
   } catch {
     return "internal_error";
   }

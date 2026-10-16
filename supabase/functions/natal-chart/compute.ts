@@ -14,6 +14,7 @@ import {
   ENGINE_VERSION,
   type MoonSignChange,
   type NatalChart,
+  type PhaseListener,
   SCHEMA_VERSION,
   type TimeMargin,
 } from "./types.ts";
@@ -91,11 +92,18 @@ function warningsOf(
   return warnings;
 }
 
-export function computeNatalChart(input: BirthInput): NatalChart {
+export function computeNatalChart(
+  input: BirthInput,
+  onPhase: PhaseListener = () => undefined,
+): NatalChart {
   const knownTime = input.timePrecision === "unknown" ? null : input.birthTime;
   const localTimeUsed = knownTime === null ? UNKNOWN_TIME_REFERENCE : knownTime.slice(0, 5);
   const offset = utcOf(input.birthDate, localTimeUsed, input);
   const instant = new Date(offset.utc);
+  onPhase("timezone");
+
+  const positions = BODY_IDS.map((body) => computeBody(body, instant));
+  onPhase("positions");
 
   const calculation = knownTime === null
     ? null
@@ -106,15 +114,19 @@ export function computeNatalChart(input: BirthInput): NatalChart {
     fallback: calculation.fallback,
     cusps: calculation.cusps,
   };
+  onPhase("ascendant");
 
-  const bodies: BodyPosition[] = BODY_IDS.map((body) => {
-    const position = computeBody(body, instant);
-    return { ...position, house: houses ? houseOf(position.longitude, houses.cusps) : null };
-  });
+  const bodies: BodyPosition[] = positions.map((position) => ({
+    ...position,
+    house: houses ? houseOf(position.longitude, houses.cusps) : null,
+  }));
 
   const change = moonSignChange(uncertaintyWindow(input, instant));
 
-  return {
+  const aspects = findAspects(bodies);
+  onPhase("houses_aspects");
+
+  const chart: NatalChart = {
     schemaVersion: SCHEMA_VERSION,
     engine: { name: ENGINE_NAME, version: ENGINE_VERSION },
     confidence: confidenceOf(input, offset),
@@ -132,8 +144,10 @@ export function computeNatalChart(input: BirthInput): NatalChart {
       midheaven: calculation.midheaven,
     },
     houses,
-    aspects: findAspects(bodies),
+    aspects,
     moonSignChange: change,
     warnings: warningsOf(input, offset, houses, change),
   };
+  onPhase("reading");
+  return chart;
 }

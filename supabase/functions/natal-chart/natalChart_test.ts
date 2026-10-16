@@ -105,3 +105,49 @@ Deno.test("toBirthInput convertit les numeriques PostgREST en nombres", () => {
   const caller: Caller = { userId: USER_ID, isAnonymous: false };
   assertEquals(caller.userId, USER_ID);
 });
+
+async function readEvents(response: Response): Promise<Record<string, unknown>[]> {
+  const text = await response.text();
+  return text.trim().split("\n").map((line) => JSON.parse(line));
+}
+
+const PROGRESS_URL = "http://localhost/natal-chart?progress=1";
+
+Deno.test("progress=1 : phases reelles dans l'ordre puis theme identique au mode JSON", async () => {
+  const { store } = storeReturning(ROW);
+  const handler = handlerFor(store);
+  const streamed = await handler(new Request(PROGRESS_URL, authorized));
+  assertEquals(streamed.status, 200);
+  assertEquals(streamed.headers.get("Content-Type"), "application/x-ndjson; charset=utf-8");
+  const events = await readEvents(streamed);
+  assertEquals(events.slice(0, -1), [
+    { phase: "validation" },
+    { phase: "timezone" },
+    { phase: "positions" },
+    { phase: "ascendant" },
+    { phase: "houses_aspects" },
+    { phase: "reading" },
+  ]);
+  const plain = await (await handler(request(authorized))).json();
+  assertEquals(events[events.length - 1], plain);
+});
+
+Deno.test("progress=1 : erreurs d'authentification et 404 restent des reponses JSON", async () => {
+  const unauthenticated = await handlerFor(storeReturning(ROW).store)(new Request(PROGRESS_URL));
+  assertEquals(unauthenticated.status, 401);
+  await unauthenticated.body?.cancel();
+  const missing = await handlerFor(storeReturning(null).store)(
+    new Request(PROGRESS_URL, authorized),
+  );
+  assertEquals(missing.status, 404);
+  await missing.body?.cancel();
+});
+
+Deno.test("progress=1 : donnees invalides signalees par un evenement d'erreur", async () => {
+  const { store } = storeReturning({ ...ROW, timezone: "Mars/Olympus" });
+  const response = await handlerFor(store)(new Request(PROGRESS_URL, authorized));
+  assertEquals(await readEvents(response), [
+    { phase: "validation" },
+    { error: { code: "invalid_birth_data", message: "invalid_birth_data" } },
+  ]);
+});

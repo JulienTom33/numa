@@ -103,3 +103,16 @@ export interface NatalChart {
   readonly moonSignChange: MoonSignChange | null;
   readonly warnings: readonly ChartWarning[];
 }
+
+export const CHART_PHASES = [
+  "validation",
+  "timezone",
+  "positions",
+  "ascendant",
+  "houses_aspects",
+  "reading",
+] as const;
+
+export type ChartPhase = (typeof CHART_PHASES)[number];
+
+export type PhaseListener = (phase: ChartPhase) => void;

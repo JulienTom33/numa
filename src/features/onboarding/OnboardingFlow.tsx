@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import AppShell from "../../components/AppShell/AppShell";
 import { useComputedAscendant } from "../../hooks/useComputedAscendant";
@@ -13,6 +14,7 @@ import { toPlaceSearch, type PlaceSearch } from "../../screens/Onboarding/PlaceS
 import SummaryStep from "../../screens/Onboarding/SummaryStep/SummaryStep";
 import TimeStep from "../../screens/Onboarding/TimeStep/TimeStep";
 import { ASCENDANT_STEP } from "../../lib/onboardingStore";
+import ChartProgressFlow from "../chart/ChartProgressFlow";
 import OnboardingLoading from "./OnboardingLoading";
 import { toBirthTimeInput, toTimeStepValue } from "./timeStepAdapter";
 
@@ -31,6 +33,7 @@ function OnboardingFlow({ userId, discoveryMode, onComplete, onExit, search = de
   const { t } = useTranslation("onboarding");
   const onboarding = useOnboarding({ userId, today });
   const { step, stepCount, data, loading, saving, error, next, back, goToStep } = onboarding;
+  const [computingChart, setComputingChart] = useState(false);
   const computedAscendant = useComputedAscendant(step === ASCENDANT_STEP && !loading, onboarding.birthDataId);
 
   if (loading) return <OnboardingLoading />;
@@ -41,9 +44,17 @@ function OnboardingFlow({ userId, discoveryMode, onComplete, onExit, search = de
   };
   const handleFinish = () => {
     void next().then((finished) => {
-      if (finished) onComplete();
+      if (finished) setComputingChart(true);
     });
   };
+  if (computingChart) {
+    return (
+      <AppShell id="onboarding-flow__shell--chart-progress" screenKey="chart-progress">
+        <ChartProgressFlow onComplete={onComplete} />
+      </AppShell>
+    );
+  }
+
   const shared = { onBack: handleBack, discoveryMode, error, saving };
   const timeValue = toTimeStepValue(data.birthTime);
 

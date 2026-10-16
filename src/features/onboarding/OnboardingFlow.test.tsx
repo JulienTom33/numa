@@ -5,6 +5,7 @@ import type { AscendantChoice } from "../../lib/ascendant";
 import type { BirthPlace, OnboardingData } from "../../lib/birthData";
 import { completeOnboarding, loadOnboardingDraft, saveOnboardingDraft } from "../../lib/onboardingStore";
 import { fetchComputedAscendant } from "../../lib/natalChart";
+import { streamNatalChart } from "../../lib/natalChartProgress";
 import type { PlaceSuggestion } from "../../lib/placeSearch";
 import type { PlaceSearch } from "../../screens/Onboarding/PlaceStep/placeSearchAdapter";
 import OnboardingFlow from "./OnboardingFlow";
@@ -12,6 +13,11 @@ import OnboardingFlow from "./OnboardingFlow";
 vi.mock("../../lib/supabaseClient", () => ({ supabase: {} }));
 
 vi.mock("../../lib/natalChart", () => ({ fetchComputedAscendant: vi.fn() }));
+
+vi.mock("../../lib/natalChartProgress", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../lib/natalChartProgress")>()),
+  streamNatalChart: vi.fn(),
+}));
 
 vi.mock("../../lib/onboardingStore", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../lib/onboardingStore")>()),
@@ -75,6 +81,7 @@ function mockDraft(
 
 describe("OnboardingFlow", () => {
   beforeEach(() => {
+  vi.mocked(streamNatalChart).mockResolvedValue(null);
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
     vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: null });
     vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: "bd-1", error: null });
