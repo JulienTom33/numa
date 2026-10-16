@@ -33,6 +33,15 @@ export const Pending: Story = {
   args: { mode: "signin", pendingProvider: "google" },
 };
 
+export const SignInFromDiscovery: Story = {
+  args: {
+    mode: "signin",
+    backLabel: "Retour à Aujourd'hui",
+    noticeMessage:
+      "Vous êtes en mode découverte : en vous connectant à un compte existant, les lectures faites sans compte ne lui seront pas rattachées.",
+  },
+};
+
 export const WithError: Story = {
   args: {
     mode: "signin",

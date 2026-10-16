@@ -83,4 +83,16 @@ describe("AuthScreen", () => {
 
     expect(screen.getByRole("alert")).toHaveTextContent("La connexion a échoué. Réessayez.");
   });
+
+  it("shows the notice message only when provided", () => {
+    const { unmount } = setup("signin");
+    expect(document.getElementById("auth-screen__callout--notice")).toBeNull();
+    unmount();
+
+    setup("signin", { noticeMessage: "Vos données ne seront pas rattachées." });
+
+    expect(document.getElementById("auth-screen__callout--notice")).toHaveTextContent(
+      "Vos données ne seront pas rattachées.",
+    );
+  });
 });
