@@ -26,7 +26,7 @@ Module serveur `supabase/functions/_shared/astrology/` (Deno, fonctions pures), 
 - `computeAngles({ instant, latitude, longitude })` : temps sidéral local (RAMC, degrés), obliquité vraie, ascendant et MC en longitude écliptique tropicale. `instant` est un instant **UTC déjà résolu** (fuseau, heure d'été, temps moyen local : hors module).
 - `computeHouses(location, system?)` : ascendant, MC et 12 cuspides (`longitude`, `sign`, `degreeInSign`), système demandé, système effectivement utilisé et repli éventuel.
 - Systèmes disponibles : `placidus`, `porphyry` (Porphyre), `equal` (égales depuis l'ascendant), `whole-sign` (signes entiers).
-- **Défaut proposé : Placidus** (à valider par le mainteneur).
-- **Repli proposé : Porphyre** (à valider) quand Placidus est indéfini, au-delà des cercles polaires (|latitude| ≥ 90° − obliquité, environ 66,56°), ou ne converge pas. Le résultat l'indique : `system: "porphyry"`, `fallback: { from: "placidus", reason: "polar-latitude" | "placidus-not-converged" }`. À signaler à l'utilisateur dans la lecture (transparence).
+- **Défaut : Placidus** (décidé par le mainteneur le 16/10/2026).
+- **Repli : Porphyre** (décidé le 16/10/2026) quand Placidus est indéfini, au-delà des cercles polaires (|latitude| ≥ 90° − obliquité, environ 66,56°), ou ne converge pas. Le résultat l'indique : `system: "porphyry"`, `fallback: { from: "placidus", reason: "polar-latitude" | "placidus-not-converged" }`. À signaler à l'utilisateur dans la lecture (transparence).
 - Latitude ±90° exacte, longitude hors [−180, 180] ou date invalide : `RangeError`.
 - Précision mesurée : ≤ 0,12″ par rapport à Swiss Ephemeris 2.10.03 (référence calculée hors dépôt) sur les profils P1–P5 et les cas limites ; références et sources dans `houses_test.ts`.

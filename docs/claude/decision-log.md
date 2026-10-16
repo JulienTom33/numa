@@ -14,7 +14,7 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
-## 2026-10-16 — Ascendant, MC et maisons codés sur Astronomy Engine (issue #126) — proposition, à valider
+## 2026-10-16 — Ascendant, MC et maisons codés sur Astronomy Engine (issue #126) — décidée
 
 Contexte : Astronomy Engine (MIT, retenu par #50) fournit le temps sidéral et l'obliquité mais ni ascendant, ni MC, ni maisons. Swiss Ephemeris (AGPL) est refusé comme dépendance.
 Décision (proposée) : module pur `supabase/functions/_shared/astrology/` (`computeAngles`, `computeHouses`), dépendance `npm:astronomy-engine@2.1.19` épinglée dans `supabase/functions/deno.json`.
