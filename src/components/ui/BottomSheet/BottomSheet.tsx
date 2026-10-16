@@ -83,7 +83,7 @@ function BottomSheet({
         aria-labelledby={titleId}
         tabIndex={-1}
         onKeyDown={handleKeyDown}
-        className="relative flex max-h-[85%] w-full max-w-app flex-col gap-4 overflow-y-auto rounded-t-sheet bg-surface p-5 focus:outline-none"
+        className="relative flex max-h-[85%] w-full max-w-app flex-col gap-4 overflow-y-auto rounded-t-sheet bg-surface p-5 focus:outline-hidden"
       >
         <div className="flex items-start justify-between gap-4">
           <h2 id={titleId} className="text-title-sm font-bold text-ink">

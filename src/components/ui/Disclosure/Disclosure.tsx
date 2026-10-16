@@ -24,7 +24,7 @@ function Disclosure({ id, summary, children, defaultOpen = false, className }: P
         aria-controls={contentId}
         onClick={() => setOpen((current) => !current)}
         className={cx(
-          "flex items-center justify-between gap-2 rounded-sm py-1 text-left font-display text-sm font-semibold text-violet-ink",
+          "flex items-center justify-between gap-2 rounded-xs py-1 text-left font-display text-sm font-semibold text-violet-ink",
           focusRing,
         )}
       >

@@ -45,7 +45,7 @@ function Logo({ id, size = "md", showWordmark = true, onWordmarkClick }: Props) 
             type="button"
             onClick={onWordmarkClick}
             aria-haspopup="dialog"
-            className={cx(wordmarkClass, "rounded-sm hover:text-violet-ink", focusRing)}
+            className={cx(wordmarkClass, "rounded-xs hover:text-violet-ink", focusRing)}
           >
             {appName}
           </button>
