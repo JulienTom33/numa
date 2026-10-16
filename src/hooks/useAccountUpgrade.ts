@@ -1,5 +1,7 @@
 import type { Provider } from "@supabase/supabase-js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { translateUpgradeError, type TranslatedUpgradeError } from "../i18n/messages/auth";
 import {
   linkAnonymousAccountWithProvider,
   readUpgradeRedirectError,
@@ -15,7 +17,7 @@ export type AccountUpgradeStep = "idle" | "submitting" | "confirmation_sent" | "
 export interface UseAccountUpgradeResult {
   step: AccountUpgradeStep;
   email: string | null;
-  error: UpgradeError | null;
+  error: TranslatedUpgradeError | null;
   upgrade: (email: string) => Promise<void>;
   resend: () => Promise<void>;
   linkProvider: (provider: Provider) => Promise<void>;
@@ -32,6 +34,7 @@ function readInitialRedirectError(): UpgradeError | null {
  */
 export function useAccountUpgrade(options: UpgradeOptions = {}): UseAccountUpgradeResult {
   const { redirectTo } = options;
+  const { t } = useTranslation("auth");
   const [step, setStep] = useState<AccountUpgradeStep>("idle");
   const [email, setEmail] = useState<string | null>(null);
   const [error, setError] = useState<UpgradeError | null>(readInitialRedirectError);
@@ -89,5 +92,7 @@ export function useAccountUpgrade(options: UpgradeOptions = {}): UseAccountUpgra
     [redirectTo],
   );
 
-  return { step, email, error, upgrade, resend, linkProvider };
+  const translatedError = useMemo(() => error && translateUpgradeError(error, t), [error, t]);
+
+  return { step, email, error: translatedError, upgrade, resend, linkProvider };
 }

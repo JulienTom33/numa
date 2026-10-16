@@ -54,5 +54,47 @@
     "dayOrdinal_ordinal_other": "{{count}}",
     "confirmation": "Date enregistrée : {{day}} {{month}} {{year}}",
     "invalid": "Cette date n'existe pas ou n'est pas encore passée. Vérifiez le jour et le mois."
+  },
+  "validation": {
+    "firstName": {
+      "required": "Indiquez un prénom ou un pseudonyme.",
+      "tooLong": "Votre prénom ne peut pas dépasser {{max}} caractères.",
+      "invalidCharacters": "Votre prénom contient des caractères non autorisés."
+    },
+    "birthDate": {
+      "incomplete": "Indiquez votre jour, mois et année de naissance.",
+      "required": "Indiquez votre date de naissance.",
+      "invalidFormat": "Cette date n'est pas valide.",
+      "nonexistent": "Cette date n'existe pas. Vérifiez le jour et le mois.",
+      "tooEarly": "L'année de naissance doit être postérieure à {{year}}.",
+      "future": "La date de naissance ne peut pas être dans le futur."
+    },
+    "birthTime": {
+      "precisionRequired": "Indiquez si vous connaissez votre heure de naissance.",
+      "timeRequired": "Indiquez votre heure de naissance, même approximative.",
+      "invalidFormat": "L'heure doit être au format HH:MM (par exemple 14:30).",
+      "marginRequired": "Indiquez la marge d'incertitude de votre heure de naissance."
+    },
+    "birthPlace": {
+      "required": "Choisissez votre ville de naissance dans la liste des suggestions."
+    }
+  },
+  "errors": {
+    "save_failed": "Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.",
+    "load_failed": "Votre saisie précédente n'a pas pu être récupérée. Vous pouvez reprendre depuis le début.",
+    "missing_session": "Votre session a expiré. Rechargez la page pour reprendre votre saisie."
+  },
+  "summary": {
+    "notProvided": "Non renseignée",
+    "birthDate": "{{day}} {{month}} {{year}}",
+    "birthTime": {
+      "approximate": "Vers {{time}}",
+      "approximateWithMargin": "Vers {{time}} (marge {{margin}})",
+      "unknown": "Heure inconnue"
+    },
+    "timeWarning": {
+      "approximate": "Votre heure est approximative : l'ascendant et les maisons sont donnés à titre indicatif.",
+      "unknown": "Sans heure de naissance, l'ascendant et les maisons ne peuvent pas être calculés précisément."
+    }
   }
 }

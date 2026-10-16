@@ -37,7 +37,18 @@ describe("startAnonymousSession", () => {
 
     const { error } = await startAnonymousSession();
 
-    expect(error).toEqual({ message: "réseau indisponible" });
+    expect(error).toEqual({ code: "sign_in_failed", message: "réseau indisponible" });
+  });
+
+  it("returns the sign_in_failed code without detail when no user is created", async () => {
+    vi.mocked(supabase.auth.signInAnonymously).mockResolvedValue({
+      data: { user: null, session: null },
+      error: null,
+    } as never);
+
+    const { error } = await startAnonymousSession();
+
+    expect(error).toEqual({ code: "sign_in_failed", message: null });
   });
 
   it("returns an error when the profile upsert fails", async () => {
@@ -50,6 +61,6 @@ describe("startAnonymousSession", () => {
 
     const { error } = await startAnonymousSession();
 
-    expect(error).toEqual({ message: "profil refusé" });
+    expect(error).toEqual({ code: "profile_failed", message: "profil refusé" });
   });
 });

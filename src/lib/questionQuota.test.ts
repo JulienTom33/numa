@@ -69,8 +69,23 @@ describe("askQuestion", () => {
     expect(result).toEqual({
       answer: null,
       quota: null,
-      error: { code: "question_quota_exceeded", message: "Quota atteint." },
+      error: { code: "question_quota_exceeded" },
     });
+  });
+
+  it.each([
+    ["invalid_token", "unauthenticated"],
+    ["invalid_question", "invalid_question"],
+    ["internal_error", "unknown_error"],
+  ])("maps the %s server code to %s", async (serverCode, expected) => {
+    vi.mocked(supabase.functions.invoke).mockResolvedValue({
+      data: null,
+      error: httpError(400, { error: { code: serverCode, message: "…" } }),
+    } as never);
+
+    const result = await askQuestion("Question");
+
+    expect(result.error).toEqual({ code: expected });
   });
 
   it("falls back to a generic error when the error body is not readable", async () => {

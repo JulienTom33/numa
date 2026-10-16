@@ -3,10 +3,8 @@ import type { OnboardingData } from "./birthData";
 import {
   completeOnboarding,
   draftToRow,
-  LOAD_ERROR_MESSAGE,
   loadOnboardingDraft,
   rowToDraft,
-  SAVE_ERROR_MESSAGE,
   saveOnboardingDraft,
   type OnboardingDraftRow,
 } from "./onboardingStore";
@@ -133,10 +131,10 @@ describe("loadOnboardingDraft", () => {
     expect(await loadOnboardingDraft(USER_ID)).toEqual({ draft: null, birthDataId: null, error: null });
   });
 
-  it("returns a user-friendly error without technical details", async () => {
+  it("returns the load_failed code without technical details", async () => {
     mockSelect({ data: null, error: { message: "relation does not exist" } });
 
-    expect(await loadOnboardingDraft(USER_ID)).toEqual({ draft: null, birthDataId: null, error: LOAD_ERROR_MESSAGE });
+    expect(await loadOnboardingDraft(USER_ID)).toEqual({ draft: null, birthDataId: null, error: "load_failed" });
   });
 });
 
@@ -155,11 +153,11 @@ describe("saveOnboardingDraft", () => {
     expect(upsert).toHaveBeenCalledWith(ROW, { onConflict: "user_id" });
   });
 
-  it("returns a user-friendly error on failure", async () => {
+  it("returns the save_failed code on failure", async () => {
     const upsert = vi.fn().mockResolvedValue({ error: { message: "violates row-level security" } });
     vi.mocked(supabase.from).mockReturnValue({ upsert } as never);
 
-    expect(await saveOnboardingDraft(USER_ID, { step: 4, data: DATA })).toEqual({ error: SAVE_ERROR_MESSAGE });
+    expect(await saveOnboardingDraft(USER_ID, { step: 4, data: DATA })).toEqual({ error: "save_failed" });
   });
 });
 
@@ -175,9 +173,9 @@ describe("completeOnboarding", () => {
     expect(supabase.rpc).toHaveBeenCalledWith("complete_onboarding");
   });
 
-  it("returns a user-friendly error when the rpc fails", async () => {
+  it("returns the save_failed code when the rpc fails", async () => {
     vi.mocked(supabase.rpc).mockResolvedValue({ data: null, error: { message: "onboarding_incomplete" } } as never);
 
-    expect(await completeOnboarding()).toEqual({ birthDataId: null, error: SAVE_ERROR_MESSAGE });
+    expect(await completeOnboarding()).toEqual({ birthDataId: null, error: "save_failed" });
   });
 });
