@@ -28,7 +28,6 @@ export type PlaceSearchErrorCode =
 
 export interface PlaceSearchError {
   code: PlaceSearchErrorCode;
-  message: string;
 }
 
 export type PlaceSearchResult =
@@ -40,18 +39,8 @@ export type SearchPlaces = (
   options?: { signal?: AbortSignal; limit?: number },
 ) => Promise<PlaceSearchResult>;
 
-const MESSAGES: Record<PlaceSearchErrorCode, string> = {
-  invalid_query: "Saisissez au moins deux caractères.",
-  provider_unavailable: "La recherche de lieux est momentanément indisponible.",
-  provider_timeout: "La recherche de lieux met trop de temps à répondre.",
-  unauthenticated: "Votre session a expiré. Rechargez la page.",
-  network_error: "Connexion impossible. Vérifiez votre réseau.",
-  aborted: "Recherche annulée.",
-  unknown_error: "Une erreur inattendue est survenue.",
-};
-
 function failure(code: PlaceSearchErrorCode): PlaceSearchResult {
-  return { places: null, error: { code, message: MESSAGES[code] } };
+  return { places: null, error: { code } };
 }
 
 const SERVER_CODES: Partial<Record<string, PlaceSearchErrorCode>> = {

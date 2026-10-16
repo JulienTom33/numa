@@ -13,5 +13,15 @@
     "theme": "Mon thème",
     "profile": "Profil"
   },
-  "comingSoon": "Cet écran arrive bientôt."
+  "comingSoon": "Cet écran arrive bientôt.",
+  "questionQuota": {
+    "errors": {
+      "question_quota_exceeded": "Vous avez utilisé vos questions gratuites. Créez un compte pour continuer.",
+      "provider_unavailable": "La réponse n'a pas pu être générée. Votre question n'a pas été décomptée.",
+      "invalid_question": "Votre question est vide ou trop longue.",
+      "unauthenticated": "Votre session a expiré. Rechargez la page.",
+      "network_error": "Le service est momentanément indisponible.",
+      "unknown_error": "Une erreur inattendue est survenue."
+    }
+  }
 }

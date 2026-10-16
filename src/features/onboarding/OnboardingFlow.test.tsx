@@ -176,33 +176,33 @@ describe("OnboardingFlow", () => {
 
   it("stays on the step and shows the error when saving fails", async () => {
     const user = userEvent.setup({ delay: null });
-    vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: "Enregistrement impossible." });
+    vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: "save_failed" });
     renderFlow();
 
     await user.type(await screen.findByLabelText("Prénom ou pseudonyme"), "Émile");
     await user.click(screen.getByRole("button", { name: "Continuer" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Enregistrement impossible.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Vos informations n'ont pas pu être enregistrées.");
     expect(screen.getByRole("heading", { name: "Comment devons-nous vous appeler ?" })).toBeInTheDocument();
   });
 
   it("does not end the journey when the final validation fails", async () => {
     const user = userEvent.setup({ delay: null });
     mockDraft(5, COMPLETE_DATA);
-    vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: null, error: "Finalisation impossible." });
+    vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: null, error: "save_failed" });
     const { onComplete } = renderFlow();
 
     await user.click(await screen.findByRole("button", { name: "Valider" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Finalisation impossible.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Vos informations n'ont pas pu être enregistrées.");
     expect(onComplete).not.toHaveBeenCalled();
   });
 
   it("shows the load error and starts from the first step", async () => {
-    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "Reprise impossible." });
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "load_failed" });
     renderFlow();
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Reprise impossible.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Votre saisie précédente n'a pas pu être récupérée.");
     expect(screen.getByText("Étape 1 sur 5")).toBeInTheDocument();
   });
 });

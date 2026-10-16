@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
+  birthDateErrorMessage,
+  birthPlaceErrorMessage,
+  birthTimeErrorMessage,
   buildOnboardingSummary,
+  firstNameErrorMessage,
+  onboardingErrorMessage,
+  type OnboardingErrorCode,
+} from "../i18n/messages/onboarding";
+import {
   EMPTY_ONBOARDING_DATA,
   hasPreciseBirthData,
   validateBirthDateParts,
@@ -20,8 +29,6 @@ import {
   saveOnboardingDraft,
   type OnboardingStep,
 } from "../lib/onboardingStore";
-
-export const MISSING_SESSION_MESSAGE = "Votre session a expiré. Rechargez la page pour reprendre votre saisie.";
 
 export interface OnboardingErrors {
   firstName: string | null;
@@ -49,6 +56,7 @@ export interface UseOnboardingResult {
   loading: boolean;
   saving: boolean;
   error: string | null;
+  errorCode: OnboardingErrorCode | null;
   setFirstName: (value: string) => void;
   setBirthDateParts: (parts: BirthDateParts) => void;
   setBirthTime: (input: BirthTimeInput) => void;
@@ -68,14 +76,19 @@ function isoToParts(isoDate: string | null): BirthDateParts {
   return { day, month, year };
 }
 
+/**
+ * Pilote les cinq étapes de l'onboarding : validation, sauvegarde du brouillon et finalisation.
+ * Les erreurs de la couche domaine sont des codes, traduits ici dans la langue courante.
+ */
 export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboardingResult {
+  const { t, i18n } = useTranslation("onboarding");
   const [step, setStep] = useState<OnboardingStep>(1);
   const [data, setData] = useState<OnboardingData>(EMPTY_ONBOARDING_DATA);
   const [birthDateParts, setBirthDatePartsState] = useState<BirthDateParts>(EMPTY_DATE_PARTS);
   const [birthDataId, setBirthDataId] = useState<string | null>(null);
   const [loading, setLoading] = useState(userId !== null);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<OnboardingErrorCode | null>(null);
 
   useEffect(() => {
     if (userId === null) {
@@ -85,14 +98,14 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
 
     let cancelled = false;
     setLoading(true);
-    setError(null);
+    setErrorCode(null);
 
     loadOnboardingDraft(userId).then((result) => {
       if (cancelled) {
         return;
       }
       if (result.error) {
-        setError(result.error);
+        setErrorCode(result.error);
       } else if (result.draft) {
         setStep(result.draft.step);
         setData(result.draft.data);
@@ -107,15 +120,18 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     };
   }, [userId]);
 
-  const errors = useMemo<OnboardingErrors>(
-    () => ({
-      firstName: validateFirstName(data.firstName),
-      birthDate: validateBirthDateParts(birthDateParts, today ?? new Date()).error,
-      birthTime: validateBirthTime(data.birthTime),
-      birthPlace: validateBirthPlace(data.birthPlace),
-    }),
-    [data, birthDateParts, today],
-  );
+  const errors = useMemo<OnboardingErrors>(() => {
+    const firstName = validateFirstName(data.firstName);
+    const birthDate = validateBirthDateParts(birthDateParts, today ?? new Date()).error;
+    const birthTime = validateBirthTime(data.birthTime);
+    const birthPlace = validateBirthPlace(data.birthPlace);
+    return {
+      firstName: firstName && firstNameErrorMessage(firstName, t),
+      birthDate: birthDate && birthDateErrorMessage(birthDate, t),
+      birthTime: birthTime && birthTimeErrorMessage(birthTime, t),
+      birthPlace: birthPlace && birthPlaceErrorMessage(birthPlace, t),
+    };
+  }, [data, birthDateParts, today, t]);
 
   const isStepValid = useCallback(
     (target: OnboardingStep): boolean => {
@@ -156,17 +172,17 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
       return true;
     }
     if (userId === null) {
-      setError(MISSING_SESSION_MESSAGE);
+      setErrorCode("missing_session");
       return false;
     }
 
     const nextStep = Math.min(step + 1, ONBOARDING_STEP_COUNT) as OnboardingStep;
     setSaving(true);
-    setError(null);
+    setErrorCode(null);
 
     const { error: saveError } = await saveOnboardingDraft(userId, { step: nextStep, data });
     if (saveError) {
-      setError(saveError);
+      setErrorCode(saveError);
       setSaving(false);
       return false;
     }
@@ -174,7 +190,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     if (nextStep === ONBOARDING_STEP_COUNT) {
       const completion = await completeOnboarding();
       if (completion.error) {
-        setError(completion.error);
+        setErrorCode(completion.error);
         setSaving(false);
         return false;
       }
@@ -187,21 +203,22 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
   }, [canContinue, step, birthDataId, userId, data]);
 
   const back = useCallback(() => {
-    setError(null);
+    setErrorCode(null);
     setStep((current) => (current > 1 ? ((current - 1) as OnboardingStep) : current));
   }, []);
 
   const goToStep = useCallback(
     (target: OnboardingStep) => {
       if (target === 1 || isStepValid((target - 1) as OnboardingStep)) {
-        setError(null);
+        setErrorCode(null);
         setStep(target);
       }
     },
     [isStepValid],
   );
 
-  const summary = useMemo(() => buildOnboardingSummary(data), [data]);
+  const summary = useMemo(() => buildOnboardingSummary(data, t, i18n.language), [data, t, i18n.language]);
+  const error = useMemo(() => errorCode && onboardingErrorMessage(errorCode, t), [errorCode, t]);
 
   return {
     step,
@@ -217,6 +234,7 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
     loading,
     saving,
     error,
+    errorCode,
     setFirstName,
     setBirthDateParts,
     setBirthTime,

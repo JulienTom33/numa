@@ -70,8 +70,7 @@ describe("searchPlaces", () => {
     const { places, error } = await searchPlaces("Paris");
 
     expect(places).toBeNull();
-    expect(error?.code).toBe(expected);
-    expect(error?.message).not.toBe("");
+    expect(error).toEqual({ code: expected });
   });
 
   it("maps an unreadable error body to unknown_error", async () => {

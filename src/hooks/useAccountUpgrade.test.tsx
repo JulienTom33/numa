@@ -70,6 +70,9 @@ describe("useAccountUpgrade", () => {
 
     expect(result.current.step).toBe("idle");
     expect(result.current.error?.code).toBe("email_already_used");
+    expect(result.current.error?.message).toBe(
+      "Cette adresse est déjà associée à un compte. Connectez-vous avec ce compte ou utilisez une autre adresse.",
+    );
   });
 
   it("clears the error on a successful retry after a network failure", async () => {

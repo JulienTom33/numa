@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildOnboardingSummary,
   EMPTY_ONBOARDING_DATA,
-  formatBirthDate,
-  formatBirthTime,
   hasPreciseBirthData,
   normalizeBirthTime,
+  parseIsoDate,
+  timeWarningCode,
   toLocalIsoDate,
   validateBirthDate,
   validateBirthDateParts,
@@ -28,17 +27,17 @@ describe("validateFirstName", () => {
   });
 
   it("rejects an empty or blank value", () => {
-    expect(validateFirstName("")).toBe("Indiquez un prénom ou un pseudonyme.");
-    expect(validateFirstName("   ")).toBe("Indiquez un prénom ou un pseudonyme.");
+    expect(validateFirstName("")).toBe("required");
+    expect(validateFirstName("   ")).toBe("required");
   });
 
   it("rejects a value longer than 50 characters once trimmed", () => {
     expect(validateFirstName(`  ${"a".repeat(50)}  `)).toBeNull();
-    expect(validateFirstName("a".repeat(51))).toBe("Votre prénom ne peut pas dépasser 50 caractères.");
+    expect(validateFirstName("a".repeat(51))).toBe("tooLong");
   });
 
   it("rejects control characters", () => {
-    expect(validateFirstName("Em\u0007ile")).toBe("Votre prénom contient des caractères non autorisés.");
+    expect(validateFirstName("Em\u0007ile")).toBe("invalidCharacters");
   });
 });
 
@@ -53,16 +52,16 @@ describe("validateBirthDate", () => {
   });
 
   it("requires a value", () => {
-    expect(validateBirthDate(null, TODAY)).toBe("Indiquez votre date de naissance.");
-    expect(validateBirthDate("", TODAY)).toBe("Indiquez votre date de naissance.");
+    expect(validateBirthDate(null, TODAY)).toBe("required");
+    expect(validateBirthDate("", TODAY)).toBe("required");
   });
 
   it("rejects a malformed value", () => {
-    expect(validateBirthDate("12/03/1990", TODAY)).toBe("Cette date n'est pas valide.");
+    expect(validateBirthDate("12/03/1990", TODAY)).toBe("invalidFormat");
   });
 
   it("rejects impossible dates such as 31 February", () => {
-    const message = "Cette date n'existe pas. Vérifiez le jour et le mois.";
+    const message = "nonexistent";
     expect(validateBirthDate("1990-02-31", TODAY)).toBe(message);
     expect(validateBirthDate("1991-02-29", TODAY)).toBe(message);
     expect(validateBirthDate("1990-04-31", TODAY)).toBe(message);
@@ -71,11 +70,11 @@ describe("validateBirthDate", () => {
   });
 
   it("rejects a date in the future", () => {
-    expect(validateBirthDate("2026-10-16", TODAY)).toBe("La date de naissance ne peut pas être dans le futur.");
+    expect(validateBirthDate("2026-10-16", TODAY)).toBe("future");
   });
 
   it("rejects an implausible year", () => {
-    expect(validateBirthDate("1899-12-31", TODAY)).toBe("L'année de naissance doit être postérieure à 1899.");
+    expect(validateBirthDate("1899-12-31", TODAY)).toBe("tooEarly");
     expect(validateBirthDate("1900-01-01", TODAY)).toBeNull();
   });
 
@@ -95,14 +94,12 @@ describe("validateBirthDateParts", () => {
   it("requires every part", () => {
     expect(validateBirthDateParts({ day: 2, month: null, year: 1990 }, TODAY)).toEqual({
       isoDate: null,
-      error: "Indiquez votre jour, mois et année de naissance.",
+      error: "incomplete",
     });
   });
 
   it("rejects 31 February", () => {
-    expect(validateBirthDateParts({ day: 31, month: 2, year: 1990 }, TODAY).error).toBe(
-      "Cette date n'existe pas. Vérifiez le jour et le mois.",
-    );
+    expect(validateBirthDateParts({ day: 31, month: 2, year: 1990 }, TODAY).error).toBe("nonexistent");
   });
 
   it("rejects non-integer parts", () => {
@@ -118,9 +115,7 @@ describe("toLocalIsoDate", () => {
 
 describe("validateBirthTime", () => {
   it("requires a precision choice", () => {
-    expect(validateBirthTime({ precision: null, time: "", margin: null })).toBe(
-      "Indiquez si vous connaissez votre heure de naissance.",
-    );
+    expect(validateBirthTime({ precision: null, time: "", margin: null })).toBe("precisionRequired");
   });
 
   it("accepts an unknown time without any value", () => {
@@ -133,29 +128,25 @@ describe("validateBirthTime", () => {
   });
 
   it("requires a time for exact and approximate precision", () => {
-    expect(validateBirthTime({ precision: "exact", time: "", margin: null })).toBe(
-      "Indiquez votre heure de naissance, même approximative.",
-    );
+    expect(validateBirthTime({ precision: "exact", time: "", margin: null })).toBe("timeRequired");
   });
 
   it("rejects a malformed time", () => {
-    const message = "L'heure doit être au format HH:MM (par exemple 14:30).";
+    const message = "invalidFormat";
     expect(validateBirthTime({ precision: "exact", time: "24:00", margin: null })).toBe(message);
     expect(validateBirthTime({ precision: "exact", time: "9:30", margin: null })).toBe(message);
     expect(validateBirthTime({ precision: "exact", time: "12:60", margin: null })).toBe(message);
   });
 
   it("requires a margin for an approximate time", () => {
-    expect(validateBirthTime({ precision: "approximate", time: "14:30", margin: null })).toBe(
-      "Indiquez la marge d'incertitude de votre heure de naissance.",
-    );
+    expect(validateBirthTime({ precision: "approximate", time: "14:30", margin: null })).toBe("marginRequired");
     expect(validateBirthTime({ precision: "approximate", time: "14:30", margin: "over_2_h" })).toBeNull();
   });
 });
 
 describe("validateBirthPlace", () => {
   it("requires a place picked from the suggestions", () => {
-    expect(validateBirthPlace(null)).toBe("Choisissez votre ville de naissance dans la liste des suggestions.");
+    expect(validateBirthPlace(null)).toBe("required");
     expect(validateBirthPlace(LYON)).toBeNull();
   });
 });
@@ -183,61 +174,22 @@ describe("normalizeBirthTime", () => {
   });
 });
 
-describe("formatting", () => {
-  it("formats the birth date in French", () => {
-    expect(formatBirthDate("1990-03-12")).toBe("12 mars 1990");
-    expect(formatBirthDate("invalide")).toBe("invalide");
+describe("parseIsoDate", () => {
+  it("splits an ISO date into numbers", () => {
+    expect(parseIsoDate("1990-03-01")).toEqual({ year: 1990, month: 3, day: 1 });
   });
 
-  it("formats each time precision", () => {
-    expect(formatBirthTime({ precision: "exact", time: "14:30", margin: null })).toBe("14:30");
-    expect(formatBirthTime({ precision: "approximate", time: "14:30", margin: "between_30_min_and_2_h" })).toBe(
-      "Vers 14:30 (marge 30 min–2 h)",
-    );
-    expect(formatBirthTime({ precision: "approximate", time: "14:30", margin: null })).toBe("Vers 14:30");
-    expect(formatBirthTime({ precision: "unknown", time: "", margin: null })).toBe("Heure inconnue");
-    expect(formatBirthTime({ precision: null, time: "", margin: null })).toBe("Non renseignée");
+  it("returns null for a non-ISO value", () => {
+    expect(parseIsoDate("01/03/1990")).toBeNull();
   });
 });
 
-describe("buildOnboardingSummary", () => {
-  const complete: OnboardingData = {
-    firstName: "  Émile ",
-    birthDate: "1990-03-12",
-    birthTime: { precision: "exact", time: "14:30", margin: null },
-    birthPlace: LYON,
-  };
-
-  it("summarises complete data without warning for an exact time", () => {
-    expect(buildOnboardingSummary(complete)).toEqual({
-      firstName: "Émile",
-      birthDate: "12 mars 1990",
-      birthTime: "14:30",
-      birthPlace: "Lyon, France",
-      timezone: "Europe/Paris",
-      timeWarning: null,
-    });
-  });
-
-  it("warns when the time is unknown or approximate", () => {
-    expect(
-      buildOnboardingSummary({ ...complete, birthTime: { precision: "unknown", time: "", margin: null } }).timeWarning,
-    ).toContain("ne peuvent pas être calculés précisément");
-    expect(
-      buildOnboardingSummary({ ...complete, birthTime: { precision: "approximate", time: "14:30", margin: "over_2_h" } })
-        .timeWarning,
-    ).toContain("à titre indicatif");
-  });
-
-  it("handles empty data", () => {
-    expect(buildOnboardingSummary(EMPTY_ONBOARDING_DATA)).toEqual({
-      firstName: "",
-      birthDate: "Non renseignée",
-      birthTime: "Non renseignée",
-      birthPlace: null,
-      timezone: null,
-      timeWarning: null,
-    });
+describe("timeWarningCode", () => {
+  it("warns only for approximate or unknown times", () => {
+    expect(timeWarningCode("exact")).toBeNull();
+    expect(timeWarningCode(null)).toBeNull();
+    expect(timeWarningCode("approximate")).toBe("approximate");
+    expect(timeWarningCode("unknown")).toBe("unknown");
   });
 });
 

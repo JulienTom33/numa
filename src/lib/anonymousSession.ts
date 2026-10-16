@@ -1,13 +1,18 @@
 import type { PostgrestError } from "@supabase/supabase-js";
-import i18n from "../i18n";
 import { supabase } from "./supabaseClient";
 
+export type AnonymousSessionErrorCode = "sign_in_failed" | "profile_failed";
+
 export interface AnonymousSessionError {
-  message: string;
+  code: AnonymousSessionErrorCode;
+  message: string | null;
 }
 
-function toSessionError(error: { message: string } | PostgrestError | null): AnonymousSessionError | null {
-  return error ? { message: error.message } : null;
+function toSessionError(
+  code: AnonymousSessionErrorCode,
+  error: { message: string } | PostgrestError | null,
+): AnonymousSessionError | null {
+  return error ? { code, message: error.message } : null;
 }
 
 /**
@@ -17,12 +22,12 @@ function toSessionError(error: { message: string } | PostgrestError | null): Ano
 export async function startAnonymousSession(): Promise<{ error: AnonymousSessionError | null }> {
   const { data, error } = await supabase.auth.signInAnonymously();
   if (error || !data.user) {
-    return { error: toSessionError(error) ?? { message: i18n.t("auth:anonymousSession.notCreated") } };
+    return { error: toSessionError("sign_in_failed", error) ?? { code: "sign_in_failed", message: null } };
   }
 
   const { error: profileError } = await supabase
     .from("profiles")
     .upsert({ id: data.user.id }, { onConflict: "id" });
 
-  return { error: toSessionError(profileError) };
+  return { error: toSessionError("profile_failed", profileError) };
 }

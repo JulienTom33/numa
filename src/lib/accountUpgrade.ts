@@ -7,7 +7,6 @@ import {
 } from "@supabase/supabase-js";
 import { supabase } from "./supabaseClient";
 
-
 export type UpgradeErrorCode =
   | "no_session"
   | "not_anonymous"
@@ -23,7 +22,6 @@ export type UpgradeErrorCode =
 
 export interface UpgradeError {
   code: UpgradeErrorCode;
-  message: string;
   retryable: boolean;
 }
 
@@ -36,21 +34,6 @@ export type UpgradeResult =
 export interface UpgradeOptions {
   redirectTo?: string;
 }
-
-const MESSAGES: Record<UpgradeErrorCode, string> = {
-  no_session: "Votre session a expiré. Rechargez la page pour retrouver votre espace.",
-  not_anonymous: "Votre compte est déjà créé.",
-  email_already_used:
-    "Cette adresse est déjà associée à un compte. Connectez-vous avec ce compte ou utilisez une autre adresse.",
-  identity_already_linked: "Ce compte est déjà associé à un autre utilisateur.",
-  invalid_email: "Cette adresse email n'est pas valide.",
-  weak_password: "Ce mot de passe est trop faible.",
-  link_expired: "Le lien de confirmation a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
-  rate_limited: "Trop de tentatives. Patientez quelques minutes avant de réessayer.",
-  manual_linking_disabled: "La connexion par ce fournisseur n'est pas disponible pour le moment.",
-  network: "Connexion impossible. Vérifiez votre réseau puis réessayez.",
-  unknown: "La création du compte a échoué. Réessayez.",
-};
 
 const RETRYABLE: ReadonlySet<UpgradeErrorCode> = new Set(["network", "rate_limited", "unknown"]);
 
@@ -69,7 +52,7 @@ const CODE_BY_AUTH_ERROR: Record<string, UpgradeErrorCode> = {
 };
 
 export function toUpgradeError(code: UpgradeErrorCode): UpgradeError {
-  return { code, message: MESSAGES[code], retryable: RETRYABLE.has(code) };
+  return { code, retryable: RETRYABLE.has(code) };
 }
 
 export function mapAuthError(error: AuthError): UpgradeError {

@@ -24,8 +24,7 @@ export interface OnboardingDraftRow {
   timezone: string | null;
 }
 
-export const SAVE_ERROR_MESSAGE = "Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.";
-export const LOAD_ERROR_MESSAGE = "Votre saisie précédente n'a pas pu être récupérée. Vous pouvez reprendre depuis le début.";
+export type OnboardingStoreErrorCode = "save_failed" | "load_failed";
 
 const DRAFT_COLUMNS =
   "user_id, current_step, first_name, birth_date, birth_time, time_precision, time_margin, birth_place, latitude, longitude, timezone";
@@ -88,7 +87,7 @@ export function rowToDraft(row: OnboardingDraftRow): OnboardingDraft {
 export interface LoadedOnboardingDraft {
   draft: OnboardingDraft | null;
   birthDataId: string | null;
-  error: string | null;
+  error: OnboardingStoreErrorCode | null;
 }
 
 export async function loadOnboardingDraft(userId: string): Promise<LoadedOnboardingDraft> {
@@ -99,25 +98,25 @@ export async function loadOnboardingDraft(userId: string): Promise<LoadedOnboard
     .maybeSingle<OnboardingDraftRow & { birth_data_id: string | null }>();
 
   if (error) {
-    return { draft: null, birthDataId: null, error: LOAD_ERROR_MESSAGE };
+    return { draft: null, birthDataId: null, error: "load_failed" };
   }
   return { draft: data ? rowToDraft(data) : null, birthDataId: data?.birth_data_id ?? null, error: null };
 }
 
-export async function saveOnboardingDraft(userId: string, draft: OnboardingDraft): Promise<{ error: string | null }> {
+export async function saveOnboardingDraft(userId: string, draft: OnboardingDraft): Promise<{ error: OnboardingStoreErrorCode | null }> {
   const { error } = await supabase
     .from("onboarding_drafts")
     .upsert(draftToRow(userId, draft), { onConflict: "user_id" });
 
-  return { error: error ? SAVE_ERROR_MESSAGE : null };
+  return { error: error ? "save_failed" : null };
 }
 
 /** Finalise côté base (transaction unique) : prénom dans le profil, données dans birth_data. */
-export async function completeOnboarding(): Promise<{ birthDataId: string | null; error: string | null }> {
+export async function completeOnboarding(): Promise<{ birthDataId: string | null; error: OnboardingStoreErrorCode | null }> {
   const { data, error } = await supabase.rpc("complete_onboarding");
 
   if (error || typeof data !== "string") {
-    return { birthDataId: null, error: SAVE_ERROR_MESSAGE };
+    return { birthDataId: null, error: "save_failed" };
   }
   return { birthDataId: data, error: null };
 }
