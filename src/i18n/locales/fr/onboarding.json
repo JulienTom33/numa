@@ -1,5 +1,31 @@
 {
+  "flow": {
+    "loading": "Chargement de votre parcours…"
+  },
+  "summary": {
+    "title": "Vérifiez vos informations",
+    "confirm": "Valider",
+    "edit": "Modifier<hidden> : {{field}}</hidden>",
+    "fields": {
+      "firstName": "Prénom",
+      "birthDate": "Date de naissance",
+      "birthTime": "Heure de naissance",
+      "birthPlace": "Lieu de naissance"
+    },
+    "time": {
+      "exact": "{{time}}",
+      "approximate": "Vers {{time}} (marge {{margin}})",
+      "unknown": "Heure inconnue"
+    },
+    "timezone": "Fuseau horaire : {{timezone}}",
+    "missing": "Non renseigné",
+    "warnings": {
+      "approximate": "Votre heure est approximative : l'ascendant et les maisons seront donnés à titre indicatif.",
+      "unknown": "Sans heure de naissance, l'ascendant et les maisons ne pourront pas être calculés précisément."
+    }
+  },
   "place": {
+    "title": "Où êtes-vous né(e) ?",
     "cityLabel": "Ville de naissance",
     "cityPlaceholder": "Ex. : Bordeaux",
     "noResults": "Aucune ville trouvée. Vérifiez l'orthographe ou essayez une ville proche.",
@@ -8,6 +34,7 @@
     "timezone": "Fuseau horaire détecté : {{timezone}}"
   },
   "time": {
+    "title": "À quelle heure êtes-vous né(e) ?",
     "question": "Connaissez-vous votre heure de naissance ?",
     "exact": {
       "title": "Heure exacte",
