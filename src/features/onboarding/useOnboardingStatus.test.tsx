@@ -58,7 +58,7 @@ describe("useOnboardingStatus", () => {
   });
 
   it("requires onboarding when the draft cannot be loaded", async () => {
-    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "erreur" });
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "load_failed" });
 
     const { result } = renderHook(() => useOnboardingStatus("user-1"));
 

@@ -3,6 +3,17 @@
     "loading": "Chargement de votre parcours…"
   },
   "summary": {
+    "notProvided": "Non renseignée",
+    "birthDate": "{{day}} {{month}} {{year}}",
+    "birthTime": {
+      "approximate": "Vers {{time}}",
+      "approximateWithMargin": "Vers {{time}} (marge {{margin}})",
+      "unknown": "Heure inconnue"
+    },
+    "timeWarning": {
+      "approximate": "Votre heure est approximative : l'ascendant et les maisons sont donnés à titre indicatif.",
+      "unknown": "Sans heure de naissance, l'ascendant et les maisons ne peuvent pas être calculés précisément."
+    },
     "title": "Vérifiez vos informations",
     "confirm": "Valider",
     "edit": "Modifier<hidden> : {{field}}</hidden>",
@@ -110,18 +121,5 @@
     "save_failed": "Vos informations n'ont pas pu être enregistrées. Vérifiez votre connexion et réessayez.",
     "load_failed": "Votre saisie précédente n'a pas pu être récupérée. Vous pouvez reprendre depuis le début.",
     "missing_session": "Votre session a expiré. Rechargez la page pour reprendre votre saisie."
-  },
-  "summary": {
-    "notProvided": "Non renseignée",
-    "birthDate": "{{day}} {{month}} {{year}}",
-    "birthTime": {
-      "approximate": "Vers {{time}}",
-      "approximateWithMargin": "Vers {{time}} (marge {{margin}})",
-      "unknown": "Heure inconnue"
-    },
-    "timeWarning": {
-      "approximate": "Votre heure est approximative : l'ascendant et les maisons sont donnés à titre indicatif.",
-      "unknown": "Sans heure de naissance, l'ascendant et les maisons ne peuvent pas être calculés précisément."
-    }
   }
 }
