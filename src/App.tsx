@@ -3,6 +3,9 @@ import AppShell from "./components/AppShell/AppShell";
 import DiscoverButton from "./components/DiscoverButton";
 import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
 import EmptyState from "./components/ui/EmptyState/EmptyState";
+import OnboardingFlow from "./features/onboarding/OnboardingFlow";
+import OnboardingLoading from "./features/onboarding/OnboardingLoading";
+import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus";
 import TabBar from "./components/ui/TabBar/TabBar";
 import { useTranslation } from "react-i18next";
 import { useAnonymousSession } from "./hooks/useAnonymousSession";
@@ -13,6 +16,7 @@ function App() {
   const { session, isAnonymous, loading, error, start } = useAnonymousSession();
   const [activeTab, setActiveTab] = useState<MainTab>("today");
   const tabItems = useMainTabs();
+  const onboarding = useOnboardingStatus(session?.user.id ?? null);
 
   if (!session) {
     return (
@@ -31,6 +35,11 @@ function App() {
         </div>
       </AppShell>
     );
+  }
+
+  if (onboarding.status === "loading") return <OnboardingLoading />;
+  if (onboarding.status === "required") {
+    return <OnboardingFlow userId={session.user.id} discoveryMode={isAnonymous} onComplete={onboarding.markCompleted} />;
   }
 
   const tab = tabItems.find((item) => item.key === activeTab) ?? tabItems[0];

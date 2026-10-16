@@ -67,4 +67,20 @@ describe("OnboardingStepLayout", () => {
 
     expect(screen.queryByText("Mode découverte")).not.toBeInTheDocument();
   });
+
+  it("hides the back button when no onBack is given", () => {
+    renderLayout({ onBack: undefined });
+
+    expect(screen.queryByRole("button", { name: "Retour" })).not.toBeInTheDocument();
+  });
+
+  it("shows the error and blocks Continue while saving", async () => {
+    const { onContinue } = renderLayout({ error: "Enregistrement impossible.", saving: true });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Enregistrement impossible.");
+    expect(document.getElementById("test__form--step-continue")).toBeDisabled();
+    await userEvent.type(screen.getByLabelText("Champ"), "{Enter}");
+
+    expect(onContinue).not.toHaveBeenCalled();
+  });
 });
