@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 import AppShell from "./components/AppShell/AppShell";
 import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
 import EmptyState from "./components/ui/EmptyState/EmptyState";
+import DiscoveryConsultGate from "./features/discovery/DiscoveryConsultGate";
+import MigrationScreen from "./features/discovery/MigrationScreen";
 import OnboardingFlow from "./features/onboarding/OnboardingFlow";
 import OnboardingLoading from "./features/onboarding/OnboardingLoading";
 import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus";
@@ -26,6 +28,10 @@ function App() {
     setAuthMode(null);
     if (destination === "today") setActiveTab("today");
   }, []);
+
+  if (auth.converted) {
+    return <MigrationScreen onContinue={auth.acknowledgeConversion} />;
+  }
 
   if (authMode) {
     return <AuthFlow initialMode={authMode} auth={auth} onExit={exitAuth} />;
@@ -70,6 +76,9 @@ function App() {
           title={tab.label}
           description={t("common:comingSoon")}
         />
+        {isAnonymous && tab.key === "consult" && (
+          <DiscoveryConsultGate onSignUp={() => setAuthMode("signup")} onSignIn={() => setAuthMode("signin")} />
+        )}
       </div>
     </AppShell>
   );
