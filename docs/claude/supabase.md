@@ -6,6 +6,28 @@
 - Sessions anonymes supportées pour permettre l'usage sans compte (lecture astrologique avant inscription) ; migration vers compte identifié gère la conservation des données déjà produites.
 - Conversion anonyme → compte : identité rattachée au même user id (`src/lib/accountUpgrade.ts`, hook `useAccountUpgrade`) ; `profiles.status` passe à `authenticated` par trigger sur `auth.users.is_anonymous`. Requiert `enable_manual_linking` pour l'OAuth. Voir `decision-log.md` (issue #15).
 
+### Inscription et connexion (issue #14)
+
+- Client : `src/lib/auth.ts` (actions Supabase, erreurs normalisées `AuthFlowError` : `code` + `retryable`, jamais le message technique) et hook `useAuth()` (une seule instance, dans `App`) ; parcours d'écrans `src/features/auth/AuthFlow.tsx` (AuthScreen + MagicLinkScreen). Messages affichés : clés `auth:errors.<code>`.
+- Lien magique : `signInWithOtp({ email, options: { emailRedirectTo, shouldCreateUser: true } })` — même action en inscription et en connexion (le compte est créé s'il n'existe pas).
+- OAuth Google / Apple : `signInWithOAuth({ provider, options: { redirectTo } })`.
+- **Session anonyme** : l'inscription (lien email ou OAuth) passe par la conversion #15 (`updateUser({ email })` / `linkIdentity`, même user id, aucune donnée copiée). La connexion à un compte existant remplace la session anonyme : un avertissement est affiché, les données anonymes ne sont pas fusionnées (`decision-log.md`, #15).
+- Événement « converti » : avant la conversion, l'user id anonyme est mémorisé (`localStorage`, clé `numa:pending-conversion`) ; `useAuth().converted` vaut `true` dès que ce même user id devient non anonyme (y compris après rechargement ou dans l'onglet ouvert par le lien), jusqu'à `acknowledgeConversion()`. L'écran Migration (#86) s'appuie dessus.
+- Restauration : session persistée par `supabase-js` (`localStorage`), relue par `getSession()` au chargement puis suivie par `onAuthStateChange`.
+- Erreurs de retour (`#error=…&error_code=…` ou query) : lues au chargement, affichées sur l'écran de connexion, puis retirées de l'URL.
+- Déconnexion : `useAuth().signOut()`.
+
+### Configuration Supabase requise (dashboard, par environnement)
+
+Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `env(…)` dans `supabase/config.toml` en local).
+
+- **Authentication → URL Configuration** : `Site URL` = URL publique de l'app ; `Redirect URLs` contient l'origine de l'app suivie de `/` (ex. `https://<domaine>/`, et `http://localhost:5173/` pour le dev Vite). L'app envoie `redirectTo = <origine>/` ; une URL absente de la liste est remplacée par la `Site URL`.
+- **Authentication → Sign In / Providers** : Email activé (lien magique) ; Anonymous sign-ins activé ; **Allow manual linking** activé (`enable_manual_linking`, requis par `linkIdentity`).
+- **Google** : client OAuth (Google Cloud) dont l'URI de redirection autorisée est `https://<ref>.supabase.co/auth/v1/callback` ; client ID et secret saisis dans le provider Google.
+- **Apple** : Services ID, Key ID, Team ID et clé privée (Apple Developer) ; Return URL = la même callback Supabase. Le secret Apple expire (6 mois) : à renouveler.
+- **Email** : la confirmation (`Confirm email`) détermine si la conversion anonyme est immédiate ou attend le clic ; les gabarits « Magic Link » et « Change Email Address » doivent garder `{{ .ConfirmationURL }}`. SMTP personnalisé recommandé en production (limite d'envoi du SMTP Supabase).
+- Local (`supabase/config.toml`) : `site_url` / `additional_redirect_urls` à aligner sur le port du serveur Vite si l'on teste les liens en local ; providers `[auth.external.google|apple]` désactivés par défaut.
+
 ## PostgreSQL
 
 - Schéma versionné via migrations Supabase (`supabase/migrations`).
