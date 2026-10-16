@@ -423,3 +423,6 @@ verify_jwt = true
 
 [functions.geocode]
 verify_jwt = true
+
+[functions.natal-chart]
+verify_jwt = true
