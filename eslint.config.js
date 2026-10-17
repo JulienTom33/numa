@@ -84,6 +84,17 @@ export default tseslint.config(
     },
   },
   {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/**/*.test.{ts,tsx}", "src/**/*.stories.{ts,tsx}", "src/test/**", "src/docs/**"],
+    rules: {
+      "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
+      "max-lines-per-function": ["warn", { max: 60, skipBlankLines: true, skipComments: true }],
+      complexity: ["warn", 12],
+      "@typescript-eslint/consistent-type-imports": "error",
+      eqeqeq: "error",
+    },
+  },
+  {
     files: ["**/*.test.{ts,tsx}", "src/test/**"],
     rules: {
       "numa/no-comments": "off",
