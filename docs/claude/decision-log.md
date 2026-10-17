@@ -207,3 +207,9 @@ Alternatives écartées : seuil de couverture à 0 % (pas de garde-fou) ou à 10
 Contexte : besoin d'encadrer Claude Code sans concentrer toute la documentation dans un seul fichier long (issue #58).
 Décision : `CLAUDE.md` court à la racine + documents spécialisés sous `docs/claude/` (architecture, git-workflow, development, supabase, ai-astrology, security, pull-requests, decision-log), indexés depuis `CLAUDE.md`.
 Alternatives écartées : un unique fichier `CLAUDE.md` exhaustif — jugé moins maintenable dans la durée.
+
+## 2026-10-17 — Review Claude notée et orchestration d'agents
+
+Contexte : traiter plusieurs tickets en parallèle sans conflit ni dérive de qualité, avec une consommation de tokens maîtrisée (issues #155, #157, epic #145).
+Décision : orchestrateur Opus medium (`/orchestrate`) et workers Sonnet medium, 5 en parallèle maximum sur des fichiers disjoints ; reviewer unique `pr-reviewer` partagé local/CI, score sur 100, approbation à 80 sans bloquant ; jusqu'à 5 corrections automatiques, arrêt si le score stagne 2 tours ; le reviewer est lu depuis la branche de base ; merge toujours humain.
+Alternatives écartées : verdict binaire sans score (pas de mesure de progression) ; boucle de correction non bornée (coût et risque de dérive).

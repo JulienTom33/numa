@@ -23,8 +23,19 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 - Aucun secret, clé privée ou donnée personnelle commité. Voir `docs/claude/security.md`.
 - RLS obligatoire sur toute table Supabase exposée à des données utilisateur. Voir `docs/claude/supabase.md`.
 - Code serveur = Supabase Edge Functions (`supabase/functions/`). Toute clé d'API astrologique ou IA y reste, jamais dans le bundle client (`VITE_*`). Voir `docs/claude/architecture.md`.
-- Chaque PR est d'abord relue par Claude en CI (`claude-review.yml`, corrections bornées à 3) ; la review et le merge humains restent obligatoires. Voir `docs/claude/pull-requests.md`.
+- Chaque PR est d'abord relue par Claude en CI (`claude-review.yml`, score ≥ 80 requis, jusqu'à 5 corrections automatiques) ; la review et le merge humains restent obligatoires. Voir `docs/claude/pull-requests.md`.
 - Notifications Discord (PR, CI, tickets) : webhook stocké dans `secrets.DISCORD_WEBHOOK_URL`, jamais dans le code. Voir `docs/claude/pull-requests.md`.
+
+## Interdits
+
+- `any`, `as` de contournement, `console.log`, TODO/FIXME, code mort, commentaires.
+- Texte en dur (hors tests/stories), couleur en dur, secret ou donnée personnelle commités.
+- Modifier un fichier hors du périmètre du ticket, ajouter une dépendance sans la justifier dans la PR, créer une abstraction avant un second usage réel.
+- Merger, approuver, force-pusher, pousser sur `master`.
+
+## Définition de terminé
+
+Critères d'acceptation remplis, test dans la même PR, validation ci-dessous verte, `/review-pr` à 80 ou plus sans finding bloquant, PR ouverte avec `Closes #<id>`.
 
 ## Validation avant PR
 
@@ -61,9 +72,10 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/security.md` | Secrets, données personnelles, rate limiting, logs |
 | `docs/claude/pull-requests.md` | Création de PR, corrections, notifications, interdiction de merge auto |
 | `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |
+| `docs/claude/orchestration.md` | Orchestrateur, workers, coordination par fichiers, budget, boucle de review |
 | `docs/claude/decision-log.md` | Décisions d'architecture et règles évolutives |
 | `docs/research/api-astrologiques.md` | Comparatif des moteurs et API astrologiques, profils de référence, mesures (#50) |
 | `docs/research/fournisseurs-ia.md` | Fournisseurs IA gratuits (Mistral, Groq, Gemini, OpenAI, OpenRouter) : quotas, budget de bêta, risques juridiques, mix et bascule, longueur de réponse, protocole de test (#51) |
 | `docs/design/handoff.md` | Handoff design → dev : écrans du MVP, tickets, composants, tokens, états, responsive, accessibilité |
 
-Consulter le document spécialisé concerné avant toute tâche touchant à son périmètre.
+Les règles par chemin sont dans `.claude/rules/` (chargées automatiquement). Consulter le document spécialisé concerné avant toute tâche touchant à son périmètre.
