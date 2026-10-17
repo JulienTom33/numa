@@ -16,6 +16,11 @@ vi.mock("./lib/supabaseClient", () => ({
   },
 }));
 
+vi.mock("./lib/skyChart", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./lib/skyChart")>()),
+  fetchMyChart: vi.fn(() => new Promise<never>(() => undefined)),
+}));
+
 vi.mock("./lib/onboardingStore", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./lib/onboardingStore")>()),
   loadOnboardingDraft: vi.fn(),

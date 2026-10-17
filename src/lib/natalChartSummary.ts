@@ -107,7 +107,7 @@ async function readFirstName(): Promise<string | null> {
   return typeof data?.display_name === "string" && data.display_name.trim() !== "" ? data.display_name : null;
 }
 
-async function readComputedAt(): Promise<string | null> {
+export async function readComputedAt(): Promise<string | null> {
   const { data } = await supabase
     .from("natal_charts")
     .select("computed_at")
