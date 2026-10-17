@@ -75,6 +75,7 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/orchestration.md` | Orchestrateur, workers, coordination par fichiers, budget, boucle de review |
 | `docs/claude/decision-log.md` | Décisions d'architecture et règles évolutives |
 | `docs/research/api-astrologiques.md` | Comparatif des moteurs et API astrologiques, profils de référence, mesures (#50) |
+| `docs/research/fournisseurs-ia.md` | Fournisseurs IA gratuits (Mistral, Groq, Gemini, OpenAI, OpenRouter) : quotas, budget de bêta, risques juridiques, mix et bascule, longueur de réponse, protocole de test (#51) |
 | `docs/design/handoff.md` | Handoff design → dev : écrans du MVP, tickets, composants, tokens, états, responsive, accessibilité |
 
 Les règles par chemin sont dans `.claude/rules/` (chargées automatiquement). Consulter le document spécialisé concerné avant toute tâche touchant à son périmètre.
