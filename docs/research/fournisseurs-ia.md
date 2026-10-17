@@ -1,87 +1,114 @@
 # Fournisseurs IA : quotas, coûts et stratégie (#51)
 
-Recherche préalable à #26 (intégration du fournisseur IA et du prompt Numa). Consultation des sources le **2026-10-17**. Tarifs et limites changent souvent : toute valeur est à revérifier avant la mise en production. « Non vérifié » = information introuvable ou non confirmée par une source officielle.
+Recherche préalable à #26 (intégration du fournisseur IA et du prompt Numa). Sources consultées le **2026-10-17**. Tarifs et limites changent souvent : toute valeur est à revérifier avant la mise en production. « Non vérifié » = introuvable ou non confirmé par une source officielle. Ce document n'est pas un avis juridique.
 
-## Résultats clés
+## Décision du mainteneur : gratuit uniquement
 
-1. **L'offre gratuite de l'API Gemini est inutilisable pour Numa** : les conditions imposent les services payants dès que l'application est accessible à des utilisateurs de l'EEE, du Royaume-Uni ou de Suisse, et interdisent les applications susceptibles d'être utilisées par des moins de 18 ans. En offre gratuite, Google utilise les contenus pour améliorer ses produits, avec relecture humaine possible (https://ai.google.dev/gemini-api/terms).
-2. Le « gratuit soutenable » du ticket devient donc « quasi gratuit » : Gemini Flash-Lite payant coûte environ 0,0016 $ par question (voir « Coûts estimés »), soit moins de 2 $ pour 1 000 questions.
-3. Le fallback n'a **pas pu être testé en conditions réelles** (aucune clé API disponible pour cette recherche). Un protocole reproductible est fourni plus bas ; le critère « fallback testé » de #51 reste à valider par le mainteneur.
+Retour sur la PR #144 : les fournisseurs IA doivent être gratuits (API et modèles gratuits), **aucun coût**, avec un mix possible entre Gemini, ChatGPT/OpenAI et Mistral. Le payant (Gemini Flash-Lite payant, Claude Haiku) est donc **écarté** ; il reste décrit en fin de document comme alternative écartée.
 
-## Tableau comparatif
+### Résumé
 
-| Critère | Gemini (Flash-Lite / Flash) | Groq (modèles ouverts) | Claude Haiku (référence payante) |
-|---|---|---|---|
-| Modèles | `gemini-3.1-flash-lite`, `gemini-3.5-flash-lite`, `gemini-3.6-flash` (stables) | `openai/gpt-oss-120b`, `openai/gpt-oss-20b`, `llama-3.3-70b-versatile` (production) ; `qwen/qwen3.8-27b` (preview, à éviter) | Claude Haiku 5.5 |
-| Offre gratuite | Oui, mais interdite pour l'EEE/UK/CH et les apps ouvertes aux mineurs | Oui (plan Free). Limites du plan Free : non vérifié | Non |
-| Limites (RPM / TPM / RPD) | Gratuit : non publiées dans la doc (renvoi vers https://aistudio.google.com/rate-limit). Non vérifié | Plan Developer, par modèle : gpt-oss-120b 30 RPM, 1 000 RPD, 8 000 TPM, 200 000 TPD. Plan Free : non vérifié | Palier Start : 1 000 RPM, 2 M tokens d'entrée/min, 400 000 tokens de sortie/min |
-| Portée des limites | Par projet ; RPD réinitialisé à minuit heure du Pacifique | Par organisation ; tokens en cache non comptés | Par organisation, algorithme du seau à jetons |
-| Prix (par M tokens, entrée / sortie) | Flash-Lite 3.1 : 0,25 $ / 1,50 $ ; Flash-Lite 3.5 : 0,30 $ / 2,50 $ ; Flash 3.6 : 0,75 $ / 3,75 $ jusqu'au 31/12/2026 puis 1,50 $ / 7,50 $ | Non vérifié (page tarifs sans chiffres exploitables) | Haiku 5.5 : 0,10 $ / 0,50 $ (prompts jusqu'à 100 000 tokens) ; Haiku 4.5 : 1 $ / 5 $ |
-| Contexte | Non vérifié (non listé sur les pages consultées) | 131 072 tokens ; sortie max 65 536 (gpt-oss) | Non vérifié |
-| Vitesse / latence | Non mesurée | Annoncée : gpt-oss-120b 500 tokens/s, gpt-oss-20b 1 000 tokens/s (non mesurée) | Non mesurée |
-| Français | Non évalué (aucun test possible ; voir protocole) | Non évalué ; modèles ouverts, à tester | Non évalué |
-| Données / entraînement | Gratuit : utilisées pour améliorer les produits, relecture humaine possible. Payant : non | Pas de rétention des entrées/sorties par défaut ; journaux de fiabilité/abus jusqu'à 30 jours ; ZDR activable dans les paramètres. Entraînement : non confirmé par la page officielle consultée. Stockage aux États-Unis (Google Cloud), clauses contractuelles types | Non vérifié dans cette recherche |
-| Erreur 429 | Erreur de limite sans détail documenté pour RPM/TPM/RPD ; `429 RESOURCE_EXHAUSTED` documenté pour les limites de dépense (payant). En-têtes : non vérifié | `429 Too Many Requests` ; `retry-after` (secondes) uniquement sur 429 ; `x-ratelimit-limit/remaining/reset-requests` (RPD) et `-tokens` (TPM) sur chaque réponse | `429` `rate_limit_error` ; `retry-after` quand présent, absent pour le plafond de dépense mensuel (`enforced_spend_limit_reached`, inutile de réessayer) ; en-têtes `anthropic-ratelimit-*` |
+1. **Mix recommandé : Mistral (principal, offre gratuite, entreprise européenne) puis Groq `openai/gpt-oss-120b` (secours 1, plan gratuit), puis réponse dégradée sans IA (secours 2).** Aucun appel payant.
+2. **Aucun mix gratuit n'est pleinement sain juridiquement pour un public européen.** Les offres gratuites reposent sur des clauses de réutilisation des données (Mistral en mode gratuit de Studio, Gemini gratuit) ou sur un hébergement hors UE (Groq). Les mesures d'atténuation ci-dessous réduisent fortement l'exposition mais ne la suppriment pas. L'option la plus sûre à coût nul est de n'envoyer **aucune donnée personnelle** (prompt réduit aux seuls facteurs astrologiques) et d'avertir l'utilisateur de ne pas saisir de données personnelles dans sa question.
+3. **Gemini gratuit est à écarter** pour un public EEE/UK/CH : ses conditions l'interdisent expressément.
+4. **OpenAI/ChatGPT est à écarter** : pas d'offre API gratuite officielle ; seul un programme de partage de données (prompts et réponses envoyés à OpenAI contre des jetons gratuits) existe, incompatible avec des données de naissance.
+5. Le budget gratuit **tient** pour une bêta privée de 100 testeurs **si** les limites réelles du compte Mistral correspondent aux chiffres tiers (non vérifiés, à lire dans la console). Sans Mistral, Groq seul ne tient pas (voir « Budget »).
+6. Le fallback n'a **pas pu être testé en conditions réelles** (aucune clé API). Un protocole est fourni ; le critère « fallback testé » de #51 reste à valider par le mainteneur.
 
-Sources : https://ai.google.dev/gemini-api/docs/rate-limits, https://ai.google.dev/gemini-api/docs/pricing, https://ai.google.dev/gemini-api/docs/models, https://ai.google.dev/gemini-api/terms, https://console.groq.com/docs/rate-limits, https://console.groq.com/docs/models, https://console.groq.com/docs/your-data, https://platform.claude.com/docs/en/api/rate-limits, https://platform.claude.com/docs/en/docs/about-claude/pricing.
+## Classement des fournisseurs (public européen)
 
-Mistral La Plateforme : la page officielle des paliers renvoie 404 et ses limites ne sont publiées que par des sites tiers (ex. 1 requête/s, 500 000 tokens/min, 1 milliard de tokens/mois, plan gratuit conditionné à l'acceptation d'un usage des données pour l'entraînement) : **non vérifié, non retenu**.
-
-## Coûts estimés
-
-Hypothèse : 4 000 tokens d'entrée (consignes + thème + historique court) et 400 tokens de sortie par question.
-
-| Modèle | Coût par question | Pour 1 000 questions |
+| Fournisseur | Classement | Raison |
 |---|---|---|
-| Gemini 3.1 Flash-Lite | 4 000 x 0,25 / 1 M + 400 x 1,50 / 1 M = 0,0016 $ | 1,60 $ |
-| Gemini 3.6 Flash (après le 01/01/2027) | 4 000 x 1,50 / 1 M + 400 x 7,50 / 1 M = 0,009 $ | 9 $ |
-| Claude Haiku 5.5 | 4 000 x 0,10 / 1 M + 400 x 0,50 / 1 M = 0,0006 $ | 0,60 $ |
+| Mistral (Experiment / Free) | **Utilisable avec mesures** | Société française. Documentation API : données API non utilisées pour l'entraînement, ZDR sur demande ; aide en ligne : en mode Free de Studio, entrées et sorties peuvent servir à entraîner (désinscription possible). Les deux sources divergent : à lever avec le support avant la prod. Hébergement UE : non vérifié sur les pages consultées. |
+| Groq (plan Free) | **Utilisable avec mesures** | Pas de rétention des entrées/sorties par défaut, journaux jusqu'à 30 jours, ZDR activable ; stockage aux États-Unis (clauses contractuelles types). Entraînement : non confirmé. Conditions du plan Free pour un usage commercial : non vérifiées. Données strictement minimales. |
+| OpenRouter (modèles `:free`) | **À écarter** (ou secours d'urgence sans donnée personnelle) | 50 requêtes/jour sans crédits achetés (1 000 avec 10 crédits, donc payant). Le routage vers des fournisseurs tiers dont les politiques de données ne sont pas maîtrisées : non vérifié. |
+| Gemini (offre gratuite) | **À écarter pour un public EEE** | Conditions : services payants obligatoires pour les utilisateurs EEE/UK/CH et interdiction d'apps susceptibles d'être utilisées par des moins de 18 ans ; contenus utilisés pour améliorer les produits, relecture humaine possible. |
+| OpenAI / ChatGPT | **À écarter** | Pas d'offre API gratuite officielle trouvée. Programme de jetons gratuits quotidiens contre le partage des entrées/sorties avec OpenAI (éligibilité par compte, préavis de 30 jours avant arrêt). Incompatible avec des données personnelles et dépendant du compte. |
 
-Le quota anonyme de 2 questions par session (#27) borne le coût des visiteurs anonymes. Les comptes identifiés ne sont pas encore limités : un rate limiting par utilisateur est à définir avec #26.
+## Quotas et conditions par fournisseur
 
-## Recommandation
+| Critère | Mistral | Groq | Gemini (gratuit) | OpenRouter `:free` | OpenAI |
+|---|---|---|---|---|---|
+| Limites gratuites | Par modèle : requêtes/s, tokens/min, tokens/mois ; valeurs visibles seulement dans la console (Admin, API, Limits). Chiffres tiers non vérifiés : environ 1 requête/s, 500 000 tokens/min, 1 milliard de tokens/mois | Plan Free : non vérifié. Plan Developer (base) pour gpt-oss-120b : 30 RPM, 1 000 RPD, 8 000 TPM, 200 000 TPD ; le Free ne peut pas être supposé supérieur | Non publiées dans la doc (renvoi vers AI Studio). Non vérifié | 20 requêtes/min ; 50 requêtes/jour (moins de 10 crédits achetés) | Programme de partage de données : quota quotidien de jetons selon palier, détails variables selon les versions de la page : non vérifié |
+| Contexte | Non vérifié | 131 072 tokens (gpt-oss-120b) | Non vérifié | Variable selon le modèle | Non applicable |
+| Français | Mistral : modèles d'origine française (qualité à tester) | À tester | À tester | À tester | Non applicable |
+| Erreur 429 | Page des limites sans détail sur 429 ni en-têtes : non vérifié | `429` ; `retry-after` (secondes) uniquement sur 429 ; `x-ratelimit-*-requests` (RPD) et `-tokens` (TPM) sur chaque réponse | Erreur de limite, détail non documenté pour RPM/TPM/RPD | `429` `rate_limit_exceeded` ; `X-RateLimit-*` ; `Retry-After` parfois ; en flux, erreur SSE avec `finish_reason: "error"` | Non applicable |
+| Latence | Non mesurée | Annoncée très rapide (gpt-oss-120b : 500 tokens/s) ; non mesurée | Non mesurée | Non mesurée | Non applicable |
 
-- **Principal : Gemini 3.1 Flash-Lite, en offre payante (facturation activée)**, avec plafond de dépense côté Google. Justification : seule option dont les conditions de données sont acceptables (payant : pas d'entraînement sur les données), modèle stable, coût négligeable. Ne jamais utiliser le niveau gratuit en production. `gemini-3.6-flash` reste une option si la qualité française de Flash-Lite est insuffisante au test.
-- **Fallback : Groq `openai/gpt-oss-120b`** (production, contexte 131 072 tokens, en-têtes 429 explicites), ZDR activé. Limites du plan Free et qualité en français à valider (non vérifiées). Réserve RGPD : stockage aux États-Unis ; n'envoyer que le contexte minimal.
-- **Alternative au fallback : Claude Haiku 5.5** (payant, 0,10 $ / 0,50 $ par M tokens selon la page de tarifs consultée), pertinent si les tests montrent un écart de qualité en français ou de ton non catégorique. Prix à revérifier avant décision.
+Sources : https://help.mistral.ai/en/articles/698531-why-am-i-hitting-api-rate-limits-and-how-do-i-increase-them, https://docs.mistral.ai/admin/billing-usage/usage-limits, https://help.mistral.ai/en/articles/347617-do-you-use-my-user-data-to-train-your-artificial-intelligence-models, https://docs.mistral.ai/getting-started/quickstarts/studio/activate-and-generate-api-key, https://console.groq.com/docs/rate-limits, https://console.groq.com/docs/models, https://console.groq.com/docs/your-data, https://ai.google.dev/gemini-api/terms, https://ai.google.dev/gemini-api/docs/rate-limits, https://openrouter.ai/docs/api-reference/limits, https://help.openai.com/en/articles/10306912-sharing-feedback-evaluation-and-fine-tuning-data-and-api-inputs-and-outputs. La page https://help.openai.com/... n'a pas pu être lue directement (403) : le résumé du programme OpenAI provient d'un résultat de recherche. Les chiffres Mistral « tiers » viennent d'agrégateurs non officiels (ex. https://mintlify.com/cheahjs/free-llm-api-resources/providers/free/mistral-plateforme).
+
+## Mix recommandé et bascule
+
+Chaîne : **Mistral (principal)**, **Groq `openai/gpt-oss-120b` (secours 1)**, **réponse dégradée (secours 2)**.
+
+- Sur `429`, `5xx` ou timeout du principal : une seule nouvelle tentative si `retry-after` est présent et inférieur à 2 s, sinon bascule immédiate sur le secours suivant. Pas de répartition de charge au MVP (elle consommerait inutilement le quota du secours) ; la bascule intervient seulement sur erreur.
+- Un compteur de quota maison (jour courant, par fournisseur) est une amélioration optionnelle : avant d'atteindre la limite connue, passer directement au suivant. Les valeurs de limites viennent de la configuration, pas du code.
+- Secours 2 (sans IA) : message i18n expliquant que Numa est très sollicité et invitant à réessayer, avec rappel que la question n'est pas comptée. Un résumé statique du thème (déjà affiché ailleurs) reste disponible.
+- Chaque erreur fournisseur ou bascule libère la réservation (`release_question`) : la question n'est jamais décomptée si aucune réponse n'est livrée (cohérent avec #27). Une réponse livrée par n'importe quel maillon de la chaîne déclenche `commit_question`.
+- Disjoncteur en mémoire de quelques minutes après un `429` sans `retry-after` ou une indisponibilité répétée, pour éviter les appels voués à l'échec.
+- Aucun texte de réponse d'erreur en dur côté serveur : code stable (`ai_unavailable`), le front traduit via `t()`.
+- Rate limiting par utilisateur identifié (minute et jour) : à définir avec #26, il protège le quota gratuit partagé.
+
+## Budget de quota gratuit contre une bêta privée
+
+Hypothèses (à ajuster) : bêta de **100 testeurs**, 2 questions anonymes chacun (quota #27) + 3 questions de compte par testeur et par jour = **500 questions/jour** au pic. Prompt réduit : environ 2 500 tokens en entrée (consignes + facteurs astrologiques + question) et 400 en sortie, soit **2 900 tokens/question**, **1,45 million de tokens/jour**, environ 45 millions de tokens/mois, 500 requêtes/jour.
+
+| Source | Capacité gratuite | Questions/jour couvertes | Verdict |
+|---|---|---|---|
+| Mistral (chiffres tiers, non vérifiés) | 1 milliard de tokens/mois, 500 000 tokens/min, 1 requête/s | Environ 11 000 (limite mensuelle) ; 1 requête/s tient largement pour 500 requêtes/jour en pointes modérées | Tient très largement **si** ces chiffres sont exacts |
+| Groq gpt-oss-120b (plan Developer, borne de référence ; Free non vérifié) | 200 000 tokens/jour, 1 000 requêtes/jour | Environ 69 questions/jour (limite en tokens) | Insuffisant seul ; sert de secours pour absorber des pannes ou des pics |
+| OpenRouter `:free` | 50 requêtes/jour | 50 | Marginal, écarté |
+| Gemini gratuit | Non vérifié | Non applicable | Écarté (conditions) |
+
+Lecture : le gratuit tient pour 100 testeurs **uniquement grâce à Mistral**. Il cesse de tenir (1) si les limites réelles du compte Mistral sont très inférieures aux chiffres tiers, à vérifier dans la console avant de s'engager, (2) si le secours Groq doit porter plus d'environ 70 questions/jour, ce qui arrive si Mistral est indisponible plus de quelques heures, (3) au-delà d'environ 10 000 questions/jour sur Mistral (environ 2 000 testeurs actifs avec 5 questions/jour), en supposant les chiffres tiers corrects. Au-delà, l'application devra soit passer sur un plan payant (décision écartée à ce stade), soit réduire le quota par utilisateur.
+
+## Verrous juridiques et mesures d'atténuation
+
+Verrous constatés :
+
+- Gemini gratuit : interdit pour les utilisateurs EEE/UK/CH et les apps ouvertes aux mineurs ; contenus utilisés pour améliorer les produits, relecture humaine possible. Non contournable par des mesures : écarté.
+- Mistral gratuit : l'aide en ligne indique que, en mode Free de Studio, les entrées et sorties peuvent servir à l'entraînement (désinscription possible) ; la documentation API indique l'inverse. Lequel s'applique à une clé de l'offre Experiment : non vérifié.
+- Groq : stockage aux États-Unis ; entraînement non confirmé ; usage commercial du plan Free non vérifié.
+- Les données de naissance sont des données personnelles ; une combinaison date, heure et lieu est quasi identifiante.
+
+Mesures (à implémenter dans #26 et documenter dans la politique de confidentialité #45) :
+
+1. **Prompt réduit aux seuls facteurs astrologiques** : signes, degrés, maisons, aspects, avertissements d'heure. Jamais prénom, e-mail, date, heure ou lieu de naissance, coordonnées, identifiant utilisateur. Le thème seul, sans les données qui l'ont produit, n'identifie pas la personne.
+2. **Question utilisateur filtrée et avertie** : message affiché près du champ « ne saisissez pas de données personnelles (nom, date ou lieu de naissance, santé…) » (clé i18n) ; longueur limitée (500 caractères) ; détection simple de motifs évidents (e-mail, téléphone, date de naissance) avec refus poli ; question placée hors des consignes système.
+3. **Fournisseur européen en premier** : Mistral comme principal ; l'hébergement exact des appels API de l'offre gratuite est à confirmer (non vérifié ici).
+4. **ZDR / désinscription** : demander la rétention nulle et la désinscription de l'entraînement chez Mistral ; activer ZDR chez Groq.
+5. **Transparence** : mentionner dans la politique de confidentialité (#45) les sous-traitants (Mistral, Groq), les transferts hors UE (Groq, clauses contractuelles types), le contenu envoyé et sa finalité ; indiquer à l'utilisateur, dans l'interface, que la réponse est générée par un fournisseur IA externe.
+6. **Public** : conserver l'exigence de majorité si la politique du fournisseur l'impose (non vérifiée pour Mistral et Groq).
+7. **Pas de journalisation du contenu** des questions et réponses au-delà du besoin produit ; journaliser seulement fournisseur, code d'erreur, latence.
+
+Risques restants après mesures : une question libre peut contenir des données personnelles malgré l'avertissement ; la base légale et les clauses de réutilisation en offre gratuite ne sont pas négociables ; le caractère « gratuit » n'offre aucune garantie de service ni de stabilité des conditions. Si le mainteneur juge ce risque inacceptable pour un public européen, l'option la plus sûre est un plan payant avec conditions de données entreprise (écarté pour l'instant) ; l'option gratuite la plus sûre est celle décrite ici, avec Mistral seul en IA et réponse dégradée plutôt qu'un secours hors UE (supprimer Groq de la chaîne).
 
 ## Longueur de réponse
 
-- `max_output_tokens` : **600** (plafond dur contre les coûts et les dérives).
-- Cible demandée dans le prompt : **120 à 200 mots** (environ 250 à 400 tokens en français), 3 courts paragraphes au plus, avec les points astrologiques utilisés cités.
-- Si la réponse est coupée par la limite, tronquer à la dernière phrase complète côté serveur ; la réponse est livrée, la question est décomptée.
-
-## Stratégie de dépassement de quota
-
-Principe, cohérent avec #27 : **une erreur fournisseur ne décompte jamais la question** (`release_question`). Seule une réponse livrée déclenche `commit_question`.
-
-1. Appel au principal avec timeout. Sur `429`, `5xx` ou timeout : une nouvelle tentative seulement si `retry-after` est présent et inférieur à 2 s ; sinon bascule immédiate.
-2. Bascule sur le fallback, même contexte et mêmes consignes. Journaliser (sans contenu) le fournisseur utilisé et le code d'erreur.
-3. Échec du fallback : `release_question`, puis réponse `503` avec un code stable (`ai_unavailable`) que le front traduit en message poli (clé i18n, aucun texte en dur côté serveur), du type « Numa est très sollicité, réessaie dans quelques minutes. Ta question n'a pas été comptée. »
-4. Plafond de dépense atteint (429 sans `retry-after`) : ne pas réessayer ; disjoncteur en mémoire de quelques minutes pour éviter les appels voués à l'échec, et alerte au mainteneur (Discord).
-5. Pas de file d'attente côté serveur au MVP : la durée d'une Edge Function est limitée et les réservations expirent à 5 minutes (#27). Un refus poli vaut mieux qu'une attente.
-6. Rate limiting par utilisateur identifié (minute et jour) : à décider avec #26.
+- `max_output_tokens` : **600** (plafond dur).
+- Cible demandée dans le prompt : **120 à 200 mots** (environ 250 à 400 tokens), 3 courts paragraphes au plus, avec les points astrologiques utilisés cités. Une cible courte économise aussi le quota gratuit.
+- Si la réponse est coupée par la limite, tronquer à la dernière phrase complète côté serveur.
 
 ## Contraintes pour #26
 
-- **Données minimales** : jamais le prénom, l'e-mail, les coordonnées exactes de naissance, ni l'identifiant utilisateur. Envoyer uniquement le thème calculé (signes, degrés, maisons, aspects, avertissements d'heure) et la question.
-- **Prompt versionné** : identifiant de version du prompt et modèle stockés avec chaque réponse ; prompt dans le dépôt (pas de « prompt magique » caché), règles éditoriales de `ai-astrology.md` incluses.
-- **Fournisseur injectable** : les deux fournisseurs derrière l'interface `QuestionProvider` (#27), avec un fournisseur composite principal puis fallback.
-- **Timeouts** : 15 s sur le principal, 10 s sur le fallback (valeurs de départ à ajuster d'après les mesures du protocole) ; total sous la limite de l'Edge Function et sous l'expiration de 5 min des réservations.
+- **Fournisseur injectable** : les deux fournisseurs derrière l'interface `QuestionProvider` (#27), avec un fournisseur composite (chaîne ordonnée, configuration par fournisseur : modèle, timeout, activé ou non).
+- **Prompt versionné** : version du prompt et fournisseur/modèle stockés avec chaque réponse ; prompt dans le dépôt.
+- **Timeouts** : 15 s sur le principal, 10 s sur le secours 1 (valeurs de départ à ajuster d'après le protocole) ; total sous la limite de l'Edge Function et sous l'expiration de 5 min des réservations (#27).
 - **Secrets** : clés dans les secrets Supabase, jamais en `VITE_*`.
-- **Sortie** : valider la réponse (non vide, longueur plafonnée, en français) avant `commit_question`.
-- **Entrée utilisateur** : donnée non fiable, placée hors des consignes système, longueur limitée (par exemple 500 caractères).
+- **Sortie** : valider (non vide, longueur plafonnée, en français) avant `commit_question`.
+- **Entrée** : appliquer les mesures 1 et 2 ci-dessus.
 
-## Protocole de test du fallback (à exécuter par le mainteneur)
+## Protocole de test (à exécuter par le mainteneur avec des clés)
 
-Non exécuté pour #51 faute de clé API. Script de référence **non versionné** (poste du mainteneur, clés en variables d'environnement, jamais commitées), à écrire selon ces étapes :
+Non exécuté pour #51 faute de clé API. Script de référence **non versionné** (poste du mainteneur, clés en variables d'environnement, jamais commitées) :
 
-1. Charger un thème de référence (profils P1 à P5 de `docs/research/api-astrologiques.md`) au format `chart` de `natal-chart`.
-2. Pour chaque fournisseur et chaque question : envoyer consignes système + thème + question avec 600 tokens maximum, 3 répétitions ; mesurer la latence totale, les tokens consommés et les en-têtes de limites.
-3. Provoquer un `429` (rafale de requêtes parallèles) et relever statut, `retry-after` et en-têtes pour confirmer le comportement documenté.
-4. Noter chaque réponse selon les critères.
+1. Charger un thème de référence (profils P1 à P5 de `docs/research/api-astrologiques.md`) et n'en extraire que les facteurs astrologiques (prompt réduit).
+2. Pour **Mistral puis Groq** (chaque maillon du mix) et chaque question : consignes + facteurs + question, 600 tokens maximum, 3 répétitions ; mesurer latence, tokens consommés, en-têtes de limites.
+3. Relever **les limites réelles du compte** (console Mistral, Admin, API, Limits ; console Groq) et les comparer au « Budget » ci-dessus.
+4. Provoquer un `429` (rafale parallèle) sur chaque fournisseur et relever statut, `retry-after`, en-têtes ; vérifier la bascule en simulant l'échec du principal.
+5. Confirmer par le support ou la console la règle d'entraînement applicable à la clé Mistral gratuite et l'hébergement des appels API.
 
-Jeu de 5 questions :
+Questions :
 
 1. « Que dit mon Soleil sur ma manière d'aborder les choses ? »
 2. « Comment mon ascendant influence-t-il la première impression que je donne ? »
@@ -91,25 +118,27 @@ Jeu de 5 questions :
 
 | Critère | Seuil d'acceptation |
 |---|---|
-| Exactitude des données du thème | Aucune donnée inventée ou contredisant le thème fourni |
+| Exactitude des données du thème | Aucune donnée inventée ou contredisant les facteurs fournis |
 | Ton non catégorique | Tendances et possibilités, aucune affirmation absolue |
 | Longueur | 120 à 200 mots visés, jamais plus de 300 ; pas de coupure en milieu de phrase |
 | Latence | Médiane sous 5 s, maximum sous 10 s (valeurs de départ) |
 | Français | Correct et clair, jargon expliqué |
 
-Le fallback est accepté si aucune réponse n'échoue sur l'exactitude ou le ton non catégorique et si la médiane de latence respecte le seuil.
+Un maillon est accepté si aucune réponse n'échoue sur l'exactitude ou le ton non catégorique et si la médiane de latence respecte le seuil.
 
-## Risques
+## Alternatives écartées (payant)
 
-- **RGPD** : le thème dérive de données de naissance (données personnelles). Gemini payant : conditions des services payants ; Groq : stockage aux États-Unis, clauses contractuelles types. Mettre à jour la politique de confidentialité avec les sous-traitants, signer les accords de traitement (DPA), appliquer la minimisation.
-- **Conditions d'usage gratuit** : offre gratuite Gemini exclue (EEE, mineurs, entraînement). Conditions de l'offre gratuite Groq pour un usage commercial : non vérifiées.
-- **Dépendance** : modèles, tarifs et limites changent (un aperçu Gemini 3.1 est déjà arrêté ; Flash 3.6 double de prix au 01/01/2027). Épingler des modèles stables, surveiller les dépréciations, garder `QuestionProvider`.
-- **Qualité éditoriale** : non évaluée faute de test ; risque d'affirmations catégoriques.
-- **Coût** : comptes identifiés non limités ; plafond de dépense et rate limiting à définir.
+Écartées par la décision « gratuit uniquement », conservées pour mémoire (prix consultés le 2026-10-17, à revérifier) :
+
+- Gemini 3.1 Flash-Lite payant : 0,25 $ / 1,50 $ par M tokens, soit environ 0,0016 $ par question (4 000 tokens en entrée, 400 en sortie) ; données non utilisées pour l'entraînement en payant ; seule option qui lève le verrou EEE de Gemini.
+- Claude Haiku 5.5 : 0,10 $ / 0,50 $ par M tokens, soit environ 0,0006 $ par question ; limites du palier Start : 1 000 RPM, 2 M tokens d'entrée/min.
+- Pour 500 questions/jour, ces options représenteraient moins de 1 $ par jour. À reconsidérer si le gratuit cesse de tenir ou si le risque juridique ci-dessus est jugé inacceptable.
 
 ## Décisions à prendre par le mainteneur
 
-1. Valider Gemini 3.1 Flash-Lite payant comme principal (compte de facturation, coût faible mais non nul).
-2. Choisir le fallback (Groq `gpt-oss-120b` ou Claude Haiku 5.5) après exécution du protocole.
-3. Valider longueur (600 tokens max, 120 à 200 mots), timeouts et message de dépassement.
-4. Définir le rate limiting des comptes identifiés.
+1. Valider la chaîne Mistral, Groq, réponse dégradée, ou retirer Groq (hébergement hors UE) pour ne garder que Mistral puis réponse dégradée.
+2. Accepter le risque résiduel de l'offre gratuite pour un public européen, ou rouvrir l'option payante.
+3. Vérifier dans les consoles les limites réelles gratuites (Mistral, Groq) et exécuter le protocole.
+4. Confirmer auprès de Mistral la règle d'entraînement et l'hébergement des appels de l'offre gratuite.
+5. Valider longueur (600 tokens max, 120 à 200 mots), timeouts, message de dépassement, et le rate limiting des comptes identifiés.
+6. Alimenter la politique de confidentialité (#45) avec les sous-traitants et le message d'avertissement dans le champ de question.

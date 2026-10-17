@@ -14,16 +14,17 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
-## 2026-10-17 — Fournisseurs IA : Gemini payant en principal, fallback à valider (issue #51) — proposition, à valider
+## 2026-10-17 — Fournisseurs IA : mix gratuit Mistral puis Groq (issue #51) — proposition révisée, à valider
 
-Contexte : #51 demande une stratégie IA gratuite et soutenable pour le chat (#26). Les conditions de l'API Gemini interdisent l'offre gratuite pour les utilisateurs de l'EEE, du Royaume-Uni et de Suisse et pour les applications ouvertes aux mineurs, et y autorisent l'usage des données pour améliorer les produits.
+Contexte : #51 demande une stratégie IA gratuite et soutenable pour le chat (#26). Le mainteneur exclut tout coût (retour sur la PR #144). L'offre gratuite Gemini est interdite par ses conditions pour les utilisateurs EEE/UK/CH et les apps ouvertes aux mineurs ; OpenAI n'a pas d'offre API gratuite hors programme de partage de données.
 Décision proposée (non validée) :
-- Principal : Gemini 3.1 Flash-Lite en offre payante avec plafond de dépense (environ 0,0016 $ par question estimé).
-- Fallback : Groq `openai/gpt-oss-120b` (ZDR activé) ou Claude Haiku 5.5, à départager par le protocole de test de `docs/research/fournisseurs-ia.md` (non exécuté faute de clé).
+- Chaîne : Mistral (principal, offre gratuite) puis Groq `openai/gpt-oss-120b` (secours 1, ZDR) puis réponse dégradée sans IA (secours 2). Bascule sur 429, 5xx ou timeout, sans répartition de charge.
+- Une erreur fournisseur ou une bascule sans réponse libère la réservation (`release_question`) : la question n'est pas décomptée (cohérent avec #27).
+- Budget : 100 testeurs, environ 500 questions/jour, 1,45 M tokens/jour ; tient grâce à Mistral si ses limites réelles correspondent aux chiffres tiers (non vérifiés) ; Groq seul couvre environ 70 questions/jour.
+- Mesures juridiques : prompt réduit aux facteurs astrologiques (jamais prénom, date, lieu, coordonnées, identifiant), avertissement et filtrage de la question libre, ZDR / désinscription de l'entraînement, mention dans la politique de confidentialité (#45).
 - Réponse : 600 tokens maximum, cible 120 à 200 mots.
-- Une erreur fournisseur (429, 5xx, timeout) bascule sur le fallback puis, en cas d'échec, libère la réservation (`release_question`) : la question n'est pas décomptée (cohérent avec #27).
-- Données envoyées minimales : jamais prénom, e-mail, coordonnées exactes ni identifiant utilisateur ; prompt versionné.
-Alternatives écartées : offre gratuite Gemini (conditions incompatibles) ; Mistral (limites et conditions non vérifiables officiellement).
+Risque restant : aucun mix gratuit n'est pleinement sain pour un public européen (clauses de réutilisation des données en offre gratuite, Groq hors UE) ; la décision d'accepter ce risque revient au mainteneur.
+Alternatives écartées : Gemini gratuit (interdit EEE) ; OpenAI (partage de données obligatoire) ; OpenRouter `:free` (50 requêtes/jour) ; payant (Gemini Flash-Lite, Claude Haiku) car contraire à la décision « gratuit uniquement ».
 
 ## 2026-10-16 — Cache des thèmes nataux en base (issue #22)
 
