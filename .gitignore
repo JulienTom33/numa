@@ -19,3 +19,6 @@ coverage
 
 storybook-static
 *storybook.log
+
+.claude/orchestration/
+.claude/settings.local.json
