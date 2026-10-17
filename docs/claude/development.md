@@ -27,6 +27,7 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - Pas de duplication évitable ; pas d'abstraction créée avant qu'un second usage réel existe.
 - Pas de code mort.
 - **Aucun commentaire dans le code, JSDoc compris** : ni `//`, ni `/* */`, ni `/** */`, ni `{/* */}`. Commentaires libres uniquement dans les fichiers de test (`*.test.ts(x)`, `src/test/**`). Le nom du code doit suffire ; un « pourquoi » non évident va dans la PR ou le `decision-log.md`. Seules les directives techniques sont tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). S'applique aussi au code Deno de `supabase/functions/`. La règle ESLint locale `numa/no-comments` tolère encore les JSDoc de fonction exportée : elle sera durcie avec le retrait des commentaires existants (#134) ; en attendant, n'en ajouter aucun.
+- Taille : fichier ≤ 300 lignes (ESLint `max-lines`, erreur), fonction ≤ 60 lignes et complexité ≤ 12 (avertissements, à résorber lors du réagencement des modules, issue #147). `import type` obligatoire pour les imports de types.
 - **Aucun `console.log`** dans le code poussé. Bloqué par ESLint (`no-console`).
 
 ## IDs HTML
