@@ -23,7 +23,7 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 - Aucun secret, clé privée ou donnée personnelle commité. Voir `docs/claude/security.md`.
 - RLS obligatoire sur toute table Supabase exposée à des données utilisateur. Voir `docs/claude/supabase.md`.
 - Code serveur = Supabase Edge Functions (`supabase/functions/`). Toute clé d'API astrologique ou IA y reste, jamais dans le bundle client (`VITE_*`). Voir `docs/claude/architecture.md`.
-- Chaque PR est d'abord relue par Claude en CI (`claude-review.yml`, corrections bornées à 3) ; la review et le merge humains restent obligatoires. Voir `docs/claude/pull-requests.md`.
+- Chaque PR est d'abord relue par Claude en CI (`claude-review.yml`, score ≥ 80 requis, jusqu'à 5 corrections automatiques) ; la review et le merge humains restent obligatoires. Voir `docs/claude/pull-requests.md`.
 - Notifications Discord (PR, CI, tickets) : webhook stocké dans `secrets.DISCORD_WEBHOOK_URL`, jamais dans le code. Voir `docs/claude/pull-requests.md`.
 
 ## Interdits
