@@ -14,6 +14,17 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-17 — Fournisseurs IA : Gemini payant en principal, fallback à valider (issue #51) — proposition, à valider
+
+Contexte : #51 demande une stratégie IA gratuite et soutenable pour le chat (#26). Les conditions de l'API Gemini interdisent l'offre gratuite pour les utilisateurs de l'EEE, du Royaume-Uni et de Suisse et pour les applications ouvertes aux mineurs, et y autorisent l'usage des données pour améliorer les produits.
+Décision proposée (non validée) :
+- Principal : Gemini 3.1 Flash-Lite en offre payante avec plafond de dépense (environ 0,0016 $ par question estimé).
+- Fallback : Groq `openai/gpt-oss-120b` (ZDR activé) ou Claude Haiku 5.5, à départager par le protocole de test de `docs/research/fournisseurs-ia.md` (non exécuté faute de clé).
+- Réponse : 600 tokens maximum, cible 120 à 200 mots.
+- Une erreur fournisseur (429, 5xx, timeout) bascule sur le fallback puis, en cas d'échec, libère la réservation (`release_question`) : la question n'est pas décomptée (cohérent avec #27).
+- Données envoyées minimales : jamais prénom, e-mail, coordonnées exactes ni identifiant utilisateur ; prompt versionné.
+Alternatives écartées : offre gratuite Gemini (conditions incompatibles) ; Mistral (limites et conditions non vérifiables officiellement).
+
 ## 2026-10-16 — Cache des thèmes nataux en base (issue #22)
 
 Contexte : éviter de recalculer un thème identique à chaque appel de `natal-chart`.

@@ -63,6 +63,7 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |
 | `docs/claude/decision-log.md` | Décisions d'architecture et règles évolutives |
 | `docs/research/api-astrologiques.md` | Comparatif des moteurs et API astrologiques, profils de référence, mesures (#50) |
+| `docs/research/fournisseurs-ia.md` | Comparatif des fournisseurs IA (Gemini, Groq, Claude Haiku), quotas, coûts, longueur de réponse, stratégie de dépassement, protocole de test du fallback (#51) |
 | `docs/design/handoff.md` | Handoff design → dev : écrans du MVP, tickets, composants, tokens, états, responsive, accessibilité |
 
 Consulter le document spécialisé concerné avant toute tâche touchant à son périmètre.
