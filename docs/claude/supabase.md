@@ -45,6 +45,14 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 - Chaque migration est un fichier versionné dans le dépôt, appliqué via l'outillage Supabase.
 - Pas de migration destructive (drop de colonne/table contenant des données) sans validation humaine explicite.
 
+## Types TypeScript du schéma (issue #150)
+
+- `shared/database.types.ts` est **généré** (ne jamais l'éditer à la main) par `supabase gen types typescript --local`, versionné dans le dépôt.
+- Après toute migration : `supabase db reset` puis `npm run types:generate`, et commiter le fichier.
+- Client (`src/lib/supabaseClient.ts`) : `createClient<Database>` ; Edge Functions : `createClient<Database>` avec `import type { Database } from "../../../shared/database.types.ts"` (import relatif, pas d'import map). `TypedSupabaseClient` est exporté par `_shared/supabase.ts`.
+- Une table ou colonne inconnue échoue au typecheck. Les colonnes `jsonb` sont typées `Json` : convertir explicitement (`as unknown as NonNullable<Json>`) pour écrire un objet métier.
+- CI : le job `supabase-migrations` régénère les types après `supabase db reset` et échoue si le résultat diffère du fichier versionné.
+
 ## Edge Functions
 
 - Code serveur dans `supabase/functions/` (structure dans `architecture.md`).

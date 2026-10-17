@@ -1,3 +1,4 @@
+import type { Json } from "../../../shared/database.types.ts";
 import { createAdminClient } from "../_shared/supabase.ts";
 import type { NatalChart } from "./types.ts";
 
@@ -25,7 +26,12 @@ export function createSupabaseChartCache(): ChartCache {
     async save(userId, birthDataId, key, chart) {
       const client = createAdminClient();
       const { error } = await client.from("natal_charts").upsert(
-        { user_id: userId, birth_data_id: birthDataId, cache_key: key, chart_data: chart },
+        {
+          user_id: userId,
+          birth_data_id: birthDataId,
+          cache_key: key,
+          chart_data: chart as unknown as NonNullable<Json>,
+        },
         { onConflict: "birth_data_id,cache_key", ignoreDuplicates: true },
       );
       if (error) throw new Error("chart_cache_write_failed");
