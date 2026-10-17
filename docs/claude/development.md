@@ -18,6 +18,19 @@ Ces commandes doivent passer avant de considérer une tâche terminée ou une PR
 - Tests via React Testing Library pour les composants.
 - Pas de mock de ce qui peut être testé en réel de façon fiable et rapide.
 
+## Tests end-to-end (Playwright)
+
+Tests de non-régression de bout en bout, dans `e2e/` (hors `src/`, ignoré par Vitest), config `playwright.config.ts`.
+
+- `npm run test:e2e` (headless) et `npm run test:e2e:ui` (mode interactif). Prérequis : `supabase start` (Docker) et, dans un autre terminal, `supabase functions serve`. La config construit l'app (`npm run build`), la sert avec `vite preview` (port 4173) et lit l'URL et la clé publishable de la stack locale via `supabase status -o env` (ou `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` si déjà définies). Aucune donnée de production.
+- Structure : `e2e/specs/*.spec.ts` (un fichier par domaine : `discovery-onboarding`, `navigation`, `discovery-mode`, `auth`) et `e2e/support/` (helpers : onboarding, quota, Mailpit, mock du géocodage).
+- Chaque test part d'un contexte de navigateur neuf, donc d'une session anonyme neuve : les tests sont indépendants et parallélisables.
+- Sélecteurs : par rôle accessible (`getByRole`) ou par `id` (`<composant>__<type>--<descriptor>`). Jamais de classe CSS ni de texte fragile. Un élément sans `id` utile en reçoit un dans le composant, en même temps que le test.
+- Emails : la stack locale embarque Mailpit (`http://127.0.0.1:54324`, `MAILPIT_URL` pour surcharger) ; `e2e/support/mailpit.ts` y lit les messages, aucun email réel n'est envoyé. Utiliser `uniqueEmail()` pour éviter les collisions.
+- Services tiers : le géocodage (Open-Meteo, via l'Edge Function `geocode`) est intercepté par `mockGeocode` pour rester déterministe ; le calcul du thème, le quota et l'auth passent par la vraie stack locale.
+- **Règle : toute nouvelle fonctionnalité utilisateur ajoute ou étend un parcours E2E dans la même PR** (en plus des tests unitaires). Une correction de bug sur un parcours existant ajoute l'étape qui l'aurait détecté. Un parcours connu cassé se marque `test.fixme` avec la cause, jamais supprimé.
+- En CI, le job `e2e` démarre Supabase, sert les Edge Functions et lance les specs ; en cas d'échec, `e2e/playwright-report` et `e2e/test-results` (traces, captures) sont publiés en artefact `playwright-report` (`npx playwright show-trace <trace.zip>`).
+
 ## Conventions de code
 
 - TypeScript strict, pas de `any`.
@@ -126,11 +139,13 @@ La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de 
 
 ## CI
 
-- Workflow `.github/workflows/ci.yml`, deux jobs :
+- Workflow `.github/workflows/ci.yml`, quatre jobs :
   - `quality` : `npm audit --omit=dev --audit-level=high`, `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run build-storybook`.
+  - `e2e` : démarre Supabase local, sert les Edge Functions, installe Chromium et lance `npm run test:e2e` ; traces et captures en artefact en cas d'échec.
+  - `edge-functions` : `deno fmt --check`, `deno lint`, `deno task check`, `deno task test` dans `supabase/functions`.
   - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis exécute les tests pgTAP (`supabase test db`).
 - Déclenchement : PR vers `master` et push sur `master` (couvre la CI post-merge).
-- `master` est protégée côté GitHub (check `quality` obligatoire, branche à jour, PR obligatoire ; aucune approbation exigée) — voir `pull-requests.md`.
+- `master` est protégée côté GitHub (checks `quality` et `e2e` obligatoires, branche à jour, PR obligatoire ; aucune approbation exigée) — voir `pull-requests.md`.
 
 ## Audit des dépendances
 

@@ -55,7 +55,7 @@ const noComments = {
 };
 
 export default tseslint.config(
-  { ignores: ["dist", "coverage", "storybook-static", "supabase/functions", "!.storybook"] },
+  { ignores: ["dist", "coverage", "storybook-static", "e2e/test-results", "e2e/playwright-report", "supabase/functions", "!.storybook"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx,js}"],
@@ -95,10 +95,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ["**/*.test.{ts,tsx}", "src/test/**"],
+    files: ["**/*.{test,spec}.{ts,tsx}", "src/test/**"],
     rules: {
       "numa/no-comments": "off",
     },
+  },
+  {
+    files: ["e2e/**/*.ts", "playwright.config.ts"],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
   ...storybook.configs["flat/recommended"],
 );
