@@ -33,6 +33,8 @@ export interface OnboardingDraftRow {
   declared_ascendant_sign: string | null;
 }
 
+export type OnboardingDraftInsert = OnboardingDraftRow & { latitude: number | null; longitude: number | null };
+
 export type OnboardingStoreErrorCode = "save_failed" | "load_failed";
 
 const DRAFT_COLUMNS =
@@ -58,7 +60,7 @@ function toSign(value: string | null): ZodiacSign | null {
   return ZODIAC_SIGNS.find((sign) => sign === value) ?? null;
 }
 
-export function draftToRow(userId: string, draft: OnboardingDraft): OnboardingDraftRow {
+export function draftToRow(userId: string, draft: OnboardingDraft): OnboardingDraftInsert {
   const { data } = draft;
   const birthTime = normalizeBirthTime(data.birthTime);
   const firstName = data.firstName.trim();
