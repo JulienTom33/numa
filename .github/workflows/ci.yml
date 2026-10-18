@@ -150,6 +150,12 @@ jobs:
         if: steps.check.outputs.present == 'true'
         run: supabase db reset
 
+      - name: Check generated database types
+        if: steps.check.outputs.present == 'true'
+        run: |
+          supabase gen types typescript --local > "$RUNNER_TEMP/database.types.ts"
+          diff -u shared/database.types.ts "$RUNNER_TEMP/database.types.ts"
+
       - name: Run database tests (RLS)
         if: steps.check.outputs.present == 'true'
         run: supabase test db

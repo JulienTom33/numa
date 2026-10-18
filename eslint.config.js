@@ -55,7 +55,7 @@ const noComments = {
 };
 
 export default tseslint.config(
-  { ignores: ["dist", "coverage", "storybook-static", "e2e/test-results", "e2e/playwright-report", "supabase/functions", "!.storybook"] },
+  { ignores: ["dist", "coverage", "storybook-static", "e2e/test-results", "e2e/playwright-report", "supabase/functions", "shared/database.types.ts", "!.storybook"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx,js}"],

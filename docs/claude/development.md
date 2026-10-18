@@ -143,7 +143,7 @@ La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de 
   - `quality` : `npm audit --omit=dev --audit-level=high`, `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run build-storybook`.
   - `e2e` : démarre Supabase local, sert les Edge Functions, installe Chromium et lance `npm run test:e2e` ; traces et captures en artefact en cas d'échec.
   - `edge-functions` : `deno fmt --check`, `deno lint`, `deno task check`, `deno task test` dans `supabase/functions`.
-  - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis exécute les tests pgTAP (`supabase test db`).
+  - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis vérifie que `shared/database.types.ts` correspond au schéma (`npm run types:generate`) puis exécute les tests pgTAP (`supabase test db`).
 - Déclenchement : PR vers `master` et push sur `master` (couvre la CI post-merge).
 - `master` est protégée côté GitHub (checks `quality` et `e2e` obligatoires, branche à jour, PR obligatoire ; aucune approbation exigée) — voir `pull-requests.md`.
 

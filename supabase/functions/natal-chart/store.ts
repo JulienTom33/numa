@@ -1,4 +1,5 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import type { Database } from "../../../shared/database.types.ts";
 import type { BirthInput } from "./types.ts";
 
 export interface BirthDataStore {
@@ -51,7 +52,7 @@ function publishableKey(): string {
 export function createSupabaseBirthDataStore(): BirthDataStore {
   return {
     async findLatest(accessToken, userId) {
-      const client = createClient(requireEnv("SUPABASE_URL"), publishableKey(), {
+      const client = createClient<Database>(requireEnv("SUPABASE_URL"), publishableKey(), {
         auth: { persistSession: false, autoRefreshToken: false },
         global: { headers: { Authorization: `Bearer ${accessToken}` } },
       });
