@@ -1,5 +1,5 @@
-import type { Json } from "../../../shared/database.types.ts";
 import { createAdminClient } from "../_shared/supabase.ts";
+import { toJson } from "./toJson.ts";
 import type { NatalChart } from "./types.ts";
 
 export interface ChartCache {
@@ -30,7 +30,7 @@ export function createSupabaseChartCache(): ChartCache {
           user_id: userId,
           birth_data_id: birthDataId,
           cache_key: key,
-          chart_data: chart as unknown as NonNullable<Json>,
+          chart_data: toJson(chart),
         },
         { onConflict: "birth_data_id,cache_key", ignoreDuplicates: true },
       );

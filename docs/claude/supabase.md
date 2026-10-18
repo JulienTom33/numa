@@ -50,7 +50,7 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 - `shared/database.types.ts` est **généré** (ne jamais l'éditer à la main) par `supabase gen types typescript --local`, versionné dans le dépôt.
 - Après toute migration : `supabase db reset` puis `npm run types:generate`, et commiter le fichier.
 - Client (`src/lib/supabaseClient.ts`) : `createClient<Database>` ; Edge Functions : `createClient<Database>` avec `import type { Database } from "../../../shared/database.types.ts"` (import relatif, pas d'import map). `TypedSupabaseClient` est exporté par `_shared/supabase.ts`.
-- Une table ou colonne inconnue échoue au typecheck. Les colonnes `jsonb` sont typées `Json` : convertir explicitement (`as unknown as NonNullable<Json>`) pour écrire un objet métier.
+- Une table ou colonne inconnue échoue au typecheck. Les colonnes `jsonb` sont typées `Json` : convertir un objet métier avec un convertisseur typé sans `as` (`toJson(value: unknown): Json`, `supabase/functions/natal-chart/toJson.ts`) avant de l'écrire.
 - CI : le job `supabase-migrations` régénère les types après `supabase db reset` et échoue si le résultat diffère du fichier versionné.
 
 ## Edge Functions
