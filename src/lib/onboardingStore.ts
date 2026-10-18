@@ -1,5 +1,6 @@
 import { EMPTY_ASCENDANT_CHOICE, type AscendantChoice, type AscendantSource } from "./ascendant";
 import { normalizeBirthTime, TIME_MARGINS, type OnboardingData, type TimeMargin, type TimePrecision } from "./birthData";
+import type { TablesInsert } from "../../shared/database.types";
 import { supabase } from "./supabaseClient";
 import { ZODIAC_SIGNS, type ZodiacSign } from "./zodiac";
 
@@ -58,7 +59,7 @@ function toSign(value: string | null): ZodiacSign | null {
   return ZODIAC_SIGNS.find((sign) => sign === value) ?? null;
 }
 
-export function draftToRow(userId: string, draft: OnboardingDraft): OnboardingDraftRow {
+export function draftToRow(userId: string, draft: OnboardingDraft): TablesInsert<"onboarding_drafts"> {
   const { data } = draft;
   const birthTime = normalizeBirthTime(data.birthTime);
   const firstName = data.firstName.trim();

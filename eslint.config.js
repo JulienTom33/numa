@@ -55,7 +55,7 @@ const noComments = {
 };
 
 export default tseslint.config(
-  { ignores: ["dist", "coverage", "storybook-static", "supabase/functions", "!.storybook"] },
+  { ignores: ["dist", "coverage", "storybook-static", "supabase/functions", "shared/database.types.ts", "!.storybook"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx,js}"],

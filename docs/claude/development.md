@@ -128,7 +128,7 @@ La couverture (`npm run test:coverage`) est vérifiée sur toute PR ajoutant de 
 
 - Workflow `.github/workflows/ci.yml`, deux jobs :
   - `quality` : `npm audit --omit=dev --audit-level=high`, `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run build-storybook`.
-  - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis exécute les tests pgTAP (`supabase test db`).
+  - `supabase-migrations` : démarre Supabase local, applique les migrations (`supabase db reset`) puis vérifie que `shared/database.types.ts` correspond au schéma (`npm run types:generate`) puis exécute les tests pgTAP (`supabase test db`).
 - Déclenchement : PR vers `master` et push sur `master` (couvre la CI post-merge).
 - `master` est protégée côté GitHub (check `quality` obligatoire, branche à jour, PR obligatoire ; aucune approbation exigée) — voir `pull-requests.md`.
 
