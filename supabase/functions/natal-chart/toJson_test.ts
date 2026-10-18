@@ -16,6 +16,7 @@ Deno.test("toJson ignore les propriétés undefined", () => {
 Deno.test("toJson rejette les valeurs non sérialisables", () => {
   assertThrows(() => toJson({ a: () => 1 }), Error, "value_not_serializable");
   assertThrows(() => toJson(undefined), Error, "value_not_serializable");
+  assertThrows(() => toJson(null), Error, "value_not_serializable");
 });
 
 Deno.test("toJson reproduit à l'identique un thème natal sérialisé", () => {
