@@ -3,7 +3,10 @@ import { computeNatalChart } from "./compute.ts";
 import { toJson } from "./toJson.ts";
 
 Deno.test("toJson conserve les primitives, tableaux et objets imbriqués", () => {
-  assertEquals(toJson({ a: [1, "x", true, null], b: { c: 2 } }), { a: [1, "x", true, null], b: { c: 2 } });
+  assertEquals(toJson({ a: [1, "x", true, null], b: { c: 2 } }), {
+    a: [1, "x", true, null],
+    b: { c: 2 },
+  });
 });
 
 Deno.test("toJson ignore les propriétés undefined", () => {

@@ -1,7 +1,10 @@
 import type { Json } from "../../../shared/database.types.ts";
 
 export function toJson(value: unknown): Json {
-  if (value === null || typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+  if (
+    value === null || typeof value === "string" || typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
     return value;
   }
   if (Array.isArray(value)) {
