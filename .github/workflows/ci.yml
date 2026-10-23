@@ -33,6 +33,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Convention un dossier par module
+        run: npm run check:convention
+
       - name: Typecheck
         run: npm run typecheck
 

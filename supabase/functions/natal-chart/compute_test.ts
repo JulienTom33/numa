@@ -1,7 +1,7 @@
 import { assert, assertEquals, assertThrows } from "jsr:@std/assert@1";
 import { computeNatalChart } from "./compute.ts";
-import { ENGINE_VERSION } from "./types.ts";
-import type { BirthInput } from "./types.ts";
+import { ENGINE_VERSION } from "../../../shared/contracts/natalChart/natalChart.ts";
+import type { BirthInput } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 const ARC_MINUTE = 1 / 60;
 

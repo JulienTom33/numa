@@ -1,12 +1,10 @@
 import { assert, assertEquals, assertThrows } from "jsr:@std/assert@1";
 import { type ChartLocation, computeAngles } from "./angles.ts";
+import { computeHouses, isPlacidusDefined, placidusCusps } from "./houses.ts";
 import {
-  computeHouses,
   HOUSE_SYSTEMS,
   type HouseSystem,
-  isPlacidusDefined,
-  placidusCusps,
-} from "./houses.ts";
+} from "../../../../shared/contracts/natalChart/natalChart.ts";
 
 // Valeurs de référence : Swiss Ephemeris 2.10.03 (portage `sweph-wasm` 2.6.9, `swe_houses`,
 // systèmes "P", "O", "E", "W"), calculées le 2026-10-16 HORS DÉPÔT (scratchpad local), comme

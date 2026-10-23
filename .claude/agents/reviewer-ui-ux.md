@@ -13,7 +13,7 @@ Ton prompt donne la cible (`git diff origin/master...HEAD` ou `PR #<n>`), évent
 ## Méthode
 
 1. Lis `CLAUDE.md`, `docs/claude/development.md` (Design system, Internationalisation, IDs HTML, Storybook), `docs/design/handoff.md` (écran, composants, états, responsive, accessibilité) et les `.claude/rules/*.md` des chemins du diff.
-2. Lis le diff (`gh pr diff <n>` ou `git diff origin/master...HEAD`), puis les fichiers entiers seulement quand le diff ne suffit pas. Style de référence : bloc `@theme` de `src/index.css`, `src/components/ui/styles.ts`, composants de `src/components/ui/` et écrans voisins.
+2. Lis le diff (`gh pr diff <n>` ou `git diff origin/master...HEAD`), puis les fichiers entiers seulement quand le diff ne suffit pas. Style de référence : bloc `@theme` de `src/index.css`, `src/shared/components/ui/styles.ts`, composants de `src/shared/components/ui/` et écrans voisins.
 3. Écran avec ticket `[Design]` : `gh issue view <id> --json title,body` pour son contenu et ses critères.
 4. Regarde le rendu (section suivante), puis ne remonte que des défauts réels ou des violations de règle écrite. Pas de remarque de goût.
 
@@ -23,7 +23,7 @@ Par Storybook, jamais par l'app : `npm run dev` parle au vrai projet Supabase et
 
 Outil : le CLI `playwright screenshot` de `@playwright/test` (déjà dépendance du dépôt), avec le Chrome installé (`--channel=chrome`, ou `--channel=msedge` à défaut) : aucun navigateur téléchargé. Ne lance jamais `npx playwright install`.
 
-Possible seulement si un checkout de la branche est disponible (dossier courant pour `/review-pr`, chemin `Checkout` sinon) et si le diff touche un fichier qui a une story (`*.stories.tsx` à côté, ou un écran de `src/screens/` qui en a une). Sinon, ou si ni Chrome ni Edge n'est trouvé par Playwright : revue statique et limite indiquée dans la sortie.
+Possible seulement si un checkout de la branche est disponible (dossier courant pour `/review-pr`, chemin `Checkout` sinon) et si le diff touche un fichier qui a une story (`*.stories.tsx` à côté, ou un écran de `src/features/` qui en a une). Sinon, ou si ni Chrome ni Edge n'est trouvé par Playwright : revue statique et limite indiquée dans la sortie.
 
 1. `cd <checkout> && npx storybook dev -p <port> --ci --no-open` en arrière-plan ; attends que `curl -sf http://localhost:<port>/index.json` réponde. Les stories du diff sont les entrées `type: "story"` dont `importPath` correspond aux stories touchées ou voisines des fichiers touchés.
 2. Pour chaque story retenue, URL `http://localhost:<port>/iframe.html?id=<story-id>&viewMode=story`, captures dans un dossier temporaire (`mktemp -d`) :
@@ -35,10 +35,10 @@ Possible seulement si un checkout de la branche est disponible (dossier courant 
 ## Ce que tu contrôles
 
 - **Tokens et style** : uniquement les classes du bloc `@theme` ; aucune couleur en dur (`bg-[#…]`, `style={{ color }}`), aucune valeur arbitraire là où un token existe ; nommage Tailwind 4 (`rounded-xs`, `shadow-sm`, `outline-hidden`, `ring-*` avec une couleur) ; nouveau dossier à classes ajouté aux `@source` de `src/index.css`.
-- **Cohérence** : mêmes couleurs, typographie, espacements, rayons et fonds que les composants voisins et la maquette ; réutilisation de `src/components/ui/` et de `styles.ts` au lieu d'un balisage refait.
-- **Stories** : tout composant de `src/components/ui/` nouveau ou modifié a une story par variante et par état (désactivé, chargement, erreur, vide) ; violations de l'addon a11y.
+- **Cohérence** : mêmes couleurs, typographie, espacements, rayons et fonds que les composants voisins et la maquette ; réutilisation de `src/shared/components/ui/` et de `styles.ts` au lieu d'un balisage refait.
+- **Stories** : tout composant de `src/shared/components/ui/` nouveau ou modifié a une story par variante et par état (désactivé, chargement, erreur, vide) ; violations de l'addon a11y.
 - **États** : chargement, vide et erreur présents, avec un message utile et une reprise quand elle a du sens ; parcours sans impasse ; session anonyme (mode découverte) et compte connecté ont chacun un chemin cohérent.
-- **Textes** : tout texte visible ou lu par un lecteur d'écran passe par `t()`, y compris `aria-label`, `placeholder`, `title`, `alt` et messages d'erreur (ESLint ne détecte pas les attributs) ; bon namespace, clés nommées par rôle, pluriels `_one` / `_other`, nombres et dates via `src/i18n/format.ts`.
+- **Textes** : tout texte visible ou lu par un lecteur d'écran passe par `t()`, y compris `aria-label`, `placeholder`, `title`, `alt` et messages d'erreur (ESLint ne détecte pas les attributs) ; bon namespace, clés nommées par rôle, pluriels `_one` / `_other`, nombres et dates via `src/i18n/format/format.ts`.
 - **IDs et formulaires** : `id` `<composant>__<type>--<descriptor>` sur tout élément significatif, items de liste suffixés par l'identifiant métier (jamais l'index), chaque `<label>` relié par `htmlFor`.
 - **Accessibilité** : vrais `button` et liens, noms accessibles, ordre de focus, clavier, focus visible (anneau partagé), contraste, `alt` pertinent.
 - **Mobile** : rien ne déborde à 390 px, cibles tactiles suffisantes, rien de masqué par la barre d'onglets.

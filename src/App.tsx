@@ -1,21 +1,21 @@
 import { useCallback, useState } from "react";
-import AppShell from "./components/AppShell/AppShell";
-import DiscoveryModeBadge from "./components/DiscoveryModeBadge";
-import EmptyState from "./components/ui/EmptyState/EmptyState";
-import DiscoveryConsultGate from "./features/discovery/DiscoveryConsultGate";
-import MigrationScreen from "./features/discovery/MigrationScreen";
-import MyChartFlow from "./features/chart/MyChartFlow";
-import OnboardingFlow from "./features/onboarding/OnboardingFlow";
-import OnboardingLoading from "./features/onboarding/OnboardingLoading";
-import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus";
-import TabBar from "./components/ui/TabBar/TabBar";
+import AppShell from "./shared/components/AppShell/AppShell";
+import DiscoveryModeBadge from "./features/discovery/DiscoveryModeBadge/DiscoveryModeBadge";
+import EmptyState from "./shared/components/ui/EmptyState/EmptyState";
+import DiscoveryConsultGate from "./features/discovery/DiscoveryConsultGate/DiscoveryConsultGate";
+import MigrationScreen from "./features/discovery/MigrationScreen/MigrationScreen";
+import MyChartFlow from "./features/chart/MyChartFlow/MyChartFlow";
+import OnboardingFlow from "./features/onboarding/OnboardingFlow/OnboardingFlow";
+import OnboardingLoading from "./features/onboarding/OnboardingLoading/OnboardingLoading";
+import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus/useOnboardingStatus";
+import TabBar from "./shared/components/ui/TabBar/TabBar";
 import { useTranslation } from "react-i18next";
-import AuthFlow, { type AuthFlowDestination } from "./features/auth/AuthFlow";
-import { useAnonymousSession } from "./hooks/useAnonymousSession";
-import { useAuth } from "./hooks/useAuth";
-import type { AuthMode } from "./lib/auth";
-import { useMainTabs, type MainTab } from "./navigation/mainTabs";
-import Welcome from "./screens/Welcome/Welcome";
+import AuthFlow, { type AuthFlowDestination } from "./features/auth/AuthFlow/AuthFlow";
+import { useAnonymousSession } from "./features/auth/useAnonymousSession/useAnonymousSession";
+import { useAuth } from "./features/auth/useAuth/useAuth";
+import type { AuthMode } from "./features/auth/auth/auth";
+import { useMainTabs, type MainTab } from "./shared/navigation/mainTabs/mainTabs";
+import Welcome from "./features/welcome/Welcome/Welcome";
 
 function App() {
   const { t } = useTranslation(["common", "auth"]);

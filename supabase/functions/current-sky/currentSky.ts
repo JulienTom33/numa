@@ -1,14 +1,19 @@
 import { extractBearerToken } from "../_shared/auth.ts";
 import type { HandlerContext } from "../_shared/handler.ts";
 import { HttpError, json } from "../_shared/http.ts";
-import type { ZodiacSign } from "../_shared/astrology/zodiac.ts";
+import type { ZodiacSign } from "../../../shared/zodiac/zodiac.ts";
 import { angularSeparation, ASPECT_DEFINITIONS } from "../natal-chart/aspects.ts";
 import { computeBody, round } from "../natal-chart/bodies.ts";
 import type { ChartCache } from "../natal-chart/cache.ts";
 import { computeCacheKey } from "../natal-chart/cacheKey.ts";
 import { computeNatalChart } from "../natal-chart/compute.ts";
 import type { BirthDataStore } from "../natal-chart/store.ts";
-import { type AspectType, BODY_IDS, type BodyId, type NatalChart } from "../natal-chart/types.ts";
+import {
+  type AspectType,
+  BODY_IDS,
+  type BodyId,
+  type NatalChart,
+} from "../../../shared/contracts/natalChart/natalChart.ts";
 
 export const NATAL_POINTS = ["sun", "moon", "ascendant"] as const;
 

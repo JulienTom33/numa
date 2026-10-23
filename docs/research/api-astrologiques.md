@@ -100,7 +100,7 @@ La synthèse et l'analyse ci-dessous décrivent l'étude telle qu'elle a été s
 
 ## Jeu de profils de référence
 
-Profils fictifs, sauf P3 (Albert Einstein, données publiques notées AA). L'heure locale est convertie en UTC avec `resolveUtcOffset` (`src/lib/utcOffset.ts`, base tz du moteur JavaScript), comme le fera #20.
+Profils fictifs, sauf P3 (Albert Einstein, données publiques notées AA). L'heure locale est convertie en UTC avec `resolveUtcOffset` (`shared/time/utcOffset/utcOffset.ts`, base tz du moteur JavaScript), comme le fera #20.
 
 | Id | Naissance (heure locale) | Lieu | Fuseau | UTC | Statut `utcOffset` | Ce que le profil teste |
 |---|---|---|---|---|---|---|

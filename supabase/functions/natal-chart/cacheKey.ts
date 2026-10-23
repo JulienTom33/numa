@@ -1,6 +1,10 @@
 import { DEFAULT_HOUSE_SYSTEM } from "../_shared/astrology/houses.ts";
-import { ENGINE_NAME, ENGINE_VERSION, SCHEMA_VERSION } from "./types.ts";
-import type { BirthInput } from "./types.ts";
+import {
+  ENGINE_NAME,
+  ENGINE_VERSION,
+  SCHEMA_VERSION,
+} from "../../../shared/contracts/natalChart/natalChart.ts";
+import type { BirthInput } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 const COORDINATE_DECIMALS = 6;
 
