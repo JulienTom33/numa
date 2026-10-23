@@ -20,6 +20,22 @@
 
 **Aucune PR n'est mergée automatiquement, sous aucune condition** (CI verte, review approuvée, urgence perçue). Le merge est toujours une action humaine explicite, déclenchée par l'utilisateur ou une personne autorisée du projet. Claude Code ne merge jamais une PR de sa propre initiative.
 
+## Reviewers spécialisés
+
+En plus de `pr-reviewer` (rubrique sur 100, seuil 80), deux agents en lecture seule relisent un angle que la rubrique ne couvre qu'en surface. Ils rendent leurs findings au format de `pr-reviewer` (`fichier:ligne: [bloquant|majeur|mineur] …`, puis `verdict` et `summary`) ; un bloquant donne `changes_requested`.
+
+| Agent | Modèle | Lancé si le diff touche | Contrôle |
+|---|---|---|---|
+| `reviewer-ui-ux` | Sonnet | `src/components/**`, `src/screens/**`, `src/features/**`, `src/navigation/**`, `src/App.tsx`, `src/index.css`, `src/i18n/locales/**`, `.storybook/**`, `index.html` (hors diff limité à des fichiers `*.test.ts(x)`) | tokens `@theme`, cohérence avec la maquette (`docs/design/handoff.md`) et les composants voisins, stories par variante et état, états chargement / vide / erreur, `t()`, IDs, `htmlFor`, accessibilité, rendu mobile |
+| `reviewer-editorial` | Opus | `supabase/functions/chat/**`, tout fichier de `supabase/functions/` contenant un prompt ou le contexte envoyé au modèle IA, `src/i18n/locales/fr/chart.json`, `astrology.json` et tout namespace de lecture (horoscope, chat), `docs/claude/ai-astrology.md` | règles éditoriales de `ai-astrology.md` : compréhensible, transparent, non catégorique, aucun conseil médical, financier ou juridique ; données envoyées au modèle |
+
+Aucun chemin ne correspond : `pr-reviewer` seul.
+
+- **`/review-pr`** lance `pr-reviewer` et les reviewers applicables en parallèle ; la boucle de correction (3 tours) traite les findings de tous.
+- **`/orchestrate`** : un worker ne pouvant pas lancer de sous-agent, l'orchestrateur lance les reviewers applicables sur chaque PR après la vague et, en cas de bloquant, relance une fois le `ticket-worker` en mode correction sur la même branche.
+- **CI** : `claude-review.yml` n'applique que la rubrique de `pr-reviewer`.
+- **Vérification visuelle** (`reviewer-ui-ux`) : stories Storybook capturées par Chrome ou Edge headless (mobile 390 × 844 dans une iframe, desktop 1280 px), sur un port dédié (6106 par défaut), serveurs arrêtés à la fin. Jamais l'app elle-même (`npm run dev` crée des sessions anonymes sur le vrai projet Supabase), ni connexion, ni formulaire soumis. Sans checkout de la branche, sans story concernée ou sans navigateur : revue statique, limite indiquée dans la sortie.
+
 ## Review automatique Claude
 
 Workflow `.github/workflows/claude-review.yml`, basé sur l'action officielle `anthropics/claude-code-action` (épinglée par SHA). Il relit chaque PR vers `master` **avant** la review humaine ; il ne la remplace pas.
