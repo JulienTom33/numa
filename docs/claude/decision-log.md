@@ -64,7 +64,7 @@ Alternatives écartées : import relatif de `src/lib/` (non garanti au déploiem
 
 Contexte : Astronomy Engine (MIT, retenu par #50) fournit le temps sidéral et l'obliquité mais ni ascendant, ni MC, ni maisons. Swiss Ephemeris (AGPL) est refusé comme dépendance.
 Décision (proposée) : module pur `supabase/functions/_shared/astrology/` (`computeAngles`, `computeHouses`), dépendance `npm:astronomy-engine@2.1.19` épinglée dans `supabase/functions/deno.json`.
-- Entrée : instant UTC déjà résolu (la conversion heure locale → UTC reste dans `src/lib/utcOffset.ts`, #125), latitude, longitude est.
+- Entrée : instant UTC déjà résolu (la conversion heure locale → UTC reste dans `shared/time/utcOffset/utcOffset.ts`, #125), latitude, longitude est.
 - RAMC = temps sidéral apparent de Greenwich (`SiderealTime`) × 15 + longitude ; obliquité vraie (`e_tilt().tobl`) ; MC et ascendant par les formules de Meeus (*Astronomical Algorithms*, chap. 13 et 14).
 - Systèmes : Placidus (itération sur la trisection des semi-arcs, tolérance 10⁻⁹°), Porphyre, Égales, Signes entiers.
 - **Défaut proposé : Placidus.** **Repli proposé : Porphyre** quand |latitude| ≥ 90° − ε (cercles polaires, Placidus indéfini) ou si l'itération ne converge pas ; le résultat porte `system: "porphyry"` et `fallback: { from: "placidus", reason }`. Même comportement que Swiss Ephemeris (refus de Placidus, Porphyre en secours).
@@ -117,7 +117,7 @@ Décision : `i18next` + `react-i18next`.
 - Ressources JSON embarquées dans le bundle (aucun chargement réseau, init synchrone `initAsync: false`) : volume faible, pas de flash de clés au démarrage, rendu immédiat en test et dans Storybook.
 - Un namespace par écran ou domaine (`common`, `welcome`, `auth`, `ui`, `astrology`…).
 - Typage strict des clés via `CustomTypeOptions` (`strictKeyChecks`) : une clé inexistante casse le typecheck.
-- Nombres et dates via `Intl` avec la langue courante (`src/i18n/format.ts`).
+- Nombres et dates via `Intl` avec la langue courante (`src/i18n/format/format.ts`).
 - Règle ESLint `i18next/no-literal-string` (mode `jsx-text-only`) en erreur sur `src/**` hors tests, stories et `src/docs/**`.
 Alternatives écartées : `react-intl` / FormatJS (syntaxe ICU plus lourde pour les traducteurs, typage des clés moins direct) ; LinguiJS (étape de compilation des catalogues et macros supplémentaires) ; dictionnaire maison (pluriels, interpolation et changement de langue à réimplémenter). Chargement des traductions par HTTP (`i18next-http-backend`) écarté tant qu'il n'y a qu'une ou deux langues.
 
@@ -149,7 +149,7 @@ Alternatives écartées : `timeZoneName: "longOffset"` seul (même information q
 Contexte : l'onboarding (#79) doit proposer des villes dès 2 caractères, enregistrer latitude/longitude et déterminer le fuseau horaire historique applicable à la date de naissance, sans exposer de clé côté client.
 Décision :
 - Géocodage via **Open-Meteo Geocoding API** (`geocoding-api.open-meteo.com/v1/search`), appelée depuis l'Edge Function `geocode` (JWT obligatoire, CORS `ALLOWED_ORIGINS`). Aucune clé requise, résultats localisés en français (`language=fr` : « États-Unis », « Île-de-France »), données GeoNames (CC BY 4.0) incluant pour chaque lieu le **fuseau IANA** déterminé à partir de ses coordonnées : pas de bibliothèque de recherche de fuseau à embarquer. Seules les localités habitées (codes GeoNames `PPL*`) sont renvoyées, 8 par défaut, 10 au maximum ; timeout fournisseur de 5 s. Aucune requête n'est journalisée (la ville de naissance est une donnée personnelle) ; seule la saisie de recherche est transmise au fournisseur, sans identifiant utilisateur.
-- Décalage UTC à la date et l'heure de naissance calculé par une fonction pure (`src/lib/utcOffset.ts`) à partir de la base tz embarquée dans le moteur JavaScript (`Intl.DateTimeFormat`, ICU) : historique et heure d'été inclus (ex. pas d'heure d'été en France en 1975, réintroduite en 1976). Heure répétée (retour à l'heure d'hiver) : première occurrence retenue, statut `ambiguous` ; heure sautée : décalage d'avant le saut, statut `nonexistent`.
+- Décalage UTC à la date et l'heure de naissance calculé par une fonction pure (`shared/time/utcOffset/utcOffset.ts`) à partir de la base tz embarquée dans le moteur JavaScript (`Intl.DateTimeFormat`, ICU) : historique et heure d'été inclus (ex. pas d'heure d'été en France en 1975, réintroduite en 1976). Heure répétée (retour à l'heure d'hiver) : première occurrence retenue, statut `ambiguous` ; heure sautée : décalage d'avant le saut, statut `nonexistent`.
 Limites :
 - Conditions Open-Meteo : API gratuite réservée à l'usage non commercial, environ 10 000 appels/jour partagés par adresse IP (les Edge Functions partagent leurs IP de sortie). Avant une mise en production commerciale : abonnement Open-Meteo (clé à ajouter en secret Edge Function) ou bascule vers GeoNames (compte gratuit, usage commercial autorisé). Le fournisseur est isolé dans `supabase/functions/geocode/places.ts`.
 - La précision du décalage dépend de la version de la base tz du navigateur. Pour les calculs astrologiques côté serveur (#20), recalculer le décalage côté fonction plutôt que de faire confiance à la valeur envoyée par le client.

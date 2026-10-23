@@ -21,13 +21,13 @@ Sortie `200` : `{ chart, cached }`, schéma versionné (`schemaVersion: 1`).
 - `moonSignChange` : `{ from, to }` si la Lune change de signe sur la journée locale (heure inconnue) ou dans la marge de l'heure approximative (±30 min, ±2 h, ±6 h pour « plus de 2 h »), sinon `null`.
 - `warnings` : `unknown_time`, `approximate_time`, `ambiguous_local_time`, `nonexistent_local_time`, `local_mean_time`, `polar_fallback`, `moon_sign_uncertain`. Le front les traduit ; la fonction n'envoie aucun texte.
 
-Mode progression (`?progress=1`, #81) : même authentification et mêmes erreurs HTTP (`401`, `404`, `405`) ; en cas de succès la réponse est un flux NDJSON (`application/x-ndjson`), une ligne JSON par événement : `{ "phase": ... }` émis par `computeNatalChart` au moment où chaque phase se termine (`validation`, `timezone`, `positions`, `ascendant`, `houses_aspects`, `reading`, dans cet ordre), puis `{ "chart": ..., "cached": ... }` (même objet que le mode JSON) ou `{ "error": { code, message } }` si le calcul échoue après le début du flux. Sans le paramètre, le contrat JSON est inchangé. Le client (`src/lib/natalChartProgress.ts`) coche une étape à la réception de son événement.
+Mode progression (`?progress=1`, #81) : même authentification et mêmes erreurs HTTP (`401`, `404`, `405`) ; en cas de succès la réponse est un flux NDJSON (`application/x-ndjson`), une ligne JSON par événement : `{ "phase": ... }` émis par `computeNatalChart` au moment où chaque phase se termine (`validation`, `timezone`, `positions`, `ascendant`, `houses_aspects`, `reading`, dans cet ordre), puis `{ "chart": ..., "cached": ... }` (même objet que le mode JSON) ou `{ "error": { code, message } }` si le calcul échoue après le début du flux. Sans le paramètre, le contrat JSON est inchangé. Le client (`src/features/chart/natalChartProgress/natalChartProgress.ts`) coche une étape à la réception de son événement.
 
 Confiance : `high` = heure exacte non ambiguë ; `medium` = heure approximative, ou exacte mais ambiguë/inexistante (une heure d'écart déplace l'ascendant d'environ 11°) ; `low` = heure inconnue.
 
 Erreurs : `{ error: { code, message } }` avec `message` égal au code. `401 unauthenticated` / `invalid_token`, `404 birth_data_not_found`, `405 method_not_allowed`, `422 invalid_birth_data` (date, fuseau ou coordonnées invalides), `500 internal_error`.
 
-Le décalage UTC est calculé par `_shared/time/` (copie de `src/lib/utcOffset.ts` et `legalMeanTime.ts`, contrôlée par `natal-chart/parity_test.ts`) ; toute modification de `src/lib/` doit être répercutée dans la copie.
+Le décalage UTC est calculé par `shared/time/` (`utcOffset` et `legalMeanTime`), source unique importée par le client et par les Edge Functions.
 ## Cache des thèmes (#22)
 
 - Table `natal_charts` : `chart_data` (le thème), `cache_key`, `birth_data_id`, `user_id`, `computed_at`. Unicité `(birth_data_id, cache_key)`. Lecture réservée au propriétaire (RLS) ; aucune écriture cliente (privilèges `insert`/`update`/`delete` retirés à `authenticated`), seule l'Edge Function écrit, avec la clé de service.

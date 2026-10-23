@@ -3,7 +3,7 @@ import type { Caller } from "../_shared/auth.ts";
 import { createHandler } from "../_shared/handler.ts";
 import type { ChartCache } from "./cache.ts";
 import { createNatalChartHandler } from "./natalChart.ts";
-import type { NatalChart } from "./types.ts";
+import type { NatalChart } from "../../../shared/contracts/natalChart/natalChart.ts";
 import type { BirthDataRow } from "./store.ts";
 import { type BirthDataStore, toBirthInput } from "./store.ts";
 

@@ -4,7 +4,7 @@ Document de passation entre la maquette et l'implémentation (issue #42). Il dit
 
 Sources de vérité, par ordre de priorité :
 
-1. **Code du design system** : le bloc `@theme` de `src/index.css` (tokens), `src/components/ui/` (composants), Storybook (`npm run storybook`).
+1. **Code du design system** : le bloc `@theme` de `src/index.css` (tokens), `src/shared/components/ui/` (composants), Storybook (`npm run storybook`).
 2. **Tickets `[Design]`** (#72 à #94, label `design`) : contenu et critères d'acceptation de chaque écran.
 3. **Maquette** : voir ci-dessous.
 
@@ -49,7 +49,7 @@ La colonne « Composants principaux » est une correspondance proposée à parti
 
 ## Composants du design system
 
-Inventaire de `src/components/ui/` (un dossier par composant : `.tsx`, `.test.tsx`, `.stories.tsx`). Noms identiques dans le code et dans Storybook. Chaque composant prend un `id` obligatoire fourni par l'écran ; ses sous-éléments en dérivent leurs IDs (`${id}-error`…).
+Inventaire de `src/shared/components/ui/` (un dossier par composant : `.tsx`, `.test.tsx`, `.stories.tsx`). Noms identiques dans le code et dans Storybook. Chaque composant prend un `id` obligatoire fourni par l'écran ; ses sous-éléments en dérivent leurs IDs (`${id}-error`…).
 
 ### Base (`Base/…` dans Storybook, #93)
 
@@ -93,10 +93,10 @@ Inventaire de `src/components/ui/` (un dossier par composant : `.tsx`, `.test.ts
 
 ### Composants applicatifs (`App/…` dans Storybook)
 
-- `DiscoverButton` (`src/components/`) : bouton « Découvrir sans compte » avec chargement et erreur.
-- `DiscoveryModeBadge` (`src/components/`) : pastille « Mode découverte ».
+- `DiscoverButton` (`src/shared/components/`) : bouton « Découvrir sans compte » avec chargement et erreur.
+- `DiscoveryModeBadge` (`src/shared/components/`) : pastille « Mode découverte ».
 
-Styles partagés (anneau de focus, champs) : `src/components/ui/styles.ts`.
+Styles partagés (anneau de focus, champs) : `src/shared/components/ui/styles.ts`.
 
 Le détail de chaque variante et état est visible dans les stories ; ce tableau sert d'index, pas de spécification.
 
@@ -174,7 +174,7 @@ Ce qui n'est pas défini par la maquette et reste à fournir : comportement tabl
 
 Règles déjà appliquées par les composants (ne pas les contourner dans les écrans) :
 
-- Focus clavier visible sur tout élément interactif : anneau `focusRing` / `focusWithinRing` (`src/components/ui/styles.ts`).
+- Focus clavier visible sur tout élément interactif : anneau `focusRing` / `focusWithinRing` (`src/shared/components/ui/styles.ts`).
 - Chaque champ a un `<label>` relié par `htmlFor` ; erreurs et aides reliées par `aria-describedby`, `aria-invalid` en cas d'erreur. `hideLabel` masque visuellement le libellé sans le retirer.
 - Bouton icône : `label` obligatoire (`aria-label`). Icônes décoratives en `aria-hidden`.
 - Choix uniques en `radiogroup` navigable aux flèches (`SegmentedControl`, `SelectableCardGroup`, `SignGrid`).
@@ -199,7 +199,7 @@ Règles à respecter dans les écrans :
 Assets présents dans le code (aucun fichier image exporté à ce jour) :
 
 - Logo : dessiné en SVG dans `Logo` (cercle violet, points corail et ciel, mot-symbole « Numa »).
-- Icônes : SVG inline dans `src/components/ui/Icon/icons.tsx` (liste dans le tableau des composants).
+- Icônes : SVG inline dans `src/shared/components/ui/Icon/icons.tsx` (liste dans le tableau des composants).
 - Polices : Manrope et Inter auto-hébergées via `@fontsource-variable` (aucun appel à Google Fonts).
 
 Assets attendus du design : voir la section suivante.

@@ -1,9 +1,11 @@
 ---
 paths:
-  - "src/lib/**"
+  - "src/features/**/*.ts"
+  - "src/shared/**/*.ts"
+  - "shared/**"
 ---
 
-# Couche domaine (`src/lib/`)
+# Couche domaine (modules `.ts` de `src/features/`, `src/shared/` et `shared/`)
 
 - Détails : `docs/claude/development.md` (Internationalisation), `docs/claude/architecture.md`.
 - Aucun import de React, de composant ou de hook : logique pure et services.

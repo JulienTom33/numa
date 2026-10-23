@@ -1,6 +1,6 @@
 import { computeHouses } from "../_shared/astrology/houses.ts";
-import { toEclipticPosition } from "../_shared/astrology/zodiac.ts";
-import { resolveUtcOffset, type UtcOffset } from "../_shared/time/utcOffset.ts";
+import { toEclipticPosition } from "../../../shared/zodiac/zodiac.ts";
+import { resolveUtcOffset, type UtcOffset } from "../../../shared/time/utcOffset/utcOffset.ts";
 import { findAspects } from "./aspects.ts";
 import { computeBody, eclipticLongitude } from "./bodies.ts";
 import {
@@ -17,7 +17,7 @@ import {
   type PhaseListener,
   SCHEMA_VERSION,
   type TimeMargin,
-} from "./types.ts";
+} from "../../../shared/contracts/natalChart/natalChart.ts";
 
 export const UNKNOWN_TIME_REFERENCE = "12:00";
 const DAY_START = "00:00";

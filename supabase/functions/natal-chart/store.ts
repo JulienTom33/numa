@@ -1,6 +1,6 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import type { Database } from "../../../shared/database.types.ts";
-import type { BirthInput } from "./types.ts";
+import type { BirthInput } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 export interface BirthDataStore {
   findLatest(accessToken: string, userId: string): Promise<BirthRecord | null>;

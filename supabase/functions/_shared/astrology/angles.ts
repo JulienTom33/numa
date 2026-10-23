@@ -1,5 +1,5 @@
 import { e_tilt, MakeTime, SiderealTime } from "astronomy-engine";
-import { normalizeDegrees } from "./zodiac.ts";
+import { normalizeDegrees } from "../../../../shared/zodiac/zodiac.ts";
 
 export interface ChartLocation {
   readonly instant: Date;

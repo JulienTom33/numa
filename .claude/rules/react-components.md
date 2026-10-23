@@ -1,10 +1,8 @@
 ---
 paths:
-  - "src/components/**"
   - "src/features/**"
-  - "src/screens/**"
-  - "src/hooks/**"
-  - "src/navigation/**"
+  - "src/shared/**"
+  - "src/App.tsx"
 ---
 
 # Composants et hooks React
@@ -17,5 +15,5 @@ paths:
 - Aucun texte en dur : `t()` (clé dans `src/i18n/locales/fr/<namespace>.json`).
 - Aucune couleur en dur : tokens Tailwind du bloc `@theme` de `src/index.css`.
 - Tout élément significatif porte un `id` `<composant>__<type>--<descriptor>` ; items de liste suffixés par l'identifiant métier ; `<label>` relié par `htmlFor`.
-- Réutiliser un composant de `src/components/ui/` avant d'en créer un ; un nouveau composant UI a `.tsx`, `.test.tsx` et une story par variante et par état.
+- Réutiliser un composant de `src/shared/components/ui/` avant d'en créer un ; un nouveau composant UI a `.tsx`, `.test.tsx` et une story par variante et par état.
 - Aucun commentaire, JSDoc compris.

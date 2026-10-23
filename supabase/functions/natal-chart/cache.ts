@@ -1,6 +1,6 @@
 import { createAdminClient } from "../_shared/supabase.ts";
 import { toJson } from "./toJson.ts";
-import type { NatalChart } from "./types.ts";
+import type { NatalChart } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 export interface ChartCache {
   find(birthDataId: string, key: string): Promise<NatalChart | null>;

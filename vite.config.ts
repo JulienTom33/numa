@@ -14,7 +14,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],
-      include: ["src/**/*.{ts,tsx}"],
+      include: ["src/**/*.{ts,tsx}", "shared/**/*.ts"],
       exclude: [
         "**/*.config.*",
         "src/main.tsx",
@@ -23,6 +23,8 @@ export default defineConfig({
         "dist/**",
         "storybook-static/**",
         "supabase/**",
+        "shared/database.types.ts",
+        "shared/contracts/**",
         "scripts/**",
         "src/**/*.stories.tsx",
         "src/docs/**",

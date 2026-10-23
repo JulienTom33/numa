@@ -1,6 +1,10 @@
-import { normalizeDegrees } from "../_shared/astrology/zodiac.ts";
+import { normalizeDegrees } from "../../../shared/zodiac/zodiac.ts";
 import { round } from "./bodies.ts";
-import type { Aspect, AspectType, BodyId } from "./types.ts";
+import type {
+  Aspect,
+  AspectType,
+  BodyId,
+} from "../../../shared/contracts/natalChart/natalChart.ts";
 
 export const ASPECT_DEFINITIONS: Readonly<
   Record<AspectType, { readonly angle: number; readonly maxOrb: number }>
