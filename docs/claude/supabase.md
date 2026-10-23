@@ -44,6 +44,8 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 
 - Chaque migration est un fichier versionné dans le dépôt, appliqué via l'outillage Supabase.
 - Pas de migration destructive (drop de colonne/table contenant des données) sans validation humaine explicite.
+- Plus de `supabase db push` manuel en production : après merge sur `master` et CI verte, le workflow `deploy-supabase.yml` applique les migrations sur staging puis sur production (`--dry-run` affiché avant chaque `db push`). Détails et configuration dans `deployment.md`.
+- Une migration doit donc être rétrocompatible avec la version précédente des fonctions et du client (déploiement non atomique) ; elle est testée en CI (`supabase db reset`) puis sur staging avant la production.
 
 ## Types TypeScript du schéma (issue #150)
 
@@ -79,7 +81,7 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 ## Environnements
 
 - **Local** : stack Supabase locale via `supabase start` (config versionnée dans `supabase/config.toml`). Utilisé pour le développement et testé en CI par le job `supabase-migrations` (`supabase start` + `supabase db reset`).
-- **Staging** et **Production** : projets Supabase dédiés (dashboard Supabase), un par environnement. Jamais de partage de projet entre staging et prod.
+- **Staging** et **Production** : projets Supabase dédiés (dashboard Supabase), un par environnement. Jamais de partage de projet entre staging et prod. Staging est en région UE et reçoit migrations et fonctions avant la production (environnements GitHub `staging` et `production`, voir `deployment.md`).
 - Chaque environnement a son propre jeu de variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, ...) injecté via les secrets et variables GitHub Actions / la config d'hébergement OVH — jamais commité.
 
 ## Variables d'environnement : publiques vs secrètes

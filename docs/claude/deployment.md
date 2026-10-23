@@ -45,19 +45,37 @@ Déclenché automatiquement à chaque push sur `master` (donc après merge d'une
 
 Déclenchement manuel possible depuis l'onglet Actions → workflow `Deploy` → `Run workflow`.
 
-## Edge Functions (Supabase)
+## Migrations et Edge Functions (Supabase)
 
-Les fonctions ne sont pas hébergées sur le VPS : elles sont déployées sur le projet Supabase par `.github/workflows/deploy-functions.yml`, à chaque push sur `master` qui touche `supabase/functions/` ou `supabase/config.toml` (ou manuellement).
+Les fonctions ne sont pas hébergées sur le VPS. Le workflow `.github/workflows/deploy-supabase.yml` (remplace `deploy-functions.yml`) applique les migrations et déploie les fonctions sur les projets Supabase, sans aucun `supabase db push` manuel.
 
-Configuration requise (environnement `production`) :
+Déclenchement : fin réussie du workflow `CI` sur `master` (donc après merge, CI verte), ou manuel (`workflow_dispatch`). Deux jobs enchaînés :
+
+1. `staging` (environnement GitHub `staging`) : `supabase link`, `supabase db push --dry-run` (liste des migrations en attente, visible dans le run), `supabase db push`, mise à jour du secret `ALLOWED_ORIGINS`, `supabase functions deploy`.
+2. `production` (environnement GitHub `production`, `needs: staging`) : mêmes étapes. Un échec sur staging bloque la production ; une protection « Required reviewers » sur l'environnement `production` permet d'ajouter une validation humaine.
+
+Un groupe de concurrence unique sérialise les déploiements, sans annulation d'un run en cours.
+
+Configuration requise, à définir dans chacun des environnements `staging` et `production` (valeurs distinctes, projets Supabase distincts) :
 
 | Nom | Type | Contenu |
 |---|---|---|
 | `SUPABASE_ACCESS_TOKEN` | secret | Jeton personnel Supabase (Account → Access Tokens) dédié au déploiement |
-| `SUPABASE_PROJECT_REF` | secret | Référence du projet Supabase de production |
-| `ALLOWED_ORIGINS` | variable | Origines autorisées en CORS, séparées par des virgules (ex. `https://164-132-107-30.sslip.io`) |
+| `SUPABASE_PROJECT_REF` | secret | Référence du projet Supabase de l'environnement |
+| `SUPABASE_DB_PASSWORD` | secret | Mot de passe de la base de l'environnement (requis par `supabase db push`) |
+| `ALLOWED_ORIGINS` | variable | Origines autorisées en CORS, séparées par des virgules |
 
-Tant que l'un des trois manque, le workflow se termine sans déployer (avertissement dans le résumé du run). Le workflow pousse `ALLOWED_ORIGINS` dans les secrets des fonctions avant chaque déploiement ; les autres secrets (clés API astrologique, IA) se définissent avec `supabase secrets set` et ne transitent pas par GitHub.
+Si l'un des quatre manque pour `staging`, le job se termine sans déployer (avertissement dans le résumé du run) et la production n'est pas déployée non plus. Les autres secrets des fonctions (clés API astrologique, IA) se définissent avec `supabase secrets set --project-ref <ref>` et ne transitent pas par GitHub.
+
+### Étapes manuelles (une seule fois)
+
+1. Supabase : créer un second projet `numa-staging`, région UE (même région que la production), puis relever sa référence et son mot de passe de base.
+2. Supabase : appliquer sur staging la configuration Auth listée dans `supabase.md` (connexion anonyme, URL de redirection de l'environnement).
+3. GitHub : Settings → Environments → créer `staging` (l'environnement `production` existe déjà).
+4. GitHub : renseigner dans chaque environnement les secrets `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_DB_PASSWORD` et la variable `ALLOWED_ORIGINS`. Les secrets `SUPABASE_*` ne doivent plus rester au niveau dépôt.
+5. GitHub : optionnel, activer « Required reviewers » sur `production`.
+6. Après le merge de la PR qui ajoute le workflow : lancer une première fois `Deploy Supabase` manuellement et vérifier le `--dry-run` de chaque job.
+7. Pour une base de production déjà migrée à la main : vérifier avec `supabase migration list --linked` que l'historique distant correspond au dépôt avant le premier run.
 
 ## Logs et redémarrages
 

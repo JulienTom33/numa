@@ -186,7 +186,7 @@ Décision : le code serveur est écrit en **Supabase Edge Functions** (Deno), da
 - Clés API : utiliser les nouvelles clés `sb_publishable_…` / `sb_secret_…`. Les clés `anon` / `service_role` cessent de fonctionner fin 2026 (migration du client à faire avant cette date).
 - Contraintes à respecter : 2 s de CPU par requête (les attentes réseau ne comptent pas), 150 s de durée maximale sur le plan Free (400 s sur les plans payants), 256 Mo de mémoire. Les appels IA longs se font en streaming. Le calcul astrologique est local, dans une Edge Function avec Astronomy Engine (décision du 2026-10-16, #50) : environ 0,2 ms par thème mesuré en local.
 - Socle commun : CORS limité à `ALLOWED_ORIGINS`, erreurs JSON `{ error: { code, message } }` sans détail interne, journalisation sans donnée personnelle.
-- Déploiement : workflow `deploy-functions.yml` sur push `master`, inactif tant que le projet Supabase distant n'est pas configuré.
+- Déploiement : workflow `deploy-supabase.yml` après CI verte sur `master` : migrations puis Edge Functions, staging puis production ; inactif tant que l'environnement n'est pas configuré.
 Alternatives écartées : API Node conteneurisée sur le VPS OVH (serveur, mises à jour, TLS et supervision supplémentaires à maintenir, vérification des JWT Supabase à réimplémenter) ; Cloudflare Workers (nouveau fournisseur et nouveaux secrets hors de l'écosystème Supabase, sans accès direct au Postgres du projet) ; n8n (hors chemin critique, cf. 2026-09-14).
 
 ## 2026-10-15 — Workflow Git simplifié : une branche par ticket vers `master` (issue #91)
