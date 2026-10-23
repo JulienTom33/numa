@@ -21,12 +21,16 @@ Ton prompt donne la cible (`git diff origin/master...HEAD` ou `PR #<n>`), évent
 
 Par Storybook, jamais par l'app : `npm run dev` parle au vrai projet Supabase et crée des sessions anonymes. Aucune connexion, aucune soumission de formulaire, aucune dépendance installée.
 
-Possible seulement si un checkout de la branche est disponible (dossier courant pour `/review-pr`, chemin `Checkout` sinon), si le diff touche un fichier qui a une story (`*.stories.tsx` à côté, ou un écran de `src/screens/` qui en a une), et si Chrome ou Edge est installé (`/c/Program Files/Google/Chrome/Application/chrome.exe`, `/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`, `google-chrome` ou `chromium` ailleurs). Sinon : revue statique et limite indiquée dans la sortie.
+Outil : le CLI `playwright screenshot` de `@playwright/test` (déjà dépendance du dépôt), avec le Chrome installé (`--channel=chrome`, ou `--channel=msedge` à défaut) : aucun navigateur téléchargé. Ne lance jamais `npx playwright install`.
+
+Possible seulement si un checkout de la branche est disponible (dossier courant pour `/review-pr`, chemin `Checkout` sinon) et si le diff touche un fichier qui a une story (`*.stories.tsx` à côté, ou un écran de `src/screens/` qui en a une). Sinon, ou si ni Chrome ni Edge n'est trouvé par Playwright : revue statique et limite indiquée dans la sortie.
 
 1. `cd <checkout> && npx storybook dev -p <port> --ci --no-open` en arrière-plan ; attends que `curl -sf http://localhost:<port>/index.json` réponde. Les stories du diff sont les entrées `type: "story"` dont `importPath` correspond aux stories touchées ou voisines des fichiers touchés.
-2. Mobile (cadre 390 × 844 de la maquette) : sous Windows, Chrome headless impose un viewport d'au moins 504 px. Crée un dossier temporaire (`mktemp -d`), écris-y `frame.html` contenant `<iframe src="http://localhost:<port>/iframe.html?id=<story-id>&viewMode=story" width="390" height="844" style="border:0;display:block"></iframe>` (marges du `body` à 0), et sers-le avec `python -m http.server <port + 1>` depuis ce dossier : Storybook refuse d'être encadré par une page `file://`.
-3. Capture : `"<chrome>" --headless=new --disable-gpu --hide-scrollbars --window-size=504,844 --virtual-time-budget=10000 --screenshot="$(cygpath -w <dossier>/<story>.png)" "http://localhost:<port + 1>/frame.html"`. Desktop : directement `http://localhost:<port>/iframe.html?id=<story-id>&viewMode=story` avec `--window-size=1280,900`. Lis chaque PNG avec Read. Une capture par état touché (défaut, chargement, erreur, vide, désactivé), dix au maximum.
-4. À la fin, toujours : arrête les deux serveurs (`netstat -ano | grep LISTENING | grep -E '[:.]<port> '` donne le PID, puis `taskkill //PID <pid> //T //F` ; `kill` hors Windows) et supprime le dossier temporaire.
+2. Pour chaque story retenue, URL `http://localhost:<port>/iframe.html?id=<story-id>&viewMode=story`, captures dans un dossier temporaire (`mktemp -d`) :
+   - mobile (cadre 390 × 844 de la maquette) : `npx playwright screenshot --channel=chrome --viewport-size=390,844 --full-page --wait-for-selector="#storybook-root > *" "<url>" <dossier>/<story>-mobile.png` ;
+   - desktop : même commande avec `--viewport-size=1280,900`, sans `--full-page`.
+   Lis chaque PNG avec Read. Une story par état touché (défaut, chargement, erreur, vide, désactivé), dix captures au maximum.
+3. À la fin, toujours : arrête Storybook (`netstat -ano | grep LISTENING | grep -E '[:.]<port> '` donne le PID, puis `taskkill //PID <pid> //T //F` ; `kill` hors Windows) et supprime le dossier temporaire.
 
 ## Ce que tu contrôles
 
@@ -46,6 +50,6 @@ Gravité : **bloquant** = violation d'une règle écrite de `CLAUDE.md` ou `deve
 Une ligne par finding : `fichier:ligne: [bloquant|majeur|mineur] problème. Correctif attendu.` Triés par gravité. Pas de félicitation, pas de reformulation du diff. Aucun finding : `Aucun.`
 
 Termine par :
-- `vérification visuelle` : stories capturées (mobile / desktop), ou `non faite` avec la raison (pas de checkout, pas de story, pas de navigateur, Storybook en échec) ;
+- `vérification visuelle` : stories capturées (mobile / desktop), ou `non faite` avec la raison (pas de checkout, pas de story, ni Chrome ni Edge, Storybook en échec) ;
 - `verdict` : `changes_requested` s'il y a au moins un bloquant, `ok` sinon ;
 - `summary` : synthèse courte et liste numérotée des corrections, assez précise pour qu'un autre agent les applique sans relire la review.

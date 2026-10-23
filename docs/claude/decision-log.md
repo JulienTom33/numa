@@ -14,15 +14,16 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
-## 2026-10-23 — Reviewers UI/UX et éditorial plutôt qu'une software factory (issue #164)
+## 2026-10-23 — Software factory retirée, reviewers UI/UX et éditorial ajoutés (issue #164)
 
-Contexte : la « software factory » de zazencodes (skill orchestrateur, spec-writer, builder, quatre reviewers en parallèle, approver, état en fichiers Markdown) a été évaluée et adaptée pour Numa. Le dépôt a déjà `/orchestrate`, `ticket-worker` (worktree), `pr-reviewer` (score sur 100, seuil 80), `/review-pr`, `claude-review.yml` avec correction bornée, les hooks et `.claude/rules/`. La factory complète aurait fait doublon : review en double, coût environ cinq fois plus élevé par ticket, deux systèmes concurrents. Il ne manquait que la vérification visuelle et le contrôle éditorial.
+Contexte : une « software factory » adaptée de celle de zazencodes (skill `/factory`, spec-writer, builder, cinq reviewers en parallèle, approver, état par job en fichiers Markdown, tableau de suivi) a été mergée dans #165. Elle fait doublon avec ce que le dépôt avait déjà : `/orchestrate`, `ticket-worker` (worktree), `pr-reviewer` (score sur 100, seuil 80), `/review-pr`, `claude-review.yml` avec correction bornée, les hooks et `.claude/rules/`. Résultat : review en double, coût environ cinq fois plus élevé par ticket, deux circuits concurrents. Il ne manquait à l'existant que la vérification visuelle et le contrôle éditorial.
 Décision :
+- `/orchestrate` reste le seul circuit multi-agents. La factory est retirée : skill `/factory`, `factory/` (tableau de suivi compris), agents `spec-writer`, `builder`, `approver`, `reviewer-code`, `reviewer-security`, `reviewer-ui`, `reviewer-ux`, `docs/claude/factory.md`.
 - Deux agents en lecture seule, au format de sortie de `pr-reviewer` : `reviewer-ui-ux` (Sonnet) et `reviewer-editorial` (Opus, règles de `ai-astrology.md`). Lancés selon les chemins du diff (table dans `pull-requests.md`, « Reviewers spécialisés ») ; un bloquant donne `changes_requested`.
 - `/review-pr` les lance en parallèle de `pr-reviewer`, sans toucher à la boucle de 3 tours. `/orchestrate` les lance après chaque vague (un sous-agent ne peut pas lancer de sous-agents), avec au plus une relance du `ticket-worker` en mode correction sur la même branche.
-- Vérification visuelle par Storybook (écrans et composants ont leurs stories, sans backend) et Chrome ou Edge headless, déjà installés : aucune dépendance ajoutée. Sous Windows, Chrome headless impose un viewport d'au moins 504 px, d'où la capture mobile dans une iframe de 390 px servie en HTTP (Storybook refuse un encadrement depuis `file://`). L'app elle-même n'est jamais lancée par un reviewer (sessions anonymes créées sur le vrai projet Supabase).
-- `claude-review.yml` inchangé.
-Alternatives écartées : la factory complète (doublon et coût) ; Playwright ou `agent-browser` (nouvelle dépendance pour un gain faible face à Storybook) ; intégrer ces angles à la rubrique de `pr-reviewer` (rubrique déjà dense, et la vérification visuelle demande des outils que la CI n'a pas).
+- Vérification visuelle sur les stories Storybook (écrans et composants en ont, sans backend), capturées par `npx playwright screenshot` (`@playwright/test`, déjà dépendance depuis #162) avec le Chrome ou l'Edge installé (`--channel`) : aucun navigateur téléchargé, viewport exact 390 × 844 (Chrome headless lancé directement impose au moins 504 px de large sous Windows), plus une capture desktop. L'app elle-même n'est jamais lancée par un reviewer (sessions anonymes créées sur le vrai projet Supabase).
+- `claude-review.yml` inchangé ; le reviewer éditorial en CI reste un suivi possible.
+Alternatives écartées : garder la factory à côté de `/orchestrate` (doublon et coût) ; `agent-browser` (nouvelle dépendance) ; Chrome headless seul (viewport mobile impossible sans iframe intermédiaire) ; intégrer ces angles à la rubrique de `pr-reviewer` (rubrique déjà dense, et la vérification visuelle demande des outils que la CI n'a pas).
 
 ## 2026-10-17 — Fournisseurs IA : mix gratuit Mistral puis Groq (issue #51) — proposition révisée, à valider
 
