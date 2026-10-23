@@ -1,16 +1,13 @@
+import {
+  type HouseFallback,
+  type HouseSystem,
+} from "../../../../shared/contracts/natalChart/natalChart.ts";
 import { type ChartAngles, type ChartLocation, computeAngles, DEGREES } from "./angles.ts";
-import { type EclipticPosition, normalizeDegrees, toEclipticPosition } from "./zodiac.ts";
-
-export const HOUSE_SYSTEMS = ["placidus", "porphyry", "equal", "whole-sign"] as const;
-
-export type HouseSystem = typeof HOUSE_SYSTEMS[number];
-
-export type HouseFallbackReason = "polar-latitude" | "placidus-not-converged";
-
-export interface HouseFallback {
-  readonly from: HouseSystem;
-  readonly reason: HouseFallbackReason;
-}
+import {
+  type EclipticPosition,
+  normalizeDegrees,
+  toEclipticPosition,
+} from "../../../../shared/zodiac/zodiac.ts";
 
 export interface HouseCalculation {
   readonly requestedSystem: HouseSystem;

@@ -4,11 +4,11 @@
 
 - Authentification via Supabase Auth.
 - Sessions anonymes supportées pour permettre l'usage sans compte (lecture astrologique avant inscription) ; migration vers compte identifié gère la conservation des données déjà produites.
-- Conversion anonyme → compte : identité rattachée au même user id (`src/lib/accountUpgrade.ts`, hook `useAccountUpgrade`) ; `profiles.status` passe à `authenticated` par trigger sur `auth.users.is_anonymous`. Requiert `enable_manual_linking` pour l'OAuth. Voir `decision-log.md` (issue #15).
+- Conversion anonyme → compte : identité rattachée au même user id (`src/features/auth/accountUpgrade/accountUpgrade.ts`, hook `useAccountUpgrade`) ; `profiles.status` passe à `authenticated` par trigger sur `auth.users.is_anonymous`. Requiert `enable_manual_linking` pour l'OAuth. Voir `decision-log.md` (issue #15).
 
 ### Inscription et connexion (issue #14)
 
-- Client : `src/lib/auth.ts` (actions Supabase, erreurs normalisées `AuthFlowError` : `code` + `retryable`, jamais le message technique) et hook `useAuth()` (une seule instance, dans `App`) ; parcours d'écrans `src/features/auth/AuthFlow.tsx` (AuthScreen + MagicLinkScreen). Messages affichés : clés `auth:errors.<code>`.
+- Client : `src/features/auth/auth/auth.ts` (actions Supabase, erreurs normalisées `AuthFlowError` : `code` + `retryable`, jamais le message technique) et hook `useAuth()` (une seule instance, dans `App`) ; parcours d'écrans `src/features/auth/AuthFlow.tsx` (AuthScreen + MagicLinkScreen). Messages affichés : clés `auth:errors.<code>`.
 - Lien magique : `signInWithOtp({ email, options: { emailRedirectTo, shouldCreateUser: true } })` — même action en inscription et en connexion (le compte est créé s'il n'existe pas).
 - OAuth Google / Apple : `signInWithOAuth({ provider, options: { redirectTo } })`.
 - **Session anonyme** : l'inscription (lien email ou OAuth) passe par la conversion #15 (`updateUser({ email })` / `linkIdentity`, même user id, aucune donnée copiée). La connexion à un compte existant remplace la session anonyme : un avertissement est affiché, les données anonymes ne sont pas fusionnées (`decision-log.md`, #15).
@@ -49,7 +49,7 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 
 - `shared/database.types.ts` est **généré** (ne jamais l'éditer à la main) par `supabase gen types typescript --local`, versionné dans le dépôt.
 - Après toute migration : `supabase db reset` puis `npm run types:generate`, et commiter le fichier.
-- Client (`src/lib/supabaseClient.ts`) : `createClient<Database>` ; Edge Functions : `createClient<Database>` avec `import type { Database } from "../../../shared/database.types.ts"` (import relatif, pas d'import map). `TypedSupabaseClient` est exporté par `_shared/supabase.ts`.
+- Client (`src/shared/supabaseClient/supabaseClient.ts`) : `createClient<Database>` ; Edge Functions : `createClient<Database>` avec `import type { Database } from "../../../shared/database.types.ts"` (import relatif, pas d'import map). `TypedSupabaseClient` est exporté par `_shared/supabase.ts`.
 - Une table ou colonne inconnue échoue au typecheck. Les colonnes `jsonb` sont typées `Json` : convertir un objet métier avec un convertisseur typé sans `as` (`toJson(value: unknown): Json`, `supabase/functions/natal-chart/toJson.ts`) avant de l'écrire.
 - CI : le job `supabase-migrations` régénère les types après `supabase db reset` et échoue si le résultat diffère du fichier versionné.
 
@@ -67,7 +67,7 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 - Deux questions par session anonyme (`ANONYMOUS_QUESTION_LIMIT`, `supabase/functions/chat/quota.ts`), comptées dans `usage_counters` (`period_start = '-infinity'` : toute la session).
 - Edge Function `chat` : `GET` renvoie `{ quota }`, `POST { question }` renvoie `{ answer, quota }`, `429 question_quota_exceeded` au-delà de la limite, `502 provider_unavailable` si le fournisseur échoue (question non décomptée).
 - Parcours serveur : `reserve_question` → appel fournisseur → `commit_question` (succès) ou `release_question` (échec). Voir `decision-log.md` (2026-10-15, #27).
-- Client : `src/lib/questionQuota.ts` et `useQuestionQuota()` ; le compteur affiché vient toujours du serveur.
+- Client : `src/features/discovery/questionQuota/questionQuota.ts` et `useQuestionQuota()` ; le compteur affiché vient toujours du serveur.
 
 ## Clés API
 

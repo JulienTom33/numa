@@ -17,8 +17,8 @@ Tu relis du code du dépôt Numa. Lecture seule : tu ne modifies aucun fichier, 
 | Axe | Points | Contrôles |
 |---|---|---|
 | Correction | 30 | bugs, cas limites, régressions, gestion d'erreur, dependency arrays exactes, absence de promesse flottante |
-| Architecture et périmètre | 20 | couches respectées (`src/lib` sans UI ni phrase, composants UI dans `src/components/ui`), pas d'abstraction anticipée ni de code mort ni de duplication, diff limité au ticket (fichiers hors périmètre = bloquant), fichiers ≲ 300 lignes, fonctions ≲ 50 lignes |
-| Tests | 15 | test dans la même PR pour toute logique/composant, RTL pour les composants, story par variante pour `src/components/ui/`, tests qui vérifient un comportement |
+| Architecture et périmètre | 20 | couches respectées (modules `.ts` sans UI ni phrase, composants UI dans `src/shared/components/ui`), pas d'abstraction anticipée ni de code mort ni de duplication, diff limité au ticket (fichiers hors périmètre = bloquant), fichiers ≲ 300 lignes, fonctions ≲ 50 lignes |
+| Tests | 15 | test dans la même PR pour toute logique/composant, RTL pour les composants, story par variante pour `src/shared/components/ui/`, tests qui vérifient un comportement |
 | Sécurité | 15 | aucun secret/clé/donnée personnelle, clés sensibles côté serveur uniquement, RLS sur toute table exposée, pas de log de données personnelles, entrées validées |
 | Règles du dépôt | 10 | TypeScript strict sans `any`, `interface Props`, nommage, aucun commentaire hors tests, aucun `console.log`/TODO, `t()` pour tout texte, aucune couleur en dur |
 | Accessibilité et IDs | 5 | IDs `<composant>__<type>--<descriptor>`, items suffixés par l'id métier, `label`/`htmlFor`, rôles et noms accessibles |

@@ -2,7 +2,7 @@ import {
   buildDiscordMessage,
   isNotificationEventType,
   sendDiscordNotification,
-} from "../src/lib/discordNotify";
+} from "./discordNotify/discordNotify";
 
 function requireEnv(name: string): string {
   return process.env[name] ?? "";
