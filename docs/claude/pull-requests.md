@@ -26,7 +26,7 @@ En plus de `pr-reviewer` (rubrique sur 100, seuil 80), deux agents en lecture se
 
 | Agent | Modèle | Lancé si le diff touche | Contrôle |
 |---|---|---|---|
-| `reviewer-ui-ux` | Sonnet | `src/components/**`, `src/screens/**`, `src/features/**`, `src/navigation/**`, `src/App.tsx`, `src/index.css`, `src/i18n/locales/**`, `.storybook/**`, `index.html` (hors diff limité à des fichiers `*.test.ts(x)`) | tokens `@theme`, cohérence avec la maquette (`docs/design/handoff.md`) et les composants voisins, stories par variante et état, états chargement / vide / erreur, `t()`, IDs, `htmlFor`, accessibilité, rendu mobile |
+| `reviewer-ui-ux` | Sonnet | `src/shared/components/**`, `src/features/**`, `src/App.tsx`, `src/index.css`, `src/i18n/locales/**`, `.storybook/**`, `index.html` (hors diff limité à des fichiers `*.test.ts(x)`) | tokens `@theme`, cohérence avec la maquette (`docs/design/handoff.md`) et les composants voisins, stories par variante et état, états chargement / vide / erreur, `t()`, IDs, `htmlFor`, accessibilité, rendu mobile |
 | `reviewer-editorial` | Opus | `supabase/functions/chat/**`, tout fichier de `supabase/functions/` contenant un prompt ou le contexte envoyé au modèle IA, `src/i18n/locales/fr/chart.json`, `astrology.json` et tout namespace de lecture (horoscope, chat), `docs/claude/ai-astrology.md` | règles éditoriales de `ai-astrology.md` : compréhensible, transparent, non catégorique, aucun conseil médical, financier ou juridique ; données envoyées au modèle |
 
 Aucun chemin ne correspond : `pr-reviewer` seul.
@@ -66,7 +66,7 @@ Remettre le compteur à zéro : retirer les labels `claude-fix-*` de la PR.
 ## Notifications Discord
 
 - Workflow `.github/workflows/discord-notify.yml` : envoie une notification Discord à l'ouverture, la mise à jour ou le merge d'une PR, sur demande de correction (review `changes_requested`), et au démarrage/succès/échec du workflow `CI`. Les notifications de la review automatique Claude (`claude_review_ok`, `claude_review_fixing`, `claude_review_human_needed`) sont envoyées par `claude-review.yml`.
-- Logique de formatage et d'envoi dans `src/lib/discordNotify.ts` (testée dans `discordNotify.test.ts`), invoquée en CI via `npm run notify:discord -- <type>` (`scripts/notify-discord.ts`).
+- Logique de formatage et d'envoi dans `scripts/discordNotify/discordNotify.ts` (testée dans `discordNotify.test.ts`), invoquée en CI via `npm run notify:discord -- <type>` (`scripts/notify-discord.ts`).
 - Le webhook Discord est stocké dans le secret GitHub Actions `DISCORD_WEBHOOK_URL` (Settings → Secrets and variables → Actions). Il n'apparaît jamais dans le code, les logs ou les issues.
 - Chaque étape de notification est isolée (`continue-on-error: true`) : une panne Discord ou un webhook manquant n'affecte jamais le résultat de la CI.
 - Déduplication : chaque événement GitHub (ouverture, synchronisation, merge, review, run CI) ne déclenche qu'un seul appel Discord correspondant, sans notification répétée pour le même événement.
