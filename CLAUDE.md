@@ -19,6 +19,7 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 - Toute modification passe par une pull request. **Aucun merge automatique, jamais.** Voir `docs/claude/pull-requests.md`.
 - Tout nouveau fichier de logique ou composant significatif est accompagné de son test **dans la même PR**. Voir `docs/claude/development.md`.
 - **Aucun commentaire dans le code, JSDoc compris** ; commentaires libres uniquement dans les fichiers de test. Règle ESLint `numa/no-comments` (encore tolérante aux JSDoc de fonction exportée jusqu'à #134). Voir `docs/claude/development.md`.
+- Toute fonctionnalité utilisateur ajoute ou étend un parcours E2E Playwright (`e2e/`) dans la même PR. Voir `docs/claude/development.md` (Tests end-to-end).
 - Aucun texte affiché en dur : tout passe par `t()` (react-i18next), clés dans `src/i18n/locales/fr/<namespace>.json`. Voir `docs/claude/development.md` (Internationalisation).
 - Aucun secret, clé privée ou donnée personnelle commité. Voir `docs/claude/security.md`.
 - RLS obligatoire sur toute table Supabase exposée à des données utilisateur. Voir `docs/claude/supabase.md`.
@@ -47,6 +48,7 @@ npm run typecheck
 npm run test:coverage   # seuil 70 %
 npm run build
 npm run build-storybook
+npm run test:e2e        # stack Supabase locale + `supabase functions serve` ; aussi exécuté par le job CI `e2e`
 ```
 
 Si le ticket touche `supabase/` : `supabase db reset` puis `supabase test db` (stack locale démarrée via `supabase start`).
@@ -66,7 +68,7 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 |---|---|
 | `docs/claude/architecture.md` | Stack React, Tailwind CSS, Supabase, OVH, code serveur, n8n |
 | `docs/claude/git-workflow.md` | Branches, labels, démarrage d'un ticket |
-| `docs/claude/development.md` | Commandes, qualité, tests, conventions de code, IDs HTML |
+| `docs/claude/development.md` | Commandes, qualité, tests (unitaires et E2E), conventions de code, IDs HTML |
 | `docs/claude/supabase.md` | Auth, sessions anonymes, PostgreSQL, migrations, RLS |
 | `docs/claude/ai-astrology.md` | Calcul astrologique (Astronomy Engine), IA, contexte structuré, règles éditoriales |
 | `docs/claude/security.md` | Secrets, données personnelles, rate limiting, logs |
