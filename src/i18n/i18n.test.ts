@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
-import i18n from ".";
+import i18n from "./i18n";
 import { fr } from "./locales/fr";
-import { namespaces, supportedLanguages } from "./resources";
+import { namespaces, supportedLanguages } from "./resources/resources";
 
 describe("i18n", () => {
   afterEach(() => {

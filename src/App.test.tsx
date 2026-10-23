@@ -2,11 +2,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
-import { EMPTY_ONBOARDING_DATA } from "./lib/birthData";
-import { loadOnboardingDraft } from "./lib/onboardingStore";
-import { supabase } from "./lib/supabaseClient";
+import { EMPTY_ONBOARDING_DATA } from "./features/onboarding/birthData/birthData";
+import { loadOnboardingDraft } from "./features/onboarding/onboardingStore/onboardingStore";
+import { supabase } from "./shared/supabaseClient/supabaseClient";
 
-vi.mock("./lib/supabaseClient", () => ({
+vi.mock("./shared/supabaseClient/supabaseClient", () => ({
   supabase: {
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
@@ -16,13 +16,13 @@ vi.mock("./lib/supabaseClient", () => ({
   },
 }));
 
-vi.mock("./lib/skyChart", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("./lib/skyChart")>()),
+vi.mock("./features/chart/skyChart/skyChart", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./features/chart/skyChart/skyChart")>()),
   fetchMyChart: vi.fn(() => new Promise<never>(() => undefined)),
 }));
 
-vi.mock("./lib/onboardingStore", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("./lib/onboardingStore")>()),
+vi.mock("./features/onboarding/onboardingStore/onboardingStore", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./features/onboarding/onboardingStore/onboardingStore")>()),
   loadOnboardingDraft: vi.fn(),
 }));
 
