@@ -1,7 +1,7 @@
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import type { ComputedAscendant } from "./ascendant";
 import { supabase } from "./supabaseClient";
-import { ZODIAC_SIGNS, type ZodiacSign } from "./zodiac";
+import { ZODIAC_SIGNS, type ZodiacSign } from "../../shared/zodiac/zodiac.ts";
 
 export type NatalChartErrorCode =
   | "unauthenticated"

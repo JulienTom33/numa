@@ -5,7 +5,7 @@ import Disclosure from "../../components/ui/Disclosure/Disclosure";
 import { formatNumber } from "../../i18n/format";
 import { SKY_BODIES, type NatalSky } from "../../lib/skyChart";
 import { BODY_GLYPHS, SIGN_GLYPHS } from "../../lib/skyGeometry";
-import { ZODIAC_SIGNS } from "../../lib/zodiac";
+import { ZODIAC_SIGNS } from "../../../shared/zodiac/zodiac.ts";
 import SkyWheel from "./SkyWheel";
 
 interface Props {

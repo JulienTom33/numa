@@ -1,4 +1,4 @@
-import type { ZodiacSign } from "./zodiac";
+import type { ZodiacSign } from "../../shared/zodiac/zodiac.ts";
 
 export type AscendantSource = "computed" | "declared";
 

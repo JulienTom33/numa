@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getSignLabel, ZODIAC_SIGNS } from "./zodiac";
+import { getSignLabel } from "./zodiac";
+import { ZODIAC_SIGNS } from "../../shared/zodiac/zodiac.ts";
 
 describe("zodiac", () => {
   it("lists the 12 signs in zodiac order", () => {

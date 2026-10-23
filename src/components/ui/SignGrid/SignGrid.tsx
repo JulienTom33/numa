@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { cx } from "../../../lib/cx";
 import { fieldLabel, focusWithinRing } from "../styles";
-import { ZODIAC_SIGNS, type ZodiacSign } from "../../../lib/zodiac";
+import { ZODIAC_SIGNS, type ZodiacSign } from "../../../../shared/zodiac/zodiac.ts";
 
 interface Props {
   id: string;

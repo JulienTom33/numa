@@ -11,7 +11,7 @@ import {
   WHEEL_SIZE,
   wheelRotation,
 } from "../../lib/skyGeometry";
-import { ZODIAC_SIGNS } from "../../lib/zodiac";
+import { ZODIAC_SIGNS } from "../../../shared/zodiac/zodiac.ts";
 
 interface Props {
   id: string;

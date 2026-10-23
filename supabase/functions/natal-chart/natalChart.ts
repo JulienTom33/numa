@@ -5,8 +5,8 @@ import type { ChartCache } from "./cache.ts";
 import { computeCacheKey } from "./cacheKey.ts";
 import { computeNatalChart } from "./compute.ts";
 import type { BirthDataStore, BirthRecord } from "./store.ts";
-import { CHART_PHASES } from "./types.ts";
-import type { ChartPhase, NatalChart } from "./types.ts";
+import { CHART_PHASES } from "../../../shared/contracts/natalChart/natalChart.ts";
+import type { ChartPhase, NatalChart } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 export interface NatalChartDependencies {
   store: BirthDataStore;

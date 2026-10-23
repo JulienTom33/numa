@@ -1,5 +1,5 @@
 import type { SkyBodyId } from "./skyChart";
-import type { ZodiacSign } from "./zodiac";
+import type { ZodiacSign } from "../../shared/zodiac/zodiac.ts";
 
 export const WHEEL_SIZE = 340;
 export const WHEEL_CENTER = WHEEL_SIZE / 2;

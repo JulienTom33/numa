@@ -1,7 +1,8 @@
 import { toErrorCode, type NatalChartErrorCode } from "./natalChart";
 import { parseNatalChart, readComputedAt, type NatalChartSummary } from "./natalChartSummary";
+import { ASPECT_TYPES, type AspectType } from "../../shared/contracts/natalChart/natalChart.ts";
 import { supabase } from "./supabaseClient";
-import { ZODIAC_SIGNS, type ZodiacSign } from "./zodiac";
+import { ZODIAC_SIGNS, type ZodiacSign } from "../../shared/zodiac/zodiac.ts";
 
 export const SKY_BODIES = [
   "sun",
@@ -21,10 +22,6 @@ export type SkyBodyId = (typeof SKY_BODIES)[number];
 export const NATAL_POINTS = ["sun", "moon", "ascendant"] as const;
 
 export type NatalPoint = (typeof NATAL_POINTS)[number];
-
-export const ASPECT_TYPES = ["conjunction", "sextile", "square", "trine", "opposition"] as const;
-
-export type AspectType = (typeof ASPECT_TYPES)[number];
 
 export interface SkyBodyPosition {
   body: SkyBodyId;

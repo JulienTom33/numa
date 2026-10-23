@@ -1,16 +1,7 @@
 import { toKnownErrorCode, type NatalChartErrorCode } from "./natalChart";
+import { CHART_PHASES, type ChartPhase } from "../../shared/contracts/natalChart/natalChart.ts";
 import { supabase } from "./supabaseClient";
 
-export const CHART_PHASES = [
-  "validation",
-  "timezone",
-  "positions",
-  "ascendant",
-  "houses_aspects",
-  "reading",
-] as const;
-
-export type ChartPhase = (typeof CHART_PHASES)[number];
 
 interface StreamEvent {
   phase?: unknown;

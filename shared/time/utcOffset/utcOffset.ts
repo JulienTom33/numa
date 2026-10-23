@@ -1,4 +1,4 @@
-import { LEGAL_MEAN_TIME_START_MS } from "./legalMeanTime";
+import { LEGAL_MEAN_TIME_START_MS } from "../legalMeanTime/legalMeanTime.ts";
 
 export interface LocalDateTime {
   date: string;
@@ -129,12 +129,6 @@ function localMeanTimeOffset(
   };
 }
 
-/**
- * Renvoie `null` si la date, l'heure, le fuseau ou la longitude sont invalides.
- * Avec la longitude du lieu (degrés décimaux, est positif), une date antérieure à toute heure légale
- * du fuseau est convertie en heure locale moyenne du lieu (longitude / 15 h, à la seconde) :
- * statut `localMeanTime`, `offsetSeconds` renseigné. Sans longitude, la base tz s'applique telle quelle.
- */
 export function resolveUtcOffset(
   local: LocalDateTime,
   timeZone: string,
@@ -152,7 +146,9 @@ export function resolveUtcOffset(
     return null;
   }
 
-  const meanTime = longitude === undefined ? null : localMeanTimeOffset(wallMs, timeZone, longitude);
+  const meanTime = longitude === undefined
+    ? null
+    : localMeanTimeOffset(wallMs, timeZone, longitude);
   if (meanTime) return meanTime;
 
   const valid = [...new Set([before, after])]
@@ -172,7 +168,6 @@ function statusFor(validOffsetCount: number): LegalUtcOffset["status"] {
   return validOffsetCount > 1 ? "ambiguous" : "exact";
 }
 
-/** `UTC+01:00`, `UTC−03:30`, `UTC+00:00`. */
 export function formatUtcOffset(offsetMinutes: number): string {
   const sign = offsetMinutes < 0 ? "−" : "+";
   const absolute = Math.abs(offsetMinutes);

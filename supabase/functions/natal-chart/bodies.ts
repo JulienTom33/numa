@@ -6,8 +6,8 @@ import {
   Rotation_EQJ_ECT,
   SphereFromVector,
 } from "astronomy-engine";
-import { normalizeDegrees, toEclipticPosition } from "../_shared/astrology/zodiac.ts";
-import type { BodyId, BodyPosition } from "./types.ts";
+import { normalizeDegrees, toEclipticPosition } from "../../../shared/zodiac/zodiac.ts";
+import type { BodyId, BodyPosition } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 const ENGINE_BODIES: Readonly<Record<BodyId, Body>> = {
   sun: Body.Sun,

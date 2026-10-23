@@ -1,24 +1,14 @@
 import { toErrorCode, type NatalChartConfidence, type NatalChartErrorCode } from "./natalChart";
+import {
+  CHART_WARNINGS,
+  CONFIDENCES,
+  HOUSE_SYSTEMS,
+  type ChartWarning,
+  type HouseSystem,
+} from "../../shared/contracts/natalChart/natalChart.ts";
 import { supabase } from "./supabaseClient";
-import { ZODIAC_SIGNS, type ZodiacSign } from "./zodiac";
+import { ZODIAC_SIGNS, type ZodiacSign } from "../../shared/zodiac/zodiac.ts";
 
-export const HOUSE_SYSTEMS = ["placidus", "porphyry", "equal", "whole-sign"] as const;
-
-export type HouseSystem = (typeof HOUSE_SYSTEMS)[number];
-
-export const CHART_WARNINGS = [
-  "unknown_time",
-  "approximate_time",
-  "ambiguous_local_time",
-  "nonexistent_local_time",
-  "local_mean_time",
-  "polar_fallback",
-  "moon_sign_uncertain",
-] as const;
-
-export type ChartWarning = (typeof CHART_WARNINGS)[number];
-
-const CONFIDENCES = ["high", "medium", "low"] as const;
 
 export interface SummaryPlacement {
   sign: ZodiacSign;

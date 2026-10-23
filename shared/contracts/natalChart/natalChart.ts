@@ -1,8 +1,31 @@
-import type { EclipticPosition, ZodiacSign } from "../_shared/astrology/zodiac.ts";
-import type { HouseFallback, HouseSystem } from "../_shared/astrology/houses.ts";
-import type { UtcOffsetStatus } from "../_shared/time/utcOffset.ts";
+import type { EclipticPosition, ZodiacSign } from "../../zodiac/zodiac.ts";
+import type { UtcOffsetStatus } from "../../time/utcOffset/utcOffset.ts";
 
 export const SCHEMA_VERSION = 1;
+
+export const HOUSE_SYSTEMS = ["placidus", "porphyry", "equal", "whole-sign"] as const;
+
+export type HouseSystem = typeof HOUSE_SYSTEMS[number];
+
+export type HouseFallbackReason = "polar-latitude" | "placidus-not-converged";
+
+export interface HouseFallback {
+  readonly from: HouseSystem;
+  readonly reason: HouseFallbackReason;
+}
+
+export const CONFIDENCES = ["high", "medium", "low"] as const;
+
+export const CHART_WARNINGS = [
+  "unknown_time",
+  "approximate_time",
+  "ambiguous_local_time",
+  "nonexistent_local_time",
+  "local_mean_time",
+  "polar_fallback",
+  "moon_sign_uncertain",
+] as const;
+
 export const ENGINE_NAME = "astronomy-engine";
 export const ENGINE_VERSION = "2.1.19";
 
@@ -29,7 +52,7 @@ export type TimePrecision = "exact" | "approximate" | "unknown";
 
 export type TimeMargin = "under_30_min" | "between_30_min_and_2_h" | "over_2_h";
 
-export type Confidence = "high" | "medium" | "low";
+export type Confidence = typeof CONFIDENCES[number];
 
 export type ChartWarning =
   | "unknown_time"

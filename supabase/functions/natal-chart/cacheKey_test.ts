@@ -1,7 +1,7 @@
 import { assertEquals, assertNotEquals } from "jsr:@std/assert@1";
 import { canonicalCacheInput, computeCacheKey } from "./cacheKey.ts";
-import { ENGINE_VERSION, SCHEMA_VERSION } from "./types.ts";
-import type { BirthInput } from "./types.ts";
+import { ENGINE_VERSION, SCHEMA_VERSION } from "../../../shared/contracts/natalChart/natalChart.ts";
+import type { BirthInput } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 const BIRTH: BirthInput = {
   birthDate: "1975-06-15",

@@ -13,7 +13,7 @@ import {
   type ComputedAscendant,
 } from "../../../lib/ascendant";
 import type { NatalChartErrorCode } from "../../../lib/natalChart";
-import type { ZodiacSign } from "../../../lib/zodiac";
+import type { ZodiacSign } from "../../../../shared/zodiac/zodiac.ts";
 import OnboardingStepLayout from "../OnboardingStepLayout/OnboardingStepLayout";
 
 interface Props {

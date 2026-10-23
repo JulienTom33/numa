@@ -2,7 +2,7 @@ import { EMPTY_ASCENDANT_CHOICE, type AscendantChoice, type AscendantSource } fr
 import { normalizeBirthTime, TIME_MARGINS, type OnboardingData, type TimeMargin, type TimePrecision } from "./birthData";
 import type { TablesInsert } from "../../shared/database.types";
 import { supabase } from "./supabaseClient";
-import { ZODIAC_SIGNS, type ZodiacSign } from "./zodiac";
+import { ZODIAC_SIGNS, type ZodiacSign } from "../../shared/zodiac/zodiac.ts";
 
 export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6;
 

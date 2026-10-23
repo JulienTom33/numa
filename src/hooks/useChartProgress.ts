@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { NatalChartErrorCode } from "../lib/natalChart";
-import { CHART_PHASES, streamNatalChart } from "../lib/natalChartProgress";
+import { streamNatalChart } from "../lib/natalChartProgress";
+import { CHART_PHASES } from "../../shared/contracts/natalChart/natalChart.ts";
 
 export type ChartProgressStatus = "loading" | "done" | "error";
 

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { supabase } from "./supabaseClient";
-import { streamNatalChart, type ChartPhase } from "./natalChartProgress";
+import { streamNatalChart } from "./natalChartProgress";
+import type { ChartPhase } from "../../shared/contracts/natalChart/natalChart.ts";
 
 vi.mock("./supabaseClient", () => ({ supabase: { auth: { getSession: vi.fn() } } }));
 

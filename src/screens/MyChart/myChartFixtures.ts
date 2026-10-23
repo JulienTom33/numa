@@ -1,6 +1,6 @@
 import type { CurrentSky, MyChartData, NatalSky, SkyBodyPosition } from "../../lib/skyChart";
 import { SKY_BODIES } from "../../lib/skyChart";
-import { ZODIAC_SIGNS } from "../../lib/zodiac";
+import { ZODIAC_SIGNS } from "../../../shared/zodiac/zodiac.ts";
 import {
   approximateTimeSummary,
   completeSummary,

@@ -5,7 +5,7 @@ import ProgressRing from "../../components/ui/ProgressRing/ProgressRing";
 import StepChecklist from "../../components/ui/StepChecklist/StepChecklist";
 import type { ChartProgressStatus } from "../../hooks/useChartProgress";
 import type { NatalChartErrorCode } from "../../lib/natalChart";
-import { CHART_PHASES } from "../../lib/natalChartProgress";
+import { CHART_PHASES } from "../../../shared/contracts/natalChart/natalChart.ts";
 
 interface Props {
   completedCount: number;

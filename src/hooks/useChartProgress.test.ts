@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { streamNatalChart, type ChartPhase } from "../lib/natalChartProgress";
+import { streamNatalChart } from "../lib/natalChartProgress";
+import type { ChartPhase } from "../../shared/contracts/natalChart/natalChart.ts";
 import { useChartProgress } from "./useChartProgress";
 
 vi.mock("../lib/supabaseClient", () => ({ supabase: {} }));
