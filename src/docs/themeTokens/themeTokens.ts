@@ -1,4 +1,4 @@
-import themeCss from "../index.css?raw";
+import themeCss from "../../index.css?raw";
 
 export type TokenMap = Record<string, string>;
 
