@@ -50,14 +50,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          scores=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" --jq '.[].name'             | sed -nE 's/^claude-fix-([0-9]+)-score-([0-9]+)$/ /p' | sort -n | cut -d' ' -f2)
-          fixes_done=$(printf '%s
-' "$scores" | grep -c . || true)
+          scores=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" --jq '.[].name' \
+            | sed -nE 's/^claude-fix-([0-9]+)-score-([0-9]+)$/\1 \2/p' | sort -n | cut -d' ' -f2)
+          fixes_done=$(printf '%s\n' "$scores" | grep -c . || true)
           echo "fixes_done=$fixes_done" >> "$GITHUB_OUTPUT"
-          echo "last_score=$(printf '%s
-' "$scores" | grep . | tail -n 1)" >> "$GITHUB_OUTPUT"
-          echo "prev_score=$(printf '%s
-' "$scores" | grep . | tail -n 2 | head -n 1)" >> "$GITHUB_OUTPUT"
+          echo "last_score=$(printf '%s\n' "$scores" | grep . | tail -n 1)" >> "$GITHUB_OUTPUT"
+          echo "prev_score=$(printf '%s\n' "$scores" | grep . | tail -n 2 | head -n 1)" >> "$GITHUB_OUTPUT"
 
   review:
     name: Review Claude
