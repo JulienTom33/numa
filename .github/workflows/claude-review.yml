@@ -116,6 +116,10 @@ jobs:
         env:
           OUTPUT: ${{ steps.claude.outputs.structured_output }}
         run: |
+          if [ -z "$OUTPUT" ]; then
+            echo "::notice::Review Claude ignorée : l'action n'a produit aucun résultat (workflow de la PR différent de celui de la branche par défaut)."
+            exit 0
+          fi
           score=$(printf '%s' "$OUTPUT" | jq -r '.score // empty')
           blocking=$(printf '%s' "$OUTPUT" | jq -r '.blocking // empty')
           case "$score$blocking" in ''|*[!0-9]*)
@@ -136,6 +140,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Publier la synthèse et le label
+        if: steps.verdict.outputs.verdict != ''
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -157,7 +162,7 @@ jobs:
   decide:
     name: Décider de la correction
     needs: [gate, review]
-    if: needs.review.result == 'success'
+    if: needs.review.result == 'success' && needs.review.outputs.verdict != ''
     runs-on: ubuntu-latest
     outputs:
       can_fix: ${{ steps.decision.outputs.can_fix }}
@@ -186,7 +191,7 @@ jobs:
   notify:
     name: Notifier Discord
     needs: [gate, review, decide]
-    if: always() && needs.gate.outputs.enabled == 'true' && (needs.review.result == 'success' || needs.review.result == 'failure')
+    if: always() && needs.gate.outputs.enabled == 'true' && ((needs.review.result == 'success' && needs.review.outputs.verdict != '') || needs.review.result == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: read
