@@ -1,6 +1,6 @@
 # Orchestration d'agents
 
-Traiter plusieurs tickets en une session, sans consommation excessive de tokens et sans conflit de fichiers. Pour un seul ticket traité en profondeur (spec, cinq reviews locales, décision), voir `factory.md`.
+Traiter plusieurs tickets en une session, sans consommation excessive de tokens et sans conflit de fichiers.
 
 ## Rôles
 
@@ -9,6 +9,7 @@ Traiter plusieurs tickets en une session, sans consommation excessive de tokens 
 | Orchestrateur | skill `/orchestrate` (`.claude/skills/orchestrate/`) | Opus | medium |
 | Worker | agent `ticket-worker` (`.claude/agents/ticket-worker.md`) | Sonnet | medium |
 | Reviewer | agent `pr-reviewer` (`.claude/agents/pr-reviewer.md`), en local via `/review-pr` | Sonnet | medium |
+| Reviewers spécialisés | agents `reviewer-ui-ux` et `reviewer-editorial`, selon les chemins du diff (`pull-requests.md`, « Reviewers spécialisés ») | Sonnet / Opus | medium |
 
 Lancer : `claude --model opus`, `/effort medium`, puis `/orchestrate 12 15 18`.
 
@@ -35,7 +36,7 @@ Lancer : `claude --model opus`, `/effort medium`, puis `/orchestrate 12 15 18`.
 4. Sinon, un job de correction applique les findings et pousse ; la review repart. Le nombre de tours est borné et la boucle s'arrête si le score ne progresse pas.
 5. Le merge reste une action humaine, même à 100 / 100.
 
-Avant d'ouvrir la PR, `/review-pr` fait passer le même reviewer en local pour éviter un tour de CI.
+Avant d'ouvrir la PR, `/review-pr` fait passer le même reviewer en local pour éviter un tour de CI, avec les reviewers spécialisés applicables. Dans `/orchestrate`, ces derniers sont lancés par l'orchestrateur après la vague (un worker ne peut pas lancer de sous-agent), avec au plus une relance du worker en mode correction.
 
 ## Garde-fous techniques (`.claude/settings.json`)
 

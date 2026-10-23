@@ -11,7 +11,11 @@ Tu traites un seul ticket du dépôt Numa. Réponds en français, sans préambul
 
 ## Entrées fournies par l'orchestrateur
 - `id` et `slug` du ticket ;
-- `claims` : liste des fichiers/dossiers que tu as le droit de modifier.
+- `claims` : liste des fichiers/dossiers que tu as le droit de modifier ;
+- en mode correction seulement : numéro de la PR existante et `summary` d'un reviewer spécialisé (`reviewer-ui-ux`, `reviewer-editorial`).
+
+## Mode correction
+Pas de nouvelle branche ni de nouvelle PR : `git fetch origin issue-<id>-<slug>` puis `git switch --detach FETCH_HEAD`, applique les corrections du `summary` dans les `claims` (règles 3 à 6 et 10 inchangées), commite, puis `git push origin HEAD:issue-<id>-<slug>`. Rapport : commit poussé et corrections faites ou non.
 
 ## Règles
 1. Lis `CLAUDE.md`, `gh issue view <id>` et seulement les documents `docs/claude/` utiles au ticket. Les règles de `.claude/rules/` se chargent selon les chemins touchés.
