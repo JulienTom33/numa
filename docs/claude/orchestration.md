@@ -1,6 +1,6 @@
 # Orchestration d'agents
 
-Traiter plusieurs tickets en une session, sans consommation excessive de tokens et sans conflit de fichiers.
+Traiter plusieurs tickets en une session, sans consommation excessive de tokens et sans conflit de fichiers. Pour un seul ticket traité en profondeur (spec, cinq reviews locales, décision), voir `factory.md`.
 
 ## Rôles
 
