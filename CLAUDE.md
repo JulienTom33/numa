@@ -75,7 +75,6 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/pull-requests.md` | Création de PR, corrections, notifications, interdiction de merge auto |
 | `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |
 | `docs/claude/orchestration.md` | Orchestrateur, workers, coordination par fichiers, budget, boucle de review |
-| `docs/claude/factory.md` | Software factory `/factory` : un ticket de l'issue à la PR (spec, build, 5 reviews parallèles, décision), jamais de merge |
 | `docs/claude/decision-log.md` | Décisions d'architecture et règles évolutives |
 | `docs/research/api-astrologiques.md` | Comparatif des moteurs et API astrologiques, profils de référence, mesures (#50) |
 | `docs/research/fournisseurs-ia.md` | Fournisseurs IA gratuits (Mistral, Groq, Gemini, OpenAI, OpenRouter) : quotas, budget de bêta, risques juridiques, mix et bascule, longueur de réponse, protocole de test (#51) |

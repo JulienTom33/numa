@@ -24,4 +24,3 @@ e2e/playwright-report
 
 .claude/orchestration/
 .claude/settings.local.json
-/factory/jobs/
