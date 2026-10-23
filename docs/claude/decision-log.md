@@ -14,6 +14,19 @@ Alternatives écartées : le cas échéant.
 
 ## Entrées
 
+## 2026-10-23 — Software factory Claude Code `/factory` (issue #164)
+
+Contexte : `/orchestrate` traite des lots de tickets simples et laisse toute la review à la CI. Il manquait un circuit pour un ticket à risque (écran, texte de lecture, logique métier) avec une spec écrite et une relecture spécialisée avant d'ouvrir la PR. Point de départ : la software factory de zazencodes (skill orchestrateur, sous-agents, état en fichiers Markdown).
+Décision :
+- Skill `/factory` (`.claude/skills/factory/`) et huit agents (`spec-writer`, `builder`, `reviewer-security`, `reviewer-code`, `reviewer-ux`, `reviewer-ui`, `reviewer-editorial`, `approver`) ; état par job dans `factory/jobs/<id>/` (ignoré par Git), tableau de suivi `factory/dashboard.html`. Fonctionnement : `docs/claude/factory.md`.
+- `APPROVE` ouvre la PR vers `master` au lieu de merger : la commande de merge de l'original (`/factory approve`) est supprimée, remplacée par `/factory pr` qui ouvre la PR d'un job escaladé.
+- Backlog = issues GitHub : `/factory next` prend le premier ticket « Ready » du Project 3 ; une feature en texte libre crée d'abord son issue. Job = issue = branche `issue-<id>-<slug>` = worktree `../numa-factory/<id>/`.
+- Cinquième reviewer `editorial` (règles de `ai-astrology.md`), propre à Numa. `reviewer-code` applique la rubrique de `pr-reviewer.md` au lieu d'une liste à lui, pour garder une source unique des critères.
+- Escalades obligatoires : migrations, RLS, auth et sessions anonymes, CI et déploiement, dépendances, prompts IA et règles éditoriales, quotas, hypothèses produit.
+- Verrou fichier `factory/jobs/.supabase-lock/` : un seul job à la fois sur `supabase/`, la stack locale étant unique.
+- `claude-review.yml` reste actif sur les PR de la factory comme filet de sécurité.
+Alternatives écartées : merge automatique après `APPROVE` (contraire à l'interdiction de merge automatique) ; `factory/backlog.md` (double emploi avec le GitHub Project) ; un `board.json` unique (conflits d'écriture entre sessions) ; étendre `/orchestrate` (budget et rôle différents : lots légers d'un côté, un ticket en profondeur de l'autre).
+
 ## 2026-10-17 — Fournisseurs IA : mix gratuit Mistral puis Groq (issue #51) — proposition révisée, à valider
 
 Contexte : #51 demande une stratégie IA gratuite et soutenable pour le chat (#26). Le mainteneur exclut tout coût (retour sur la PR #144). L'offre gratuite Gemini est interdite par ses conditions pour les utilisateurs EEE/UK/CH et les apps ouvertes aux mineurs ; OpenAI n'a pas d'offre API gratuite hors programme de partage de données.
