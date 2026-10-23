@@ -7,7 +7,7 @@ export default defineConfig({
   css: { postcss: {} },
   test: {
     globals: true,
-    exclude: [...configDefaults.exclude, "e2e/**"],
+    exclude: [...configDefaults.exclude, "e2e/**", ".claude/worktrees/**"],
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     css: { include: [/src\/index\.css/] },
