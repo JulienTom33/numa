@@ -4,9 +4,10 @@ import chart from "./chart.json";
 import common from "./common.json";
 import discovery from "./discovery.json";
 import onboarding from "./onboarding.json";
+import today from "./today.json";
 import ui from "./ui.json";
 import welcome from "./welcome.json";
 
-export const fr = { common, welcome, auth, ui, astrology, onboarding, discovery, chart };
+export const fr = { common, welcome, auth, ui, astrology, onboarding, discovery, chart, today };
 
 export type Translations = typeof fr;
