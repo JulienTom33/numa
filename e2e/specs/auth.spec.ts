@@ -8,6 +8,7 @@ test.describe("Inscription, connexion et lien magique", () => {
 
     await page.locator("#welcome__button--sign-up").click();
     await expect(page.locator("#auth-screen__main--signup")).toBeVisible();
+    await expect(page).toHaveURL(/\/inscription$/);
     await expect(page.locator("#auth-screen__list--benefits")).toBeVisible();
 
     await page.locator("#auth-screen__link--switch-mode").click();
@@ -24,6 +25,13 @@ test.describe("Inscription, connexion et lien magique", () => {
 
     await page.getByRole("button", { name: "Retour à l'accueil" }).click();
     await expect(page.locator("#welcome__title--main")).toBeVisible();
+  });
+
+  test("un retour de lien magique en erreur ouvre la connexion avec le message", async ({ page }) => {
+    await page.goto("/auth/callback#error=access_denied&error_code=otp_expired");
+
+    await expect(page).toHaveURL(/\/connexion$/);
+    await expect(page.locator("#auth-screen__main--signin")).toBeVisible();
   });
 
   test("un email mal formé ne peut pas être envoyé", async ({ page }) => {
