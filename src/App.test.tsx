@@ -5,6 +5,7 @@ import { createMemoryRouter, RouterProvider } from "react-router";
 import { routes } from "./App";
 import { EMPTY_ONBOARDING_DATA } from "./features/onboarding/birthData/birthData";
 import { loadOnboardingDraft } from "./features/onboarding/onboardingStore/onboardingStore";
+import { createQueryWrapper } from "./shared/queryClient/queryTestWrapper/queryTestWrapper";
 import { supabase } from "./shared/supabaseClient/supabaseClient";
 
 vi.mock("./shared/supabaseClient/supabaseClient", () => ({
@@ -36,7 +37,7 @@ function mockAnonymousSession() {
 
 function renderApp(path = "/") {
   const router = createMemoryRouter(routes, { initialEntries: [path] });
-  render(<RouterProvider router={router} />);
+  render(<RouterProvider router={router} />, { wrapper: createQueryWrapper() });
   return router;
 }
 

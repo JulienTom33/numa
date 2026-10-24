@@ -92,7 +92,7 @@ export function parseNatalChart(
   };
 }
 
-async function readFirstName(): Promise<string | null> {
+export async function readFirstName(): Promise<string | null> {
   const { data } = await supabase.from("profiles").select("display_name").maybeSingle();
   return typeof data?.display_name === "string" && data.display_name.trim() !== "" ? data.display_name : null;
 }

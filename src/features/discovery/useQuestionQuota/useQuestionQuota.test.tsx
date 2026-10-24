@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
 import { askQuestion, fetchQuestionQuota, type QuestionQuotaError } from "../questionQuota/questionQuota";
 import { useQuestionQuota } from "./useQuestionQuota";
 
@@ -21,7 +22,7 @@ describe("useQuestionQuota", () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useQuestionQuota());
+    const { result } = renderHook(() => useQuestionQuota(), { wrapper: createQueryWrapper() });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.quota).toEqual({ limit: 2, used: 1, remaining: 1 });
@@ -38,7 +39,7 @@ describe("useQuestionQuota", () => {
       quota: { limit: 2, used: 2, remaining: 0 },
       error: null,
     });
-    const { result } = renderHook(() => useQuestionQuota());
+    const { result } = renderHook(() => useQuestionQuota(), { wrapper: createQueryWrapper() });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     let answer: string | null = null;
@@ -55,7 +56,7 @@ describe("useQuestionQuota", () => {
       .mockResolvedValueOnce({ quota: { limit: 2, used: 1, remaining: 1 }, error: null })
       .mockResolvedValueOnce({ quota: { limit: 2, used: 2, remaining: 0 }, error: null });
     vi.mocked(askQuestion).mockResolvedValue({ answer: null, quota: null, error: EXCEEDED });
-    const { result } = renderHook(() => useQuestionQuota());
+    const { result } = renderHook(() => useQuestionQuota(), { wrapper: createQueryWrapper() });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => {
@@ -76,7 +77,7 @@ describe("useQuestionQuota", () => {
     });
     const providerError: QuestionQuotaError = { code: "provider_unavailable" };
     vi.mocked(askQuestion).mockResolvedValue({ answer: null, quota: null, error: providerError });
-    const { result } = renderHook(() => useQuestionQuota());
+    const { result } = renderHook(() => useQuestionQuota(), { wrapper: createQueryWrapper() });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => {
@@ -95,7 +96,7 @@ describe("useQuestionQuota", () => {
     const networkError: QuestionQuotaError = { code: "network_error" };
     vi.mocked(fetchQuestionQuota).mockResolvedValue({ quota: null, error: networkError });
 
-    const { result } = renderHook(() => useQuestionQuota());
+    const { result } = renderHook(() => useQuestionQuota(), { wrapper: createQueryWrapper() });
 
     await waitFor(() =>
       expect(result.current.error).toEqual({ code: "network_error", message: "Le service est momentanément indisponible." }),

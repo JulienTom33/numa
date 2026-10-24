@@ -5,6 +5,7 @@ import { RouterProvider } from "react-router/dom";
 import { routes } from "./App";
 import "./i18n/i18n";
 import "./index.css";
+import { QueryProvider } from "./shared/queryClient/QueryProvider/QueryProvider";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -15,6 +16,8 @@ const router = createBrowserRouter(routes);
 
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryProvider>
+      <RouterProvider router={router} />
+    </QueryProvider>
   </StrictMode>,
 );

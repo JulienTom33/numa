@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { loadStatus, type LoadStatus } from "../../../shared/queryClient/loadStatus/loadStatus";
+import { chartErrorCode, myChartQueryOptions } from "../chartQueries/chartQueries";
 import type { NatalChartErrorCode } from "../natalChart/natalChart";
-import { fetchNatalChartSummary, type NatalChartSummary } from "../natalChartSummary/natalChartSummary";
+import type { NatalChartSummary } from "../natalChartSummary/natalChartSummary";
 
-export type NatalChartSummaryStatus = "loading" | "ready" | "error";
+export type NatalChartSummaryStatus = LoadStatus;
 
 export interface UseNatalChartSummaryResult {
   status: NatalChartSummaryStatus;
@@ -12,31 +14,15 @@ export interface UseNatalChartSummaryResult {
 }
 
 export function useNatalChartSummary(): UseNatalChartSummaryResult {
-  const [status, setStatus] = useState<NatalChartSummaryStatus>("loading");
-  const [summary, setSummary] = useState<NatalChartSummary | null>(null);
-  const [errorCode, setErrorCode] = useState<NatalChartErrorCode | null>(null);
-  const [attempt, setAttempt] = useState(0);
+  const query = useQuery({ ...myChartQueryOptions(), select: (chart) => chart.summary });
+  const { refetch } = query;
 
-  useEffect(() => {
-    let cancelled = false;
-    setStatus("loading");
-    setErrorCode(null);
-
-    void fetchNatalChartSummary().then((result) => {
-      if (cancelled) return;
-      setSummary(result.summary);
-      setErrorCode(result.error);
-      setStatus(result.error ? "error" : "ready");
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [attempt]);
-
-  const retry = useCallback(() => {
-    setAttempt((current) => current + 1);
-  }, []);
-
-  return { status, summary, errorCode, retry };
+  return {
+    status: loadStatus(query),
+    summary: query.data ?? null,
+    errorCode: query.isError ? chartErrorCode(query.error) : null,
+    retry: () => {
+      void refetch();
+    },
+  };
 }

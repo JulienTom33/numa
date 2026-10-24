@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { queryKeys } from "../../../shared/queryClient/queryKeys/queryKeys";
 import { loadOnboardingDraft, ONBOARDING_STEP_COUNT } from "../onboardingStore/onboardingStore";
 
 export type OnboardingStatus = "loading" | "required" | "completed";
@@ -8,40 +10,30 @@ export interface UseOnboardingStatusResult {
   markCompleted: () => void;
 }
 
-interface ResolvedStatus {
-  userId: string;
-  status: Exclude<OnboardingStatus, "loading">;
+type ResolvedStatus = Exclude<OnboardingStatus, "loading">;
+
+async function resolveStatus(userId: string): Promise<ResolvedStatus> {
+  const { draft, birthDataId } = await loadOnboardingDraft(userId);
+  return draft?.step === ONBOARDING_STEP_COUNT && birthDataId !== null ? "completed" : "required";
 }
 
-/**
- * Indique si l'utilisateur doit (re)passer par l'onboarding : terminé quand le brouillon a atteint
- * le récapitulatif et que ses données de naissance ont été finalisées. Une erreur de chargement
- * renvoie vers l'onboarding, qui affiche lui-même l'erreur.
- */
 export function useOnboardingStatus(userId: string | null): UseOnboardingStatusResult {
-  const [resolved, setResolved] = useState<ResolvedStatus | null>(null);
-
-  useEffect(() => {
-    if (userId === null) return;
-    let cancelled = false;
-
-    loadOnboardingDraft(userId).then(({ draft, birthDataId }) => {
-      if (cancelled) return;
-      const completed = draft?.step === ONBOARDING_STEP_COUNT && birthDataId !== null;
-      setResolved({ userId, status: completed ? "completed" : "required" });
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+  const queryClient = useQueryClient();
+  const key = queryKeys.onboarding.status(userId ?? "");
+  const query = useQuery({
+    queryKey: key,
+    queryFn: () => (userId === null ? Promise.resolve<ResolvedStatus>("required") : resolveStatus(userId)),
+    enabled: userId !== null,
+    staleTime: Infinity,
+  });
 
   const markCompleted = useCallback(() => {
-    if (userId !== null) setResolved({ userId, status: "completed" });
-  }, [userId]);
+    if (userId !== null) queryClient.setQueryData<ResolvedStatus>(queryKeys.onboarding.status(userId), "completed");
+  }, [queryClient, userId]);
 
-  let status: OnboardingStatus = "required";
-  if (userId !== null) status = resolved?.userId === userId ? resolved.status : "loading";
+  let status: OnboardingStatus = "loading";
+  if (userId === null || query.isError) status = "required";
+  else if (query.data !== undefined) status = query.data;
 
   return { status, markCompleted };
 }

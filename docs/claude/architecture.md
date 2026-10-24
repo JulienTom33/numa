@@ -56,6 +56,15 @@ Le dossier racine `shared/` est du TypeScript pur importé par Vite et par Deno 
 - L'URL `redirectTo` des liens magiques et OAuth est `<origin>/auth/callback` : elle doit figurer dans `additional_redirect_urls` de Supabase (local et production).
 - Caddy : `try_files {path} /index.html` sert déjà les routes profondes (rafraîchissement et liens directs).
 
+## Chargement des données (issue #149)
+
+TanStack Query (`@tanstack/react-query`) est le seul mécanisme de chargement, de cache, de nouvelle tentative et d'annulation côté client. Aucun hook ne réimplémente `useEffect` + `let cancelled`.
+
+- `src/shared/queryClient/` : `createQueryClient` (défauts : 30 s de fraîcheur, 2 nouvelles tentatives sur `network_error` uniquement, pas de refetch au focus), `QueryProvider` (à placer au-dessus de `<App />` dans `main.tsx`), `queryKeys` (clés par domaine : `chart`, `onboarding`, `discovery`), `CodedQueryError` / `unwrapResult` / `errorCodeOf` (erreurs homogènes), `loadStatus`, `queryTestWrapper` (helper de test).
+- Les services du domaine gardent leur forme `{ data, error }` ; le `queryFn` la convertit en `CodedQueryError` portant le code de l'Edge Function, et le hook le retraduit en code typé (`chartErrorCode`, `errorCodeOf`). Les hooks conservent leur forme de retour (données, statut, `errorCode`, `retry`).
+- Cache partagé : `useMyChart` et `useNatalChartSummary` lisent la même requête `queryKeys.chart.mine()` (`chartQueries`) ; le résumé en est une sélection.
+- Invalidation : après le calcul du thème (`useChartProgress`) et la finalisation de l'onboarding (`useOnboarding`), `queryKeys.chart.all` est invalidé. Toute nouvelle modification qui change le thème doit faire de même.
+
 ## Principes
 
 - Pas d'abstraction anticipée : construire pour le besoin actuel, pas pour un besoin hypothétique.

@@ -1,5 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { unwrapResult } from "../../../shared/queryClient/CodedQueryError/CodedQueryError";
+import { queryKeys } from "../../../shared/queryClient/queryKeys/queryKeys";
 import type { ComputedAscendant } from "../ascendant/ascendant";
+import { chartErrorCode } from "../chartQueries/chartQueries";
 import { fetchComputedAscendant, type NatalChartErrorCode } from "../natalChart/natalChart";
 
 export type ComputedAscendantStatus = "idle" | "loading" | "ready" | "error";
@@ -11,43 +14,32 @@ export interface UseComputedAscendantResult {
   retry: () => void;
 }
 
+async function loadAscendant(): Promise<{ ascendant: ComputedAscendant | null }> {
+  const result = await fetchComputedAscendant();
+  return unwrapResult({ ascendant: result.ascendant }, result.error);
+}
+
+function statusOf(enabled: boolean, isSuccess: boolean, isError: boolean, isFetching: boolean): ComputedAscendantStatus {
+  if (!enabled) return "idle";
+  if (isSuccess) return "ready";
+  if (isError && !isFetching) return "error";
+  return "loading";
+}
+
 export function useComputedAscendant(enabled: boolean, refreshKey: string | null): UseComputedAscendantResult {
-  const [status, setStatus] = useState<ComputedAscendantStatus>("idle");
-  const [ascendant, setAscendant] = useState<ComputedAscendant | null>(null);
-  const [errorCode, setErrorCode] = useState<NatalChartErrorCode | null>(null);
-  const [attempt, setAttempt] = useState(0);
+  const query = useQuery({
+    queryKey: queryKeys.chart.ascendant(refreshKey),
+    queryFn: loadAscendant,
+    enabled,
+  });
+  const { refetch } = query;
 
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    let cancelled = false;
-    setStatus("loading");
-    setErrorCode(null);
-
-    fetchComputedAscendant().then((result) => {
-      if (cancelled) {
-        return;
-      }
-      if (result.error) {
-        setAscendant(null);
-        setErrorCode(result.error);
-        setStatus("error");
-        return;
-      }
-      setAscendant(result.ascendant);
-      setStatus("ready");
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, refreshKey, attempt]);
-
-  const retry = useCallback(() => {
-    setAttempt((current) => current + 1);
-  }, []);
-
-  return { status, ascendant, errorCode, retry };
+  return {
+    status: statusOf(enabled, query.isSuccess, query.isError, query.isFetching),
+    ascendant: enabled ? (query.data?.ascendant ?? null) : null,
+    errorCode: enabled && query.isError ? chartErrorCode(query.error) : null,
+    retry: () => {
+      void refetch();
+    },
+  };
 }
