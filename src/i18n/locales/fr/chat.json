@@ -1,0 +1,35 @@
+{
+  "intro": {
+    "title": "Posez votre question à Numa",
+    "description": "Numa répond à partir de votre thème, avec nuance. Choisissez une suggestion ou écrivez la vôtre."
+  },
+  "suggestions": {
+    "label": "Suggestions de questions",
+    "items": {
+      "week": "Comment se présente ma semaine ?",
+      "love": "Que disent les astres de ma vie amoureuse ?",
+      "work": "Est-ce un bon moment pour changer de travail ?",
+      "energy": "Comment gérer mon énergie en ce moment ?",
+      "sun": "Que dit mon Soleil de ma personnalité ?"
+    }
+  },
+  "profile": {
+    "label": "Profil analysé : {{details}}",
+    "placement": "{{body}} en {{sign}}",
+    "unavailable": "Profil analysé : en cours de chargement"
+  },
+  "messages": {
+    "label": "Conversation avec Numa"
+  },
+  "quota": {
+    "remaining_one": "{{count}} question gratuite restante",
+    "remaining_other": "{{count}} questions gratuites restantes",
+    "exhausted": "Vous avez utilisé vos questions gratuites."
+  },
+  "input": {
+    "disabledPlaceholder": "Créez un compte pour continuer"
+  },
+  "error": {
+    "title": "Votre question n'a pas pu être envoyée"
+  }
+}

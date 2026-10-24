@@ -1,0 +1,40 @@
+import { expect, test } from "@playwright/test";
+import { askQuestions, completeOnboarding } from "../support/discovery";
+
+test.describe("Chat Numa", () => {
+  test.beforeEach(async ({ page }) => {
+    await completeOnboarding(page);
+    await page.locator("#app__tabbar--main-consult").click();
+  });
+
+  test("état vide : profil, suggestions et quota visibles", async ({ page }) => {
+    await expect(page.locator("#chat-view__intro--empty")).toBeVisible();
+    await expect(page.locator("#chat-profile-badge__badge--main")).toContainText("Profil analysé");
+    await expect(page.locator("#chat-suggestions__chip--week")).toBeVisible();
+    await expect(page.locator("#chat-view__text--quota")).toContainText("2 questions gratuites");
+  });
+
+  test("une suggestion envoie la question et affiche une réponse", async ({ page }) => {
+    await page.locator("#chat-suggestions__chip--week").click();
+
+    await expect(page.locator("#chat-message-list__message--m1")).toBeVisible();
+    await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
+    await expect(page.locator("#chat-view__text--quota")).toContainText("1 question gratuite restante");
+  });
+
+  test("envoi au clavier d'une question libre", async ({ page }) => {
+    await page.locator("#chat-view__input--question").fill("Que dit mon thème ?");
+    await page.locator("#chat-view__input--question").press("Enter");
+
+    await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
+  });
+
+  test("quota atteint : la saisie est bloquée", async ({ page }) => {
+    await askQuestions(page, 2);
+    await page.reload();
+    await page.locator("#app__tabbar--main-consult").click();
+
+    await expect(page.locator("#chat-view__callout--exhausted")).toBeVisible();
+    await expect(page.locator("#chat-view__input--question")).toBeDisabled();
+  });
+});
