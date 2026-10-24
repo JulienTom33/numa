@@ -1,0 +1,40 @@
+{
+  "greeting": "Bonjour {{name}}",
+  "greetingAnonymous": "Bonjour",
+  "avatarLabel": "Ouvrir mon profil",
+  "avatarFallback": "Vous",
+  "discoveryBadgeLabel": "Créer un compte",
+  "loading": "Lecture du ciel du jour…",
+  "error": "Votre journée n'a pas pu être chargée.",
+  "retry": "Réessayer",
+  "energy": {
+    "title": "Votre énergie du jour",
+    "headline": "Le repère du jour : {{aspect}}.",
+    "calm": "Le ciel est calme aujourd'hui : aucun lien serré avec votre Soleil, votre Lune ou votre Ascendant.",
+    "horoscopeSoon": "Horoscope du jour",
+    "unavailable": "Les positions actuelles n'ont pas pu être chargées, la synthèse du jour est indisponible pour le moment."
+  },
+  "influences": {
+    "title": "Trois influences",
+    "relations": "Relations",
+    "work": "Travail",
+    "energy": "Énergie",
+    "levels": {
+      "calm": "Douce",
+      "moderate": "Modérée",
+      "strong": "Forte"
+    }
+  },
+  "sources": {
+    "title": "Données utilisées",
+    "text": "Positions des planètes du {{date}} comparées à votre Soleil, votre Lune et votre Ascendant. Ce sont des repères du moment, pas des prévisions.",
+    "moonSkipped": "Votre Lune natale n'est pas utilisée : son signe reste à confirmer.",
+    "ascendantSkipped": "Sans heure de naissance, votre Ascendant n'est pas utilisé.",
+    "unavailable": "Le ciel du jour n’est pas disponible : seules vos données natales sont connues pour le moment."
+  },
+  "chat": {
+    "title": "Poser une question à Numa",
+    "description": "Une interrogation sur votre journée ou votre thème ? Numa vous répond en expliquant ses sources.",
+    "action": "Consulter Numa"
+  }
+}
