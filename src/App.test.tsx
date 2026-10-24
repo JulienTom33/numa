@@ -49,7 +49,7 @@ afterEach(() => {
 
 beforeEach(() => {
   vi.mocked(loadOnboardingDraft).mockResolvedValue({
-    draft: { step: 5, data: EMPTY_ONBOARDING_DATA },
+    draft: { step: 6, data: EMPTY_ONBOARDING_DATA },
     birthDataId: "bd-1",
     error: null,
   });

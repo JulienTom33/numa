@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { queryKeys } from "../../../shared/queryClient/queryKeys/queryKeys";
-import { loadOnboardingDraft, ONBOARDING_STEP_COUNT } from "../onboardingStore/onboardingStore";
+import { ASCENDANT_STEP, loadOnboardingDraft } from "../onboardingStore/onboardingStore";
 
 export type OnboardingStatus = "loading" | "required" | "completed";
 
@@ -14,7 +14,7 @@ type ResolvedStatus = Exclude<OnboardingStatus, "loading">;
 
 async function resolveStatus(userId: string): Promise<ResolvedStatus> {
   const { draft, birthDataId } = await loadOnboardingDraft(userId);
-  return draft?.step === ONBOARDING_STEP_COUNT && birthDataId !== null ? "completed" : "required";
+  return draft?.step === ASCENDANT_STEP && birthDataId !== null ? "completed" : "required";
 }
 
 export function useOnboardingStatus(userId: string | null): UseOnboardingStatusResult {
