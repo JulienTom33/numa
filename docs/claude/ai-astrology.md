@@ -28,6 +28,22 @@ Confiance : `high` = heure exacte non ambiguë ; `medium` = heure approximative,
 Erreurs : `{ error: { code, message } }` avec `message` égal au code. `401 unauthenticated` / `invalid_token`, `404 birth_data_not_found`, `405 method_not_allowed`, `422 invalid_birth_data` (date, fuseau ou coordonnées invalides), `500 internal_error`.
 
 Le décalage UTC est calculé par `shared/time/` (`utcOffset` et `legalMeanTime`), source unique importée par le client et par les Edge Functions.
+## Edge Function `ephemeris` (#152)
+
+Éphéméride publique, identique pour tous : aucune donnée personnelle, aucun stockage, aucune lecture de base. Calcul avec Astronomy Engine (positions via `natal-chart/bodies.ts`, aspects via `natal-chart/aspects.ts`, même moteur que le thème natal). Types partagés client/Deno : `shared/contracts/ephemeris/ephemeris.ts` ; client : `src/features/ephemeris/ephemeris/ephemeris.ts` (`fetchEphemeris`, résultat `{ data, error }`, erreurs en codes).
+
+Entrée : `GET`, JWT obligatoire (session anonyme comprise, `createHandler`). Dates UTC `YYYY-MM-DD`, soit `?date=` (un jour), soit `?from=&to=` (bornes incluses). Plage maximale : 31 jours.
+
+Sortie `200` : `{ schemaVersion: 1, engine: { name, version }, range: { from, to, days }, days, events }`.
+
+- `days[]` (un par jour UTC, calculé à 12:00 UTC, champ `instant`) : `bodies` (Soleil, Lune, Mercure à Pluton : `longitude` écliptique vraie de la date, `sign`, `degreeInSign`, `retrograde`, `speed` en °/jour), `moon` (`name` parmi `new_moon`, `waxing_crescent`, `first_quarter`, `waxing_gibbous`, `full_moon`, `waning_gibbous`, `last_quarter`, `waning_crescent` ; `angle` d'élongation ; `illumination` 0–1 ; `age` en jours depuis la dernière nouvelle lune), `aspects` entre les dix corps (conjonction 8°, sextile 5°, carré 7°, trigone 8°, opposition 8°, triés par orbe croissant, mêmes orbes que le thème natal).
+- `events` sur la plage (du premier jour 00:00 UTC inclus au lendemain du dernier jour exclu), horodatés `at` en ISO UTC à la seconde : `ingresses` (`body`, `from`, `to`, `retrograde`), `stations` (`body`, `type` `retrograde` | `direct`, `sign`, `longitude`) pour Mercure à Pluton, `moonPhases` (`new_moon`, `first_quarter`, `full_moon`, `last_quarter`), `eclipses` (`body` `solar` | `lunar`, `kind` `penumbral` | `partial` | `annular` | `total`, instant du maximum).
+- `Cache-Control: public, max-age=3600, s-maxage=86400`. La réponse est déterministe : aucune horloge, mêmes entrées et même version du moteur donnent le même corps.
+
+Erreurs : `{ error: { code, message } }`, `message` égal au code. `400 invalid_date` (absente ou mal formée, jour inexistant), `400 invalid_range` (`to` avant `from`, `from` sans `to`, `date` combiné à `from`/`to`), `400 range_too_long` (plus de 31 jours), `401 unauthenticated` / `invalid_token`, `405 method_not_allowed`, `500 internal_error`. Le client ajoute `network_error`.
+
+Précision : positions à 1′ d'arc ou mieux de JPL Horizons (longitude apparente de la date, géocentrique) sur 4 dates de contrôle (2000, 2024, 2025, 2050) pour les dix corps ; événements vérifiés sur des dates connues de 2024 (équinoxe et solstice, station de Mercure du 2024-04-01, éclipses du NASA Eclipse Web Site). Sources dans `supabase/functions/ephemeris/compute_test.ts` et `events_test.ts`.
+
 ## Cache des thèmes (#22)
 
 - Table `natal_charts` : `chart_data` (le thème), `cache_key`, `birth_data_id`, `user_id`, `computed_at`. Unicité `(birth_data_id, cache_key)`. Lecture réservée au propriétaire (RLS) ; aucune écriture cliente (privilèges `insert`/`update`/`delete` retirés à `authenticated`), seule l'Edge Function écrit, avec la clé de service.
