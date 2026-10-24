@@ -1,101 +1,44 @@
-import { useCallback, useState } from "react";
-import AppShell from "./shared/components/AppShell/AppShell";
-import DiscoveryModeBadge from "./features/discovery/DiscoveryModeBadge/DiscoveryModeBadge";
-import EmptyState from "./shared/components/ui/EmptyState/EmptyState";
-import DiscoveryConsultGate from "./features/discovery/DiscoveryConsultGate/DiscoveryConsultGate";
-import MigrationScreen from "./features/discovery/MigrationScreen/MigrationScreen";
-import MyChartFlow from "./features/chart/MyChartFlow/MyChartFlow";
-import OnboardingFlow from "./features/onboarding/OnboardingFlow/OnboardingFlow";
-import OnboardingLoading from "./features/onboarding/OnboardingLoading/OnboardingLoading";
-import { useOnboardingStatus } from "./features/onboarding/useOnboardingStatus/useOnboardingStatus";
-import TabBar from "./shared/components/ui/TabBar/TabBar";
-import { useTranslation } from "react-i18next";
-import AuthFlow, { type AuthFlowDestination } from "./features/auth/AuthFlow/AuthFlow";
-import { useAnonymousSession } from "./features/auth/useAnonymousSession/useAnonymousSession";
-import { useAuth } from "./features/auth/useAuth/useAuth";
-import type { AuthMode } from "./features/auth/auth/auth";
-import { useMainTabs, type MainTab } from "./shared/navigation/mainTabs/mainTabs";
-import Welcome from "./features/welcome/Welcome/Welcome";
+import { Navigate, type RouteObject } from "react-router";
+import AppRoot from "./shared/navigation/AppRoot/AppRoot";
+import AuthCallbackRoute from "./shared/navigation/AuthCallbackRoute/AuthCallbackRoute";
+import AuthRoute from "./shared/navigation/AuthRoute/AuthRoute";
+import OnboardingRoute from "./shared/navigation/OnboardingRoute/OnboardingRoute";
+import RequireOnboarding from "./shared/navigation/RequireOnboarding/RequireOnboarding";
+import RequireSession from "./shared/navigation/RequireSession/RequireSession";
+import { paths } from "./shared/navigation/routes/routes";
+import TabScreen from "./shared/navigation/TabScreen/TabScreen";
+import TabsLayout from "./shared/navigation/TabsLayout/TabsLayout";
+import WelcomeRoute from "./shared/navigation/WelcomeRoute/WelcomeRoute";
 
-function App() {
-  const { t } = useTranslation(["common", "auth"]);
-  const { session, isAnonymous, error, start } = useAnonymousSession();
-  const [activeTab, setActiveTab] = useState<MainTab>("today");
-  const tabItems = useMainTabs();
-  const onboarding = useOnboardingStatus(session?.user.id ?? null);
-  const auth = useAuth();
-  const [authMode, setAuthMode] = useState<AuthMode | null>(auth.redirectError ? "signin" : null);
-  const exitAuth = useCallback((destination: AuthFlowDestination) => {
-    setAuthMode(null);
-    if (destination === "today") setActiveTab("today");
-  }, []);
-
-  if (auth.converted) {
-    return <MigrationScreen onContinue={auth.acknowledgeConversion} />;
-  }
-
-  if (authMode) {
-    return <AuthFlow initialMode={authMode} auth={auth} onExit={exitAuth} />;
-  }
-
-  if (!session) {
-    return (
-      <Welcome
-        onSignUp={() => setAuthMode("signup")}
-        onSignIn={() => setAuthMode("signin")}
-        onDiscover={start}
-        discoverError={error ? t("auth:anonymousSession.notCreated") : null}
-      />
-    );
-  }
-
-  if (onboarding.status === "loading") return <OnboardingLoading />;
-  if (onboarding.status === "required") {
-    return (
-      <OnboardingFlow
-        userId={session.user.id}
-        discoveryMode={isAnonymous}
-        onComplete={() => {
-          setActiveTab("today");
-          onboarding.markCompleted();
-        }}
-      />
-    );
-  }
-
-  const tab = tabItems.find((item) => item.key === activeTab) ?? tabItems[0];
-
-  return (
-    <AppShell
-      id="app__shell--root"
-      screenKey={activeTab}
-      tabBar={
-        <TabBar
-          id="app__tabbar--main"
-          items={tabItems}
-          activeKey={activeTab}
-          onSelect={setActiveTab}
-        />
-      }
-    >
-      <div id={`app__screen--${tab.key}`} className="flex flex-col items-center gap-2 px-4 pt-6">
-        {isAnonymous && <DiscoveryModeBadge />}
-        {tab.key === "theme" ? (
-          <MyChartFlow />
-        ) : (
-          <EmptyState
-            id={`app__placeholder--${tab.key}`}
-            icon={tab.icon}
-            title={tab.label}
-            description={t("common:comingSoon")}
-          />
-        )}
-        {isAnonymous && tab.key === "consult" && (
-          <DiscoveryConsultGate onSignUp={() => setAuthMode("signup")} onSignIn={() => setAuthMode("signin")} />
-        )}
-      </div>
-    </AppShell>
-  );
-}
-
-export default App;
+export const routes: RouteObject[] = [
+  {
+    element: <AppRoot />,
+    children: [
+      { path: paths.welcome, element: <WelcomeRoute /> },
+      { path: paths.signup, element: <AuthRoute mode="signup" /> },
+      { path: paths.signin, element: <AuthRoute mode="signin" /> },
+      { path: paths.authCallback, element: <AuthCallbackRoute /> },
+      {
+        element: <RequireSession />,
+        children: [
+          { path: paths.onboarding, element: <OnboardingRoute /> },
+          {
+            element: <RequireOnboarding />,
+            children: [
+              {
+                element: <TabsLayout />,
+                children: [
+                  { path: paths.today, element: <TabScreen tab="today" /> },
+                  { path: paths.consult, element: <TabScreen tab="consult" /> },
+                  { path: paths.theme, element: <TabScreen tab="theme" /> },
+                  { path: paths.profile, element: <TabScreen tab="profile" /> },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      { path: "*", element: <Navigate to={paths.welcome} replace /> },
+    ],
+  },
+];

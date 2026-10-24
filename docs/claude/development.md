@@ -24,7 +24,7 @@ src/features/chart/natalChart/natalChart.ts
 src/shared/components/ui/Badge/Badge.{tsx,test.tsx,stories.tsx}
 ```
 
-- `src/features/<domaine>/` (`auth`, `chart`, `discovery`, `onboarding`, `welcome`) regroupe flows, écrans, hooks et accès API d'un domaine. `src/shared/` regroupe le transverse (`components/ui`, `AppShell`, `cx`, `email`, `supabaseClient`, `useCooldown`, `navigation`). `src/i18n/` garde `format/`, `messages/<nom>/` et `resources/`.
+- `src/features/<domaine>/` (`auth`, `chart`, `discovery`, `onboarding`, `welcome`) regroupe flows, écrans, hooks et accès API d'un domaine. `src/shared/` regroupe le transverse (`components/ui`, `AppShell`, `cx`, `email`, `supabaseClient`, `useCooldown`, `navigation` : routes, gardes et écrans de route, voir `architecture.md` (Routage)). `src/i18n/` garde `format/`, `messages/<nom>/` et `resources/`.
 - Un fichier d'aide (`getInitial.ts`, `icons.tsx`, fixtures) peut rester dans le dossier du module qui l'utilise ; s'il a son propre test, il a son propre dossier. Un dossier de catégorie (`features/chart/`, `shared/`) ne contient que des dossiers.
 - Dossier racine `shared/` : TypeScript pur importé à la fois par Vite (`src/`) et Deno (`supabase/functions/`), imports relatifs avec extension `.ts`, sans dépendance à React ni au DOM. Il contient les signes du zodiaque (`zodiac/`), les calculs de temps (`time/utcOffset`, `time/legalMeanTime`), les contrats des Edge Functions (`contracts/`) et les types de la base (`database.types.ts`). Ses tests sont des tests Vitest (`*.test.ts`) à côté du code. Un calcul n'existe qu'une fois : jamais de copie entre `src/` et `supabase/functions/`.
 - Le code de CI ne vit pas dans `src/` : `scripts/discordNotify/` pour la notification Discord.
