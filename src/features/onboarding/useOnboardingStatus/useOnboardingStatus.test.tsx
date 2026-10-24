@@ -48,7 +48,7 @@ describe("useOnboardingStatus", () => {
 
   it("is completed once the summary is reached with finalised birth data", async () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({
-      draft: { step: 5, data: EMPTY_ONBOARDING_DATA },
+      draft: { step: 6, data: EMPTY_ONBOARDING_DATA },
       birthDataId: "bd-1",
       error: null,
     });
