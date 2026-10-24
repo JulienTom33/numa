@@ -48,6 +48,14 @@ supabase/functions/
 
 Le dossier racine `shared/` est du TypeScript pur importé par Vite et par Deno (imports relatifs en `.ts`) : `zodiac/` (signes, positions écliptiques), `time/` (décalage UTC, heure légale moyenne), `contracts/` (types et constantes des réponses des Edge Functions, ex. `contracts/natalChart/natalChart.ts`) et `database.types.ts`. Une logique partagée n'a qu'une implémentation : `src/` ne contient aucune copie du code de `supabase/functions/`. Convention de dossiers : `development.md` (Organisation du code).
 
+## Routage (issue #148)
+
+- React Router (data router) : `main.tsx` crée `createBrowserRouter(routes)` et rend `RouterProvider` ; `src/App.tsx` ne déclare que le tableau `routes`.
+- Routes : `/` (accueil), `/inscription`, `/connexion`, `/auth/callback` (retour du lien magique et des erreurs d'auth), `/onboarding`, onglets `/aujourdhui`, `/consulter`, `/mon-theme`, `/profil`. Les chemins vivent dans `src/shared/navigation/routes/routes.ts`.
+- `AppRoot` porte l'état de session partagé (`useAuth`, `useOnboardingStatus`) via `useAppContext`. Gardes en routes de mise en page : `RequireSession` (sans session, redirection vers `/`) puis `RequireOnboarding` (onboarding non terminé, redirection vers `/onboarding`).
+- L'URL `redirectTo` des liens magiques et OAuth est `<origin>/auth/callback` : elle doit figurer dans `additional_redirect_urls` de Supabase (local et production).
+- Caddy : `try_files {path} /index.html` sert déjà les routes profondes (rafraîchissement et liens directs).
+
 ## Chargement des données (issue #149)
 
 TanStack Query (`@tanstack/react-query`) est le seul mécanisme de chargement, de cache, de nouvelle tentative et d'annulation côté client. Aucun hook ne réimplémente `useEffect` + `let cancelled`.

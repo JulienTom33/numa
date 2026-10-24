@@ -1,10 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createQueryWrapper } from "./shared/queryClient/queryTestWrapper/queryTestWrapper";
-import App from "./App";
+import { createMemoryRouter, RouterProvider } from "react-router";
+import { routes } from "./App";
 import { EMPTY_ONBOARDING_DATA } from "./features/onboarding/birthData/birthData";
 import { loadOnboardingDraft } from "./features/onboarding/onboardingStore/onboardingStore";
+import { createQueryWrapper } from "./shared/queryClient/queryTestWrapper/queryTestWrapper";
 import { supabase } from "./shared/supabaseClient/supabaseClient";
 
 vi.mock("./shared/supabaseClient/supabaseClient", () => ({
@@ -14,6 +15,7 @@ vi.mock("./shared/supabaseClient/supabaseClient", () => ({
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
       signInAnonymously: vi.fn(),
     },
+    functions: { invoke: vi.fn().mockResolvedValue({ data: { quota: null }, error: null }) },
   },
 }));
 
@@ -33,6 +35,12 @@ function mockAnonymousSession() {
   } as never);
 }
 
+function renderApp(path = "/") {
+  const router = createMemoryRouter(routes, { initialEntries: [path] });
+  render(<RouterProvider router={router} />, { wrapper: createQueryWrapper() });
+  return router;
+}
+
 afterEach(() => {
   vi.clearAllMocks();
   vi.mocked(supabase.auth.getSession).mockResolvedValue({ data: { session: null } } as never);
@@ -49,19 +57,19 @@ beforeEach(() => {
 
 describe("App", () => {
   it("renders the welcome screen without tab bar when no session is persisted", async () => {
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
 
     expect(
-      screen.getByRole("heading", { name: "Votre thème astral, lu simplement." }),
+      await screen.findByRole("heading", { name: "Votre thème astral, lu simplement." }),
     ).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Découvrir sans compte" })).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Navigation principale" })).not.toBeInTheDocument();
   });
 
   it("opens the sign up flow from the welcome screen and comes back", async () => {
-    render(<App />, { wrapper: createQueryWrapper() });
-
-    await userEvent.click(screen.getByRole("button", { name: "Créer mon compte" }));
+    const router = renderApp();
+    await userEvent.click(await screen.findByRole("button", { name: "Créer mon compte" }));
+    expect(router.state.location.pathname).toBe("/inscription");
     expect(screen.getByRole("heading", { name: "Gardez votre thème avec vous" })).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Retour à l'accueil" }));
@@ -69,7 +77,7 @@ describe("App", () => {
   });
 
   it("opens the sign in flow from the welcome screen", async () => {
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
 
     await userEvent.click(screen.getByRole("button", { name: "Se connecter" }));
 
@@ -77,12 +85,13 @@ describe("App", () => {
   });
 
   it("opens the sign in flow with the error of a failed auth redirect", async () => {
-    window.history.replaceState(null, "", "/#error=access_denied&error_code=otp_expired");
+    window.history.replaceState(null, "", "/auth/callback#error=access_denied&error_code=otp_expired");
 
-    render(<App />, { wrapper: createQueryWrapper() });
+    const router = renderApp("/auth/callback");
 
     expect(await screen.findByRole("heading", { name: "Heureux de vous revoir" })).toBeInTheDocument();
     expect(screen.getByRole("alert")).toHaveTextContent("Ce lien a expiré ou a déjà été utilisé.");
+    expect(router.state.location.pathname).toBe("/connexion");
     await waitFor(() => expect(supabase.auth.getSession).toHaveBeenCalledTimes(2));
   });
 
@@ -91,7 +100,7 @@ describe("App", () => {
       data: { user: null, session: null },
       error: { message: "technical detail" },
     } as never);
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
 
     await userEvent.click(screen.getByRole("button", { name: "Découvrir sans compte" }));
 
@@ -102,7 +111,7 @@ describe("App", () => {
   it("shows the discovery mode badge for an anonymous session", async () => {
     mockAnonymousSession();
 
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
 
     expect(await screen.findByText("Mode découverte")).toBeInTheDocument();
   });
@@ -110,7 +119,7 @@ describe("App", () => {
   it("shows the tab bar with Today active once a session exists", async () => {
     mockAnonymousSession();
 
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
 
     expect(await screen.findByRole("navigation", { name: "Navigation principale" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Aujourd'hui" })).toHaveAttribute("aria-current", "page");
@@ -119,7 +128,7 @@ describe("App", () => {
 
   it("switches screen and scrolls back to the top when a tab is selected", async () => {
     mockAnonymousSession();
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
     await screen.findByRole("navigation", { name: "Navigation principale" });
     const content = screen.getByRole("main");
     content.scrollTop = 300;
@@ -136,7 +145,7 @@ describe("App", () => {
     mockAnonymousSession();
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
 
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
 
     expect(await screen.findByRole("heading", { name: "Comment devons-nous vous appeler ?" })).toBeInTheDocument();
     expect(screen.getByText("Étape 1 sur 5")).toBeInTheDocument();
@@ -152,8 +161,61 @@ describe("App", () => {
       error: null,
     });
 
-    render(<App />, { wrapper: createQueryWrapper() });
+    renderApp();
 
     expect(await screen.findByRole("heading", { name: "Quand êtes-vous né(e) ?" })).toBeInTheDocument();
+  });
+
+  it("redirects a protected URL without session to the welcome screen", async () => {
+    const router = renderApp("/mon-theme");
+
+    expect(await screen.findByRole("button", { name: "Se connecter" })).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe("/");
+  });
+
+  it("keeps the screen on a direct visit of a tab URL", async () => {
+    mockAnonymousSession();
+
+    const router = renderApp("/mon-theme");
+
+    expect(await screen.findByRole("button", { name: "Mon thème" })).toHaveAttribute("aria-current", "page");
+    expect(router.state.location.pathname).toBe("/mon-theme");
+  });
+
+  it("changes the URL with a tab and goes back with the browser history", async () => {
+    mockAnonymousSession();
+    const router = renderApp("/aujourdhui");
+    await userEvent.click(await screen.findByRole("button", { name: "Consulter" }));
+    expect(router.state.location.pathname).toBe("/consulter");
+
+    await router.navigate(-1);
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/aujourdhui"));
+  });
+
+  it("redirects tabs to the onboarding when it is not finished", async () => {
+    mockAnonymousSession();
+    vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
+
+    const router = renderApp("/profil");
+
+    expect(await screen.findByRole("heading", { name: "Comment devons-nous vous appeler ?" })).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe("/onboarding");
+  });
+
+  it("leaves the onboarding route once the onboarding is completed", async () => {
+    mockAnonymousSession();
+
+    const router = renderApp("/onboarding");
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/aujourdhui"));
+  });
+
+  it("sends a returning magic link with a session to Today", async () => {
+    mockAnonymousSession();
+
+    const router = renderApp("/auth/callback");
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/aujourdhui"));
   });
 });
