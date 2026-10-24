@@ -1,3 +1,4 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -22,6 +23,7 @@ import {
   type OnboardingData,
   type OnboardingSummary,
 } from "../birthData/birthData";
+import { queryKeys } from "../../../shared/queryClient/queryKeys/queryKeys";
 import { EMPTY_ASCENDANT_CHOICE, type AscendantChoice } from "../../chart/ascendant/ascendant";
 import {
   ASCENDANT_STEP,
@@ -92,40 +94,39 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
   const [birthDateParts, setBirthDatePartsState] = useState<BirthDateParts>(EMPTY_DATE_PARTS);
   const [ascendant, setAscendant] = useState<AscendantChoice>(EMPTY_ASCENDANT_CHOICE);
   const [birthDataId, setBirthDataId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(userId !== null);
+  const [hydratedUserId, setHydratedUserId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [errorCode, setErrorCode] = useState<OnboardingErrorCode | null>(null);
+  const queryClient = useQueryClient();
+
+  const draftQuery = useQuery({
+    queryKey: queryKeys.onboarding.draft(userId ?? ""),
+    queryFn: () => loadOnboardingDraft(userId ?? ""),
+    enabled: userId !== null,
+    staleTime: Infinity,
+    gcTime: 0,
+    refetchOnMount: false,
+  });
+  const loaded = draftQuery.data;
+  const loadFailed = draftQuery.isError;
 
   useEffect(() => {
-    if (userId === null) {
-      setLoading(false);
+    if (userId === null || (loaded === undefined && !loadFailed)) {
       return;
     }
+    if (loadFailed || loaded?.error) {
+      setErrorCode(loaded?.error ?? "load_failed");
+    } else if (loaded?.draft) {
+      setStep(loaded.draft.step);
+      setData(loaded.draft.data);
+      setAscendant(loaded.draft.ascendant ?? EMPTY_ASCENDANT_CHOICE);
+      setBirthDatePartsState(isoToParts(loaded.draft.data.birthDate));
+      setBirthDataId(loaded.birthDataId);
+    }
+    setHydratedUserId(userId);
+  }, [userId, loaded, loadFailed]);
 
-    let cancelled = false;
-    setLoading(true);
-    setErrorCode(null);
-
-    loadOnboardingDraft(userId).then((result) => {
-      if (cancelled) {
-        return;
-      }
-      if (result.error) {
-        setErrorCode(result.error);
-      } else if (result.draft) {
-        setStep(result.draft.step);
-        setData(result.draft.data);
-        setAscendant(result.draft.ascendant ?? EMPTY_ASCENDANT_CHOICE);
-        setBirthDatePartsState(isoToParts(result.draft.data.birthDate));
-        setBirthDataId(result.birthDataId);
-      }
-      setLoading(false);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+  const loading = userId !== null && hydratedUserId !== userId;
 
   const errors = useMemo<OnboardingErrors>(() => {
     const firstName = validateFirstName(data.firstName);
@@ -201,12 +202,13 @@ export function useOnboarding({ userId, today }: UseOnboardingOptions): UseOnboa
         return false;
       }
       setBirthDataId(completion.birthDataId);
+      void queryClient.invalidateQueries({ queryKey: queryKeys.chart.all });
     }
 
     setStep(nextStep);
     setSaving(false);
     return true;
-  }, [canContinue, step, userId, data, ascendant]);
+  }, [canContinue, step, userId, data, ascendant, queryClient]);
 
   const back = useCallback(() => {
     setErrorCode(null);

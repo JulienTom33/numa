@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
 import { EMPTY_ONBOARDING_DATA } from "../birthData/birthData";
 import { loadOnboardingDraft } from "../onboardingStore/onboardingStore";
 import { useOnboardingStatus } from "./useOnboardingStatus";
@@ -17,7 +18,7 @@ describe("useOnboardingStatus", () => {
   });
 
   it("is required without loading anything when there is no session", () => {
-    const { result } = renderHook(() => useOnboardingStatus(null));
+    const { result } = renderHook(() => useOnboardingStatus(null), { wrapper: createQueryWrapper() });
 
     expect(result.current.status).toBe("required");
     expect(loadOnboardingDraft).not.toHaveBeenCalled();
@@ -26,7 +27,7 @@ describe("useOnboardingStatus", () => {
   it("requires onboarding when no draft exists", async () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
 
-    const { result } = renderHook(() => useOnboardingStatus("user-1"));
+    const { result } = renderHook(() => useOnboardingStatus("user-1"), { wrapper: createQueryWrapper() });
 
     expect(result.current.status).toBe("loading");
     await waitFor(() => expect(result.current.status).toBe("required"));
@@ -40,7 +41,7 @@ describe("useOnboardingStatus", () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useOnboardingStatus("user-1"));
+    const { result } = renderHook(() => useOnboardingStatus("user-1"), { wrapper: createQueryWrapper() });
 
     await waitFor(() => expect(result.current.status).toBe("required"));
   });
@@ -52,7 +53,7 @@ describe("useOnboardingStatus", () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useOnboardingStatus("user-1"));
+    const { result } = renderHook(() => useOnboardingStatus("user-1"), { wrapper: createQueryWrapper() });
 
     await waitFor(() => expect(result.current.status).toBe("completed"));
   });
@@ -60,25 +61,26 @@ describe("useOnboardingStatus", () => {
   it("requires onboarding when the draft cannot be loaded", async () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: "load_failed" });
 
-    const { result } = renderHook(() => useOnboardingStatus("user-1"));
+    const { result } = renderHook(() => useOnboardingStatus("user-1"), { wrapper: createQueryWrapper() });
 
     await waitFor(() => expect(result.current.status).toBe("required"));
   });
 
   it("switches to completed when the flow ends", async () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
-    const { result } = renderHook(() => useOnboardingStatus("user-1"));
+    const { result } = renderHook(() => useOnboardingStatus("user-1"), { wrapper: createQueryWrapper() });
     await waitFor(() => expect(result.current.status).toBe("required"));
 
     act(() => result.current.markCompleted());
 
-    expect(result.current.status).toBe("completed");
+    await waitFor(() => expect(result.current.status).toBe("completed"));
   });
 
   it("reloads the status when the user changes", async () => {
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
     const { result, rerender } = renderHook(({ userId }) => useOnboardingStatus(userId), {
       initialProps: { userId: "user-1" as string | null },
+      wrapper: createQueryWrapper(),
     });
     await waitFor(() => expect(result.current.status).toBe("required"));
 

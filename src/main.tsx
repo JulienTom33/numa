@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./i18n/i18n";
 import "./index.css";
+import { QueryProvider } from "./shared/queryClient/QueryProvider/QueryProvider";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -11,6 +12,8 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <QueryProvider>
+      <App />
+    </QueryProvider>
   </StrictMode>,
 );

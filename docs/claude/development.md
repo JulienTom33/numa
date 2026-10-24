@@ -35,6 +35,7 @@ src/shared/components/ui/Badge/Badge.{tsx,test.tsx,stories.tsx}
 - Tout nouveau fichier de logique (hook, service, utilitaire) ou composant React significatif est accompagné de son test **dans la même pull request**. Pas de "je rajouterai les tests plus tard".
 - Tests via React Testing Library pour les composants.
 - Pas de mock de ce qui peut être testé en réel de façon fiable et rapide.
+- Tout hook ou composant qui charge des données (TanStack Query) est rendu avec `createQueryWrapper()` de `src/shared/queryClient/queryTestWrapper/queryTestWrapper.tsx` (`renderHook(…, { wrapper })`, `render(…, { wrapper })`) : client neuf, sans nouvelle tentative. Un hook de chargement n'utilise jamais `useEffect` + drapeau d'annulation : `useQuery` / `useMutation` (voir `architecture.md`, Chargement des données).
 
 ## Tests end-to-end (Playwright)
 

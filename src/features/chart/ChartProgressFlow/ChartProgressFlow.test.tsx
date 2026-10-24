@@ -1,7 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fetchNatalChartSummary } from "../natalChartSummary/natalChartSummary";
+import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
+import { readFirstName } from "../natalChartSummary/natalChartSummary";
+import { fetchMyChart } from "../skyChart/skyChart";
+import { completeChart } from "../MyChart/myChartFixtures";
 import { streamNatalChart } from "../natalChartProgress/natalChartProgress";
 import { completeSummary } from "../ChartSummary/chartSummaryFixtures";
 import ChartProgressFlow from "./ChartProgressFlow";
@@ -13,13 +16,22 @@ vi.mock("../natalChartProgress/natalChartProgress", async (importOriginal) => ({
   streamNatalChart: vi.fn(),
 }));
 
-vi.mock("../natalChartSummary/natalChartSummary", () => ({ fetchNatalChartSummary: vi.fn() }));
+vi.mock("../natalChartSummary/natalChartSummary", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../natalChartSummary/natalChartSummary")>()),
+  readFirstName: vi.fn(),
+}));
+
+vi.mock("../skyChart/skyChart", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../skyChart/skyChart")>()),
+  fetchMyChart: vi.fn(),
+}));
 
 const streamMock = vi.mocked(streamNatalChart);
-const summaryMock = vi.mocked(fetchNatalChartSummary);
+const chartMock = vi.mocked(fetchMyChart);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(readFirstName).mockResolvedValue(completeSummary.firstName);
 });
 
 describe("ChartProgressFlow", () => {
@@ -28,11 +40,11 @@ describe("ChartProgressFlow", () => {
       onPhase("validation");
       return Promise.resolve(null);
     });
-    summaryMock.mockResolvedValue({ summary: completeSummary, error: null });
+    chartMock.mockResolvedValue({ data: completeChart, error: null });
     const user = userEvent.setup();
     const onComplete = vi.fn();
 
-    render(<ChartProgressFlow onComplete={onComplete} />);
+    render(<ChartProgressFlow onComplete={onComplete} />, { wrapper: createQueryWrapper() });
 
     expect(await screen.findByRole("heading", { name: "Votre profil astrologique, Camille" })).toBeInTheDocument();
     expect(onComplete).not.toHaveBeenCalled();
@@ -46,7 +58,7 @@ describe("ChartProgressFlow", () => {
     streamMock.mockResolvedValue("internal_error");
     const onComplete = vi.fn();
 
-    render(<ChartProgressFlow onComplete={onComplete} />);
+    render(<ChartProgressFlow onComplete={onComplete} />, { wrapper: createQueryWrapper() });
 
     expect(await screen.findByRole("button", { name: "Réessayer" })).toBeInTheDocument();
     expect(onComplete).not.toHaveBeenCalled();

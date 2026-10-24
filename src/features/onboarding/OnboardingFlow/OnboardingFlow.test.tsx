@@ -1,12 +1,15 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
 import type { AscendantChoice } from "../../chart/ascendant/ascendant";
 import type { BirthPlace, OnboardingData } from "../birthData/birthData";
 import { completeOnboarding, loadOnboardingDraft, saveOnboardingDraft } from "../onboardingStore/onboardingStore";
 import { fetchComputedAscendant } from "../../chart/natalChart/natalChart";
 import { streamNatalChart } from "../../chart/natalChartProgress/natalChartProgress";
-import { fetchNatalChartSummary } from "../../chart/natalChartSummary/natalChartSummary";
+import { readFirstName } from "../../chart/natalChartSummary/natalChartSummary";
+import { fetchMyChart } from "../../chart/skyChart/skyChart";
+import { completeChart } from "../../chart/MyChart/myChartFixtures";
 import { completeSummary } from "../../chart/ChartSummary/chartSummaryFixtures";
 import type { PlaceSuggestion } from "../placeSearch/placeSearch";
 import type { PlaceSearch } from "../placeSearchAdapter/placeSearchAdapter";
@@ -16,7 +19,15 @@ vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }
 
 vi.mock("../../chart/natalChart/natalChart", () => ({ fetchComputedAscendant: vi.fn() }));
 
-vi.mock("../../chart/natalChartSummary/natalChartSummary", () => ({ fetchNatalChartSummary: vi.fn() }));
+vi.mock("../../chart/natalChartSummary/natalChartSummary", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../chart/natalChartSummary/natalChartSummary")>()),
+  readFirstName: vi.fn(),
+}));
+
+vi.mock("../../chart/skyChart/skyChart", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../chart/skyChart/skyChart")>()),
+  fetchMyChart: vi.fn(),
+}));
 
 vi.mock("../../chart/natalChartProgress/natalChartProgress", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../chart/natalChartProgress/natalChartProgress")>()),
@@ -70,6 +81,7 @@ function renderFlow({ discoveryMode = false, onExit, search = vi.fn<PlaceSearch>
       search={search}
       today={TODAY}
     />,
+    { wrapper: createQueryWrapper() },
   );
   return { onComplete, search };
 }
@@ -86,7 +98,8 @@ function mockDraft(
 describe("OnboardingFlow", () => {
   beforeEach(() => {
     vi.mocked(streamNatalChart).mockResolvedValue(null);
-    vi.mocked(fetchNatalChartSummary).mockResolvedValue({ summary: completeSummary, error: null });
+    vi.mocked(fetchMyChart).mockResolvedValue({ data: completeChart, error: null });
+    vi.mocked(readFirstName).mockResolvedValue(completeSummary.firstName);
     vi.mocked(loadOnboardingDraft).mockResolvedValue({ draft: null, birthDataId: null, error: null });
     vi.mocked(saveOnboardingDraft).mockResolvedValue({ error: null });
     vi.mocked(completeOnboarding).mockResolvedValue({ birthDataId: "bd-1", error: null });

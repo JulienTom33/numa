@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
 import { fetchComputedAscendant } from "../natalChart/natalChart";
 import { useComputedAscendant } from "./useComputedAscendant";
 
@@ -15,7 +16,7 @@ beforeEach(() => {
 
 describe("useComputedAscendant", () => {
   it("reste inactif tant qu'il n'est pas activé", () => {
-    const { result } = renderHook(() => useComputedAscendant(false, null));
+    const { result } = renderHook(() => useComputedAscendant(false, null), { wrapper: createQueryWrapper() });
 
     expect(result.current.status).toBe("idle");
     expect(fetchMock).not.toHaveBeenCalled();
@@ -24,7 +25,7 @@ describe("useComputedAscendant", () => {
   it("charge puis expose l'ascendant calculé", async () => {
     fetchMock.mockResolvedValue({ ascendant: { sign: "libra", degreeInSign: 12.3 }, confidence: "high", error: null });
 
-    const { result } = renderHook(() => useComputedAscendant(true, "bd-1"));
+    const { result } = renderHook(() => useComputedAscendant(true, "bd-1"), { wrapper: createQueryWrapper() });
 
     expect(result.current.status).toBe("loading");
     await waitFor(() => expect(result.current.status).toBe("ready"));
@@ -39,7 +40,7 @@ describe("useComputedAscendant", () => {
       error: null,
     });
 
-    const { result } = renderHook(() => useComputedAscendant(true, "bd-1"));
+    const { result } = renderHook(() => useComputedAscendant(true, "bd-1"), { wrapper: createQueryWrapper() });
 
     await waitFor(() => expect(result.current.status).toBe("error"));
     expect(result.current.errorCode).toBe("network_error");
@@ -56,6 +57,7 @@ describe("useComputedAscendant", () => {
 
     const { result, rerender } = renderHook(({ key }) => useComputedAscendant(true, key), {
       initialProps: { key: "bd-1" },
+      wrapper: createQueryWrapper(),
     });
     await waitFor(() => expect(result.current.status).toBe("ready"));
 

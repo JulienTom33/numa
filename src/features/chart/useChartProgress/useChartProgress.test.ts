@@ -1,5 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createQueryWrapper, createTestQueryClient } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
+import { queryKeys } from "../../../shared/queryClient/queryKeys/queryKeys";
 import { streamNatalChart } from "../natalChartProgress/natalChartProgress";
 import type { ChartPhase } from "../../../../shared/contracts/natalChart/natalChart.ts";
 import { useChartProgress } from "./useChartProgress";
@@ -28,8 +30,9 @@ describe("useChartProgress", () => {
       });
     });
 
-    const { result } = renderHook(() => useChartProgress());
+    const { result } = renderHook(() => useChartProgress(), { wrapper: createQueryWrapper() });
     expect(result.current).toMatchObject({ completedCount: 0, status: "loading" });
+    await waitFor(() => expect(streamMock).toHaveBeenCalled());
 
     act(() => emit("validation"));
     act(() => emit("positions"));
@@ -37,13 +40,14 @@ describe("useChartProgress", () => {
     expect(result.current.status).toBe("loading");
 
     await act(async () => finish(null));
-    expect(result.current).toMatchObject({ completedCount: 6, status: "done" });
+    await waitFor(() => expect(result.current.status).toBe("done"));
+    expect(result.current.completedCount).toBe(6);
   });
 
   it("expose le code d'erreur et permet de réessayer", async () => {
     streamMock.mockResolvedValueOnce("network_error").mockResolvedValueOnce(null);
 
-    const { result } = renderHook(() => useChartProgress());
+    const { result } = renderHook(() => useChartProgress(), { wrapper: createQueryWrapper() });
     await waitFor(() => expect(result.current.status).toBe("error"));
     expect(result.current.errorCode).toBe("network_error");
 
@@ -52,6 +56,17 @@ describe("useChartProgress", () => {
     await waitFor(() => expect(result.current.status).toBe("done"));
     expect(result.current.errorCode).toBeNull();
     expect(streamMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("invalide le cache du thème une fois le calcul terminé", async () => {
+    streamMock.mockResolvedValue(null);
+    const client = createTestQueryClient();
+    client.setQueryData(queryKeys.chart.mine(), { stale: true });
+
+    const { result } = renderHook(() => useChartProgress(), { wrapper: createQueryWrapper(client) });
+
+    await waitFor(() => expect(result.current.status).toBe("done"));
+    expect(client.getQueryState(queryKeys.chart.mine())?.isInvalidated).toBe(true);
   });
 
   it("annule le flux et ignore ses événements au démontage", async () => {
@@ -63,7 +78,8 @@ describe("useChartProgress", () => {
       return new Promise(() => undefined);
     });
 
-    const { result, unmount } = renderHook(() => useChartProgress());
+    const { result, unmount } = renderHook(() => useChartProgress(), { wrapper: createQueryWrapper() });
+    await waitFor(() => expect(streamMock).toHaveBeenCalled());
     unmount();
 
     expect(signal?.aborted).toBe(true);

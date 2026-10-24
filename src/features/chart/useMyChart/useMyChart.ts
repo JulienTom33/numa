@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { loadStatus, type LoadStatus } from "../../../shared/queryClient/loadStatus/loadStatus";
+import { chartErrorCode, myChartQueryOptions } from "../chartQueries/chartQueries";
 import type { NatalChartErrorCode } from "../natalChart/natalChart";
-import { fetchMyChart, type MyChartData } from "../skyChart/skyChart";
+import type { MyChartData } from "../skyChart/skyChart";
 
-export type MyChartStatus = "loading" | "ready" | "error";
+export type MyChartStatus = LoadStatus;
 
 export interface UseMyChartResult {
   status: MyChartStatus;
@@ -12,31 +14,15 @@ export interface UseMyChartResult {
 }
 
 export function useMyChart(): UseMyChartResult {
-  const [status, setStatus] = useState<MyChartStatus>("loading");
-  const [data, setData] = useState<MyChartData | null>(null);
-  const [errorCode, setErrorCode] = useState<NatalChartErrorCode | null>(null);
-  const [attempt, setAttempt] = useState(0);
+  const query = useQuery(myChartQueryOptions());
+  const { refetch } = query;
 
-  useEffect(() => {
-    let cancelled = false;
-    setStatus("loading");
-    setErrorCode(null);
-
-    void fetchMyChart().then((result) => {
-      if (cancelled) return;
-      setData(result.data);
-      setErrorCode(result.error);
-      setStatus(result.error ? "error" : "ready");
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [attempt]);
-
-  const retry = useCallback(() => {
-    setAttempt((current) => current + 1);
-  }, []);
-
-  return { status, data, errorCode, retry };
+  return {
+    status: loadStatus(query),
+    data: query.data ?? null,
+    errorCode: query.isError ? chartErrorCode(query.error) : null,
+    retry: () => {
+      void refetch();
+    },
+  };
 }

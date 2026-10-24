@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { BirthPlace, OnboardingData } from "../birthData/birthData";
+import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
 import { completeOnboarding, loadOnboardingDraft, saveOnboardingDraft } from "../onboardingStore/onboardingStore";
 import { useOnboarding } from "./useOnboarding";
 
@@ -25,7 +26,7 @@ const COMPLETE_DATA: OnboardingData = {
 };
 
 async function renderLoaded(userId: string | null = USER_ID) {
-  const hook = renderHook(() => useOnboarding({ userId, today: TODAY }));
+  const hook = renderHook(() => useOnboarding({ userId, today: TODAY }), { wrapper: createQueryWrapper() });
   await waitFor(() => expect(hook.result.current.loading).toBe(false));
   return hook;
 }
