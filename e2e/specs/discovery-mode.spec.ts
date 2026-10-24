@@ -16,7 +16,7 @@ test.describe("Mode découverte", () => {
   test("aucune incitation tant que les deux lectures gratuites sont intactes", async ({ page }) => {
     await page.locator("#app__tabbar--main-consult").click();
 
-    await expect(page.locator("#app__placeholder--consult")).toBeVisible();
+    await expect(page.locator("#chat-view__section--main")).toBeVisible();
     await expect(page.locator("#discovery-banner__callout--remaining")).toHaveCount(0);
     await expect(page.locator("#conversion-sheet__dialog--main")).toHaveCount(0);
   });
