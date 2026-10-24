@@ -1,0 +1,53 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import { anonymousProfile, authenticatedProfile } from "../profileData/profileFixtures";
+import ProfileScreen from "./ProfileScreen";
+
+function renderScreen(overrides: Partial<Parameters<typeof ProfileScreen>[0]> = {}) {
+  const onEdit = vi.fn();
+  render(
+    <ProfileScreen
+      profile={authenticatedProfile}
+      email="camille@example.com"
+      sun="pisces"
+      ascendant="taurus"
+      saved={false}
+      onEdit={onEdit}
+      {...overrides}
+    />,
+  );
+  return { onEdit };
+}
+
+describe("ProfileScreen", () => {
+  it("affiche prénom, signes, statut et email masqué", () => {
+    renderScreen();
+
+    expect(screen.getByRole("heading", { level: 1, name: "Camille" })).toBeInTheDocument();
+    expect(document.getElementById("profile__text--placements")).toHaveTextContent("Soleil Poissons · Ascendant Taureau");
+    expect(document.getElementById("profile__badge--status")).toHaveTextContent("Compte gratuit");
+    expect(document.getElementById("profile__row--email")).toHaveTextContent("c*****e@example.com");
+    expect(document.getElementById("profile__row--birth-place")).toHaveTextContent("Lyon, France");
+    expect(document.getElementById("profile__row--tone")).toHaveTextContent("Équilibré");
+  });
+
+  it("indique le mode découverte pour un compte anonyme sans email", () => {
+    renderScreen({ profile: anonymousProfile, email: null, sun: null, ascendant: null });
+
+    expect(document.getElementById("profile__badge--status")).toHaveTextContent("Mode découverte");
+    expect(document.getElementById("profile__row--email")).toHaveTextContent("Aucun email associé");
+    expect(document.getElementById("profile__text--placements")).toHaveTextContent("Non disponible");
+  });
+
+  it("affiche le succès après enregistrement", () => {
+    renderScreen({ saved: true });
+    expect(screen.getByRole("status")).toHaveTextContent("Vos modifications sont enregistrées.");
+  });
+
+  it("ouvre l'édition", async () => {
+    const { onEdit } = renderScreen();
+    await userEvent.click(screen.getByRole("button", { name: "Modifier mon profil" }));
+    expect(onEdit).toHaveBeenCalledTimes(1);
+  });
+});

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import DiscoveryConsultGate from "../../../features/discovery/DiscoveryConsultGate/DiscoveryConsultGate";
 import DiscoveryModeBadge from "../../../features/discovery/DiscoveryModeBadge/DiscoveryModeBadge";
 import MyChartFlow from "../../../features/chart/MyChartFlow/MyChartFlow";
+import ProfileFlow from "../../../features/profile/ProfileFlow/ProfileFlow";
 import EmptyState from "../../components/ui/EmptyState/EmptyState";
 import { useAppContext } from "../appContext/appContext";
 import { useMainTabs, type MainTab } from "../mainTabs/mainTabs";
@@ -25,6 +26,8 @@ function TabScreen({ tab }: Props) {
       {isAnonymous && <DiscoveryModeBadge />}
       {tab === "theme" ? (
         <MyChartFlow />
+      ) : tab === "profile" ? (
+        <ProfileFlow />
       ) : (
         <EmptyState
           id={`app__placeholder--${tab}`}

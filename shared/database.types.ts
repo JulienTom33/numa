@@ -133,14 +133,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "created_at": string,"display_name": string | null,"id": string,"status": string,"updated_at": string
+                    "created_at": string,"display_name": string | null,"id": string,"language": string,"status": string,"tone": string,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"display_name"?: string | null,"id": string,"status"?: string,"updated_at"?: string
+                    "created_at"?: string,"display_name"?: string | null,"id": string,"language"?: string,"status"?: string,"tone"?: string,"updated_at"?: string
                   }
                   Update: {
-                    "created_at"?: string,"display_name"?: string | null,"id"?: string,"status"?: string,"updated_at"?: string
+                    "created_at"?: string,"display_name"?: string | null,"id"?: string,"language"?: string,"status"?: string,"tone"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     
