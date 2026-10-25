@@ -1,3 +1,5 @@
+import { isRecord } from "./guards.ts";
+
 export interface ProviderSettings {
   id: string;
   baseUrl: string;
@@ -27,10 +29,6 @@ export const DEFAULT_PROVIDERS: ProviderSettings[] = [
     extraBody: { reasoning_effort: "low" },
   },
 ];
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
 
 function parseEntry(entry: unknown): ProviderSettings {
   if (!isRecord(entry)) throw new Error("ai_providers_invalid");

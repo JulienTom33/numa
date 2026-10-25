@@ -2,6 +2,7 @@ import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import type { NatalChart } from "../../../shared/contracts/natalChart/natalChart.ts";
 import { HttpError } from "../_shared/http.ts";
 import type { ChatFactors } from "./factors.ts";
+import { isRecord } from "./guards.ts";
 import type { GeneratedAnswer } from "./provider.ts";
 
 export interface ChartSource {
@@ -21,6 +22,7 @@ export interface ConversationStore {
     answer: GeneratedAnswer;
     factors: ChatFactors | null;
   }): Promise<RecordedAnswer>;
+  owns(userId: string, conversationId: string): Promise<boolean>;
 }
 
 interface ChartRow {
@@ -33,6 +35,11 @@ interface RecordRow {
 }
 
 const CONVERSATION_NOT_FOUND = "P0002";
+
+function isRecordRow(value: unknown): value is RecordRow {
+  return isRecord(value) && typeof value.conversation_id === "string" &&
+    typeof value.message_id === "string";
+}
 
 export function createSupabaseChartSource(client: SupabaseClient): ChartSource {
   return {
@@ -67,8 +74,18 @@ export function createSupabaseConversationStore(client: SupabaseClient): Convers
         throw new HttpError(404, "conversation_not_found", "conversation_not_found");
       }
       if (error) throw new Error("rpc_record_answer_failed");
-      const row = data as RecordRow;
-      return { conversationId: row.conversation_id, messageId: row.message_id };
+      if (!isRecordRow(data)) throw new Error("rpc_record_answer_invalid");
+      return { conversationId: data.conversation_id, messageId: data.message_id };
+    },
+    async owns(userId, conversationId) {
+      const { data, error } = await client
+        .from("conversations")
+        .select("id")
+        .eq("id", conversationId)
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (error) throw new Error("conversation_read_failed");
+      return data !== null;
     },
   };
 }

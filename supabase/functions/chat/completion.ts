@@ -1,4 +1,5 @@
 import type { ProviderSettings } from "./config.ts";
+import { isRecord } from "./guards.ts";
 import { type ChatMessage, MAX_OUTPUT_TOKENS } from "./prompt.ts";
 
 export type FailureKind = "timeout" | "rate_limited" | "http_error" | "invalid_response";
@@ -22,15 +23,11 @@ function parseRetryAfter(header: string | null): number | null {
 }
 
 function readCompletion(body: unknown): Completion {
-  const choices = typeof body === "object" && body !== null
-    ? (body as Record<string, unknown>).choices
-    : undefined;
+  const choices = isRecord(body) ? body.choices : undefined;
   const first: unknown = Array.isArray(choices) ? choices[0] : undefined;
-  if (typeof first !== "object" || first === null) throw new ProviderFailure("invalid_response");
-  const { message, finish_reason: finishReason } = first as Record<string, unknown>;
-  const content = typeof message === "object" && message !== null
-    ? (message as Record<string, unknown>).content
-    : undefined;
+  if (!isRecord(first)) throw new ProviderFailure("invalid_response");
+  const { message, finish_reason: finishReason } = first;
+  const content = isRecord(message) ? message.content : undefined;
   if (typeof content !== "string") throw new ProviderFailure("invalid_response");
   return { text: content, truncated: finishReason === "length" };
 }

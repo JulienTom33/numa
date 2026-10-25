@@ -1,6 +1,7 @@
 import type { HandlerContext } from "../_shared/handler.ts";
 import { HttpError, json } from "../_shared/http.ts";
 import { extractFactors } from "./factors.ts";
+import { isRecord } from "./guards.ts";
 import type { QuestionProvider } from "./provider.ts";
 import { containsPersonalData } from "./questionGuard.ts";
 import { answerWithQuota, type QuotaStore, readQuota } from "./quota.ts";
@@ -23,8 +24,7 @@ interface ChatInput {
 }
 
 function field(body: unknown, name: string): unknown {
-  if (typeof body !== "object" || body === null) return undefined;
-  return (body as Record<string, unknown>)[name];
+  return isRecord(body) ? body[name] : undefined;
 }
 
 async function readInput(req: Request): Promise<ChatInput> {
@@ -55,6 +55,9 @@ export function createChatHandler({ store, provider, charts, conversations }: Ch
       return json({ quota: await readQuota(caller, store) });
     }
     const { question, conversationId } = await readInput(req);
+    if (conversationId !== null && !(await conversations.owns(caller.userId, conversationId))) {
+      throw new HttpError(404, "conversation_not_found", "conversation_not_found");
+    }
 
     const { value, quota } = await answerWithQuota(caller, store, async () => {
       const chart = await charts.latest(caller.userId);

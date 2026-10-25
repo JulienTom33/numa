@@ -96,7 +96,28 @@ Deno.test("POST continues an existing conversation", async () => {
   assertEquals(conversations.recorded[0].factors, null);
 });
 
-Deno.test("POST rejects a malformed conversation id", async () => {
+Deno.test("POST refuses a foreign conversation before calling the provider", async () => {
+  const calls: string[] = [];
+  const provider: QuestionProvider = {
+    answer: (request) => {
+      calls.push(request.question);
+      return echoProvider().answer(request);
+    },
+  };
+  const store = createMemoryStore();
+  const conversations = memoryConversations(false);
+  const response = await chat(provider, store, null, conversations)(
+    ask({ question: "Q1", conversationId: "11111111-1111-4111-8111-111111111111" }),
+  );
+
+  assertEquals(response.status, 404);
+  assertEquals((await response.json()).error.code, "conversation_not_found");
+  assertEquals(calls.length, 0);
+  assertEquals(await store.used("anon-1"), 0);
+  assertEquals(conversations.recorded.length, 0);
+});
+
+Deno.test("POST rejects a malformed conversation id",async () => {
   const response = await chat()(ask({ question: "Q1", conversationId: "x" }));
 
   assertEquals(response.status, 400);

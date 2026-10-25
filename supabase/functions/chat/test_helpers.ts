@@ -63,10 +63,13 @@ export function memoryCharts(chart: NatalChart | null = null): ChartSource {
   return { latest: () => Promise.resolve(chart) };
 }
 
-export function memoryConversations(): ConversationStore & { recorded: RecordInput[] } {
+export function memoryConversations(
+  ownsAll = true,
+): ConversationStore & { recorded: RecordInput[] } {
   const recorded: RecordInput[] = [];
   return {
     recorded,
+    owns: () => Promise.resolve(ownsAll),
     record: (input) => {
       recorded.push(input);
       return Promise.resolve({
