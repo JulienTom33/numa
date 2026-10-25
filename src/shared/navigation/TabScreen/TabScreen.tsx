@@ -2,8 +2,10 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import DiscoveryConsultGate from "../../../features/discovery/DiscoveryConsultGate/DiscoveryConsultGate";
 import DiscoveryModeBadge from "../../../features/discovery/DiscoveryModeBadge/DiscoveryModeBadge";
+import ChatScreen from "../../../features/chat/ChatScreen/ChatScreen";
 import MyChartFlow from "../../../features/chart/MyChartFlow/MyChartFlow";
 import ProfileFlow from "../../../features/profile/ProfileFlow/ProfileFlow";
+import TodayFlow from "../../../features/today/TodayFlow/TodayFlow";
 import EmptyState from "../../components/ui/EmptyState/EmptyState";
 import { useAppContext } from "../appContext/appContext";
 import { useMainTabs, type MainTab } from "../mainTabs/mainTabs";
@@ -23,11 +25,15 @@ function TabScreen({ tab }: Props) {
 
   return (
     <div id={`app__screen--${tab}`} className="flex flex-col items-center gap-2 px-4 pt-6">
-      {isAnonymous && <DiscoveryModeBadge />}
-      {tab === "theme" ? (
+      {isAnonymous && tab !== "today" && <DiscoveryModeBadge />}
+      {tab === "today" ? (
+        <TodayFlow />
+      ) : tab === "theme" ? (
         <MyChartFlow />
       ) : tab === "profile" ? (
         <ProfileFlow />
+      ) : tab === "consult" ? (
+        <ChatScreen />
       ) : (
         <EmptyState
           id={`app__placeholder--${tab}`}
