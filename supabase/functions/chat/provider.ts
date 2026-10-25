@@ -1,10 +1,17 @@
-export interface QuestionProvider {
-  answer(question: string): Promise<string>;
+import type { ChatFactors } from "./factors.ts";
+
+export interface QuestionRequest {
+  question: string;
+  factors: ChatFactors | null;
 }
 
-export const stubProvider: QuestionProvider = {
-  answer: () =>
-    Promise.resolve(
-      "Les lectures personnalisées arrivent bientôt. Votre question a bien été reçue.",
-    ),
-};
+export interface GeneratedAnswer {
+  text: string;
+  provider: string;
+  model: string;
+  promptVersion: string;
+}
+
+export interface QuestionProvider {
+  answer(request: QuestionRequest): Promise<GeneratedAnswer>;
+}

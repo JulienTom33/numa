@@ -101,7 +101,8 @@ jobs:
 
       - name: Serve Edge Functions
         run: |
-          nohup supabase functions serve > /tmp/functions-serve.log 2>&1 &
+          echo "AI_PROVIDER_STUB=1" > "$RUNNER_TEMP/functions.env"
+          nohup supabase functions serve --env-file "$RUNNER_TEMP/functions.env" > /tmp/functions-serve.log 2>&1 &
           eval "$(supabase status -o env)"
           for _ in $(seq 1 60); do
             status=$(curl -s -o /dev/null -w "%{http_code}" -H "apikey: ${PUBLISHABLE_KEY:-$ANON_KEY}" "$API_URL/functions/v1/whoami" || true)

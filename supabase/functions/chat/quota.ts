@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import type { Caller } from "../_shared/auth.ts";
 import { HttpError } from "../_shared/http.ts";
-import type { QuestionProvider } from "./provider.ts";
 
 export const ANONYMOUS_QUESTION_LIMIT = 2;
 
@@ -18,8 +17,8 @@ export interface QuotaStore {
   used(userId: string): Promise<number>;
 }
 
-export interface AnswerResult {
-  answer: string;
+export interface QuotaResult<T> {
+  value: T;
   quota: QuotaStatus | null;
 }
 
@@ -35,14 +34,13 @@ export async function readQuota(caller: Caller, store: QuotaStore): Promise<Quot
   return caller.isAnonymous ? toStatus(await store.used(caller.userId)) : null;
 }
 
-export async function answerWithQuota(
+export async function answerWithQuota<T>(
   caller: Caller,
-  question: string,
   store: QuotaStore,
-  provider: QuestionProvider,
-): Promise<AnswerResult> {
+  generate: () => Promise<T>,
+): Promise<QuotaResult<T>> {
   if (!caller.isAnonymous) {
-    return { answer: await provider.answer(question), quota: null };
+    return { value: await generate(), quota: null };
   }
 
   const reservationId = await store.reserve(caller.userId, ANONYMOUS_QUESTION_LIMIT);
@@ -54,11 +52,12 @@ export async function answerWithQuota(
     );
   }
 
-  let answer: string;
+  let value: T;
   try {
-    answer = await provider.answer(question);
+    value = await generate();
   } catch (error) {
     await store.release(reservationId);
+    if (error instanceof HttpError) throw error;
     console.error("provider_error", error instanceof Error ? error.name : typeof error);
     throw new HttpError(
       502,
@@ -67,7 +66,7 @@ export async function answerWithQuota(
     );
   }
 
-  return { answer, quota: toStatus(await store.commit(reservationId)) };
+  return { value, quota: toStatus(await store.commit(reservationId)) };
 }
 
 async function callRpc<T>(
