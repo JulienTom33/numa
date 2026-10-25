@@ -3,13 +3,12 @@ import DiscoveryQuotaGate from "../DiscoveryQuotaGate/DiscoveryQuotaGate";
 
 interface Props {
   onSignUp: () => void;
-  onSignIn: () => void;
 }
 
-function DiscoveryConsultGate({ onSignUp, onSignIn }: Props) {
+function DiscoveryConsultGate({ onSignUp }: Props) {
   const { quota } = useQuestionQuota();
 
-  return <DiscoveryQuotaGate quota={quota} onSignUp={onSignUp} onSignIn={onSignIn} />;
+  return <DiscoveryQuotaGate quota={quota} onSignUp={onSignUp} />;
 }
 
 export default DiscoveryConsultGate;

@@ -65,7 +65,7 @@ test.describe("Inscription, connexion et lien magique", () => {
     await completeOnboarding(page);
     await askQuestions(page, 2);
     await page.locator("#app__tabbar--main-consult").click();
-    await page.locator("#conversion-sheet__button--sign-up").click();
+    await page.locator("#discovery-quota-gate__button--sign-up").click();
     await page.locator("#auth-screen__button--email-link").click();
 
     await page.locator("#magic-link-request__input--email").fill(uniqueEmail("upgrade"));
