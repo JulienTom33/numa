@@ -64,7 +64,7 @@
     "contact": {
       "title": "Nous contacter",
       "body": "Pour toute question ou demande liée à vos données : {{address}}.",
-      "address": "[adresse de contact à renseigner]"
+      "address": "sidera.app@gmail.com"
     }
   }
 }
