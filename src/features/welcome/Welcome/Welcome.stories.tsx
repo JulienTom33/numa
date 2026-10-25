@@ -5,7 +5,7 @@ import Welcome from "./Welcome";
 const meta = {
   title: "Écrans/Accueil",
   component: Welcome,
-  args: { onSignUp: fn(), onSignIn: fn(), onDiscover: fn() },
+  args: { onSignUp: fn(), onSignIn: fn(), onDiscover: fn(), onPrivacy: fn() },
   parameters: {
     layout: "fullscreen",
     docs: {

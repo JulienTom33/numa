@@ -1,0 +1,70 @@
+{
+  "link": "Politique de confidentialité",
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "intro": "Cette page explique, simplement, quelles données Numa utilise, pourquoi, où elles vont et comment les supprimer.",
+    "summary": {
+      "title": "L'essentiel",
+      "body": "Vos données de naissance servent uniquement à calculer votre thème. Elles ne sont jamais envoyées au fournisseur d'IA. Vous pouvez demander la suppression de votre compte à tout moment, et vous ne recevez aucune communication marketing."
+    },
+    "sections": {
+      "collected": {
+        "title": "Les données que nous utilisons",
+        "body": "Si vous créez un compte : votre adresse e-mail. Dans tous les cas : votre prénom, votre date, votre heure (facultative) et votre lieu de naissance, vos préférences (langue, ton des lectures), vos questions et les réponses de vos conversations, ainsi qu'un compteur de questions posées pour appliquer la limite d'usage."
+      },
+      "birthData": {
+        "title": "Vos données de naissance",
+        "body": "Votre date, votre heure et votre lieu de naissance servent à calculer votre thème natal : positions des astres, ascendant et maisons. Sans elles, aucune lecture personnalisée n'est possible. Vous pouvez les modifier à tout moment depuis votre profil ; votre thème est alors recalculé."
+      },
+      "ai": {
+        "title": "Ce qui est envoyé à l'IA",
+        "body": "Les réponses sont rédigées par un fournisseur d'IA externe. Il reçoit les facteurs astrologiques de votre thème (signes, degrés, maisons, aspects) et votre question. Il ne reçoit ni votre prénom, ni votre e-mail, ni votre date, votre heure ou votre lieu de naissance."
+      },
+      "freeQuestion": {
+        "title": "Votre question libre",
+        "body": "Le texte de votre question est transmis tel quel au fournisseur d'IA. N'y indiquez pas d'informations qui vous identifient (nom, adresse, numéro de téléphone) ni de données sensibles, comme votre santé."
+      },
+      "auth": {
+        "title": "Connexion et compte",
+        "body": "Vous pouvez vous connecter avec Google, avec Apple ou par un lien envoyé à votre adresse e-mail, sans mot de passe. Sans compte, le mode découverte crée une session anonyme liée à votre appareil. Votre session reste enregistrée sur votre appareil pour vous éviter de vous reconnecter."
+      },
+      "retention": {
+        "title": "Conservation",
+        "body": "Vos données sont conservées tant que votre compte existe. Elles sont accessibles uniquement avec votre session : personne d'autre ne peut les lire depuis l'application."
+      },
+      "deletion": {
+        "title": "Suppression du compte",
+        "body": "Vous pouvez demander la suppression de votre compte à tout moment, en nous écrivant à l'adresse de contact ci-dessous. La suppression efface votre profil, vos données de naissance, votre thème, vos conversations et vos compteurs d'usage."
+      },
+      "rights": {
+        "title": "Vos droits",
+        "body": "Vous pouvez accéder à vos données, les corriger, les faire supprimer, vous opposer à leur utilisation ou demander leur limitation. Vous pouvez aussi déposer une réclamation auprès de la CNIL."
+      },
+      "marketing": {
+        "title": "Communications marketing",
+        "body": "Numa n'envoie aucune communication marketing. Si cela change, nous vous demanderons un accord distinct, séparé de la création de votre compte, que vous pourrez retirer à tout moment."
+      },
+      "metrics": {
+        "title": "Mesure d'audience",
+        "body": "Numa n'utilise aucun outil de mesure d'audience ni de publicité, et ne partage vos données avec aucun service publicitaire."
+      }
+    },
+    "providers": {
+      "title": "Les prestataires qui interviennent",
+      "intro": "Pour fonctionner, Numa fait appel aux prestataires suivants.",
+      "items": {
+        "supabase": "Supabase : authentification et base de données qui stocke votre compte et vos données.",
+        "ovh": "OVH : hébergement de l'application.",
+        "mistral": "Mistral AI : fournisseur d'IA principal, qui rédige les réponses à vos questions.",
+        "groq": "Groq : fournisseur d'IA de secours, utilisé si le premier ne répond pas. Ses serveurs sont situés aux États-Unis, avec des clauses contractuelles types pour encadrer le transfert.",
+        "openMeteo": "Open-Meteo : recherche des lieux de naissance. Le texte que vous saisissez dans ce champ lui est transmis.",
+        "oauth": "Google et Apple : uniquement si vous choisissez de vous connecter avec leur compte."
+      }
+    },
+    "contact": {
+      "title": "Nous contacter",
+      "body": "Pour toute question ou demande liée à vos données : {{address}}.",
+      "address": "[adresse de contact à renseigner]"
+    }
+  }
+}

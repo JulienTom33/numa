@@ -10,10 +10,11 @@ interface Props {
   onSignIn: () => void;
   onDiscover: () => void;
   discoverError?: string | null;
+  onPrivacy?: () => void;
 }
 
-function Welcome({ onSignUp, onSignIn, onDiscover, discoverError = null }: Props) {
-  const { t } = useTranslation(["welcome", "common"]);
+function Welcome({ onSignUp, onSignIn, onDiscover, discoverError = null, onPrivacy }: Props) {
+  const { t } = useTranslation(["welcome", "common", "legal"]);
   const [aboutOpen, setAboutOpen] = useState(false);
   const closeAbout = () => setAboutOpen(false);
 
@@ -50,6 +51,11 @@ function Welcome({ onSignUp, onSignIn, onDiscover, discoverError = null }: Props
         <p id="welcome__text--account-later" className="text-center text-sm text-ink-secondary">
           {t("account.later")}
         </p>
+        {onPrivacy && (
+          <TextLink id="welcome__link--privacy" tone="ink" onClick={onPrivacy} className="text-sm">
+            {t("legal:link")}
+          </TextLink>
+        )}
       </div>
 
       <BottomSheet
