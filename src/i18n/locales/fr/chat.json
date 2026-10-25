@@ -29,6 +29,20 @@
   "input": {
     "disabledPlaceholder": "Créez un compte pour continuer"
   },
+  "signupPrompt": {
+    "title": "Gardez vos lectures avec vous",
+    "intro": "Vous avez reçu deux réponses de Numa. Avec un compte :",
+    "benefits": {
+      "history": "retrouvez vos conversations et vos lectures",
+      "chart": "conservez votre thème et vos préférences",
+      "devices": "accédez à Numa depuis tous vos appareils"
+    },
+    "reassurance": "Sans compte, votre session reste active : vous pouvez continuer à explorer.",
+    "signUp": "Créer un compte",
+    "signIn": "Se connecter",
+    "continue": "Continuer sans compte",
+    "closeLabel": "Fermer la fiche"
+  },
   "error": {
     "title": "Votre question n'a pas pu être envoyée"
   }
