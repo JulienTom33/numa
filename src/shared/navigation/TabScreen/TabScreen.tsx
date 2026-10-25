@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import DiscoveryConsultGate from "../../../features/discovery/DiscoveryConsultGate/DiscoveryConsultGate";
 import DiscoveryModeBadge from "../../../features/discovery/DiscoveryModeBadge/DiscoveryModeBadge";
+import ChatScreen from "../../../features/chat/ChatScreen/ChatScreen";
 import MyChartFlow from "../../../features/chart/MyChartFlow/MyChartFlow";
 import TodayFlow from "../../../features/today/TodayFlow/TodayFlow";
 import EmptyState from "../../components/ui/EmptyState/EmptyState";
@@ -28,6 +29,8 @@ function TabScreen({ tab }: Props) {
         <TodayFlow />
       ) : tab === "theme" ? (
         <MyChartFlow />
+      ) : tab === "consult" ? (
+        <ChatScreen />
       ) : (
         <EmptyState
           id={`app__placeholder--${tab}`}
