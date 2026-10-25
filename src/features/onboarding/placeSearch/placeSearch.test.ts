@@ -60,7 +60,9 @@ describe("searchPlaces", () => {
     [504, "provider_timeout", "provider_timeout"],
     [400, "invalid_query", "invalid_query"],
     [401, "invalid_token", "unauthenticated"],
-    [500, "internal_error", "unknown_error"],
+    [500, "internal_error", "service_unavailable"],
+    [429, "rate_limit_exceeded", "rate_limited"],
+    [418, "teapot", "unknown_error"],
   ])("maps a %i %s server error to %s", async (status, serverCode, expected) => {
     invoke.mockResolvedValue({
       data: null,
@@ -73,13 +75,18 @@ describe("searchPlaces", () => {
     expect(error).toEqual({ code: expected });
   });
 
-  it("maps an unreadable error body to unknown_error", async () => {
+  it.each([
+    [503, "service_unavailable"],
+    [502, "service_unavailable"],
+    [429, "rate_limited"],
+    [400, "unknown_error"],
+  ])("maps an unreadable %i error body to %s", async (status, expected) => {
     invoke.mockResolvedValue({
       data: null,
-      error: new FunctionsHttpError(new Response("<html>", { status: 502 })),
+      error: new FunctionsHttpError(new Response("<html>", { status })),
     } as never);
 
-    expect((await searchPlaces("Paris")).error?.code).toBe("unknown_error");
+    expect((await searchPlaces("Paris")).error?.code).toBe(expected);
   });
 
   it("maps a network failure to network_error", async () => {
@@ -88,10 +95,10 @@ describe("searchPlaces", () => {
     expect((await searchPlaces("Paris")).error?.code).toBe("network_error");
   });
 
-  it("maps a relay failure to unknown_error", async () => {
+  it("maps a relay failure to service_unavailable", async () => {
     invoke.mockResolvedValue({ data: null, error: new FunctionsRelayError({}) } as never);
 
-    expect((await searchPlaces("Paris")).error?.code).toBe("unknown_error");
+    expect((await searchPlaces("Paris")).error?.code).toBe("service_unavailable");
   });
 
   it("reports a search cancelled by the caller", async () => {

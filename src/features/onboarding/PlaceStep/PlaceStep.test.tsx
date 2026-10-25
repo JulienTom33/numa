@@ -8,6 +8,7 @@ import PlaceStep, {
   type SelectedPlace,
   SEARCH_DEBOUNCE_MS,
 } from "./PlaceStep";
+import { PlaceSearchFailure } from "../placeSearchAdapter/placeSearchAdapter";
 
 const bordeaux: PlaceSuggestion = {
   id: "bordeaux-fr",
@@ -135,6 +136,22 @@ describe("PlaceStep", () => {
     expect(search).toHaveBeenCalledTimes(2);
     expect(screen.getByRole("option", { name: /Bordeaux/ })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Réessayer" })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["service_unavailable", "Le service de recherche de villes est momentanément indisponible. Réessayez dans un instant."],
+    ["provider_unavailable", "Le service de recherche de villes est momentanément indisponible. Réessayez dans un instant."],
+    ["rate_limited", "Trop de recherches en peu de temps. Patientez quelques secondes puis réessayez."],
+    ["network_error", "La recherche a échoué. Vérifiez votre connexion."],
+  ] as const)("describes a %s failure without blaming the connection", async (code, message) => {
+    const search = vi.fn<PlaceSearch>().mockRejectedValue(new PlaceSearchFailure(code));
+    const { user, input } = setup({ search });
+
+    await user.type(input, "Bor");
+    await flushDebounce();
+
+    expect(input).toHaveAccessibleDescription(message);
+    expect(screen.getByRole("button", { name: "Réessayer" })).toBeInTheDocument();
   });
 
   it("selects a city and shows its detected timezone", async () => {

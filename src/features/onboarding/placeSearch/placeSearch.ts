@@ -1,4 +1,4 @@
-import { FunctionsFetchError, FunctionsHttpError } from "@supabase/supabase-js";
+import { FunctionsFetchError, FunctionsHttpError, FunctionsRelayError } from "@supabase/supabase-js";
 import { supabase } from "../../../shared/supabaseClient/supabaseClient";
 
 export const PLACE_SEARCH_MIN_LENGTH = 2;
@@ -21,6 +21,8 @@ export type PlaceSearchErrorCode =
   | "invalid_query"
   | "provider_unavailable"
   | "provider_timeout"
+  | "service_unavailable"
+  | "rate_limited"
   | "unauthenticated"
   | "network_error"
   | "aborted"
@@ -49,20 +51,29 @@ const SERVER_CODES: Partial<Record<string, PlaceSearchErrorCode>> = {
   invalid_body: "invalid_query",
   provider_unavailable: "provider_unavailable",
   provider_timeout: "provider_timeout",
+  rate_limit_exceeded: "rate_limited",
   unauthenticated: "unauthenticated",
   invalid_token: "unauthenticated",
 };
 
-async function readServerCode(response: unknown): Promise<PlaceSearchErrorCode> {
-  if (!(response instanceof Response)) return "unknown_error";
-  if (response.status === 401) return "unauthenticated";
+async function readBodyCode(response: Response): Promise<PlaceSearchErrorCode | undefined> {
   try {
     const body: unknown = await response.json();
     const code = (body as { error?: { code?: unknown } } | null)?.error?.code;
-    return (typeof code === "string" && SERVER_CODES[code]) || "unknown_error";
+    return typeof code === "string" ? SERVER_CODES[code] : undefined;
   } catch {
-    return "unknown_error";
+    return undefined;
   }
+}
+
+async function readServerCode(response: unknown): Promise<PlaceSearchErrorCode> {
+  if (!(response instanceof Response)) return "unknown_error";
+  if (response.status === 401) return "unauthenticated";
+  const bodyCode = await readBodyCode(response);
+  if (bodyCode) return bodyCode;
+  if (response.status === 429) return "rate_limited";
+  if (response.status >= 500) return "service_unavailable";
+  return "unknown_error";
 }
 
 function isPlaceSuggestion(value: unknown): value is PlaceSuggestion {
@@ -94,6 +105,7 @@ export const searchPlaces: SearchPlaces = async (query, { signal, limit } = {}) 
   if (signal?.aborted) return failure("aborted");
   if (error instanceof FunctionsHttpError) return failure(await readServerCode(error.context));
   if (error instanceof FunctionsFetchError) return failure("network_error");
+  if (error instanceof FunctionsRelayError) return failure("service_unavailable");
   if (error) return failure("unknown_error");
 
   const places = (data as { places?: unknown } | null)?.places;
