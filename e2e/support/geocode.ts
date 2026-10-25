@@ -32,3 +32,18 @@ export async function mockGeocode(page: Page): Promise<void> {
     });
   });
 }
+
+export async function mockGeocodeUnavailable(page: Page): Promise<void> {
+  await page.route("**/functions/v1/geocode", async (route) => {
+    if (route.request().method() === "OPTIONS") {
+      await route.fulfill({ status: 204, headers: CORS_HEADERS });
+      return;
+    }
+    await route.fulfill({
+      status: 503,
+      headers: CORS_HEADERS,
+      contentType: "text/plain",
+      body: "Service Temporarily Unavailable",
+    });
+  });
+}

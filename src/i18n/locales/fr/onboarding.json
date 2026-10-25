@@ -41,6 +41,8 @@
     "cityPlaceholder": "Ex. : Bordeaux",
     "noResults": "Aucune ville trouvée. Vérifiez l'orthographe ou essayez une ville proche.",
     "searchFailed": "La recherche a échoué. Vérifiez votre connexion.",
+    "serviceUnavailable": "Le service de recherche de villes est momentanément indisponible. Réessayez dans un instant.",
+    "rateLimited": "Trop de recherches en peu de temps. Patientez quelques secondes puis réessayez.",
     "retry": "Réessayer",
     "timezone": "Fuseau horaire détecté : {{timezone}}"
   },

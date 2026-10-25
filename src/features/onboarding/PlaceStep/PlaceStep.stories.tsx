@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useArgs } from "storybook/preview-api";
 import { userEvent, within } from "storybook/test";
 import PlaceStep, { type PlaceSearch, type PlaceSuggestion, type SelectedPlace } from "./PlaceStep";
+import { PlaceSearchFailure } from "../placeSearchAdapter/placeSearchAdapter";
 
 const cities: PlaceSuggestion[] = [
   {
@@ -100,6 +101,11 @@ export const NoResult: Story = {
 
 export const NetworkError: Story = {
   args: { search: async () => Promise.reject(new Error("offline")) },
+  play: typeQuery("Bor"),
+};
+
+export const ServiceUnavailable: Story = {
+  args: { search: async () => Promise.reject(new PlaceSearchFailure("service_unavailable")) },
   play: typeQuery("Bor"),
 };
 
