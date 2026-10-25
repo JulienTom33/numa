@@ -117,7 +117,7 @@ Deno.test("POST refuses a foreign conversation before calling the provider", asy
   assertEquals(conversations.recorded.length, 0);
 });
 
-Deno.test("POST rejects a malformed conversation id",async () => {
+Deno.test("POST rejects a malformed conversation id", async () => {
   const response = await chat()(ask({ question: "Q1", conversationId: "x" }));
 
   assertEquals(response.status, 400);
