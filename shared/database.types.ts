@@ -159,6 +159,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"rate_limits": {
+                  Row: {
+                    "count": number,"key": string,"window_start": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "count"?: number,"key": string,"window_start": string
+                  }
+                  Update: {
+                    "count"?: number,"key"?: string,"window_start"?: string
+                  }
+                  Relationships: [
+
+                  ]
                 },"usage_counters": {
                   Row: {
                     "count": number,"created_at": string,"id": string,"period_start": string,"user_id": string
@@ -184,6 +198,9 @@ isOneToOne: false
                            },
 "complete_onboarding":
 { Args: Record<PropertyKey, never>; Returns: string
+                           },
+"consume_rate_limit":
+{ Args: { "p_key": string,"p_limit": number,"p_window_seconds": number }; Returns: boolean
                            },
 "question_count":
 { Args: { "p_user_id": string }; Returns: number

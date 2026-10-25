@@ -1,5 +1,11 @@
 import type { HandlerContext } from "../_shared/handler.ts";
 import { HttpError, json } from "../_shared/http.ts";
+import {
+  enforceAiDailyLimit,
+  enforceRateLimit,
+  RATE_LIMITS,
+  type RateLimitStore,
+} from "../_shared/rateLimit.ts";
 import { extractFactors } from "./factors.ts";
 import { isRecord } from "./guards.ts";
 import type { QuestionProvider } from "./provider.ts";
@@ -16,6 +22,8 @@ export interface ChatDependencies {
   provider: QuestionProvider;
   charts: ChartSource;
   conversations: ConversationStore;
+  rateLimits: RateLimitStore;
+  dailyAiLimit: number;
 }
 
 interface ChatInput {
@@ -49,17 +57,21 @@ async function readInput(req: Request): Promise<ChatInput> {
   return { question: question.trim(), conversationId: conversationId ?? null };
 }
 
-export function createChatHandler({ store, provider, charts, conversations }: ChatDependencies) {
+export function createChatHandler(
+  { store, provider, charts, conversations, rateLimits, dailyAiLimit }: ChatDependencies,
+) {
   return async ({ req, caller }: HandlerContext): Promise<Response> => {
     if (req.method === "GET") {
       return json({ quota: await readQuota(caller, store) });
     }
+    await enforceRateLimit(rateLimits, RATE_LIMITS.chat, caller.userId);
     const { question, conversationId } = await readInput(req);
     if (conversationId !== null && !(await conversations.owns(caller.userId, conversationId))) {
       throw new HttpError(404, "conversation_not_found", "conversation_not_found");
     }
 
     const { value, quota } = await answerWithQuota(caller, store, async () => {
+      await enforceAiDailyLimit(rateLimits, dailyAiLimit);
       const chart = await charts.latest(caller.userId);
       const factors = chart ? extractFactors(chart) : null;
       const answer = await provider.answer({ question, factors });

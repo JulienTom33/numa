@@ -1,5 +1,6 @@
 import { parseAllowedOrigins } from "../_shared/cors.ts";
 import { createHandler } from "../_shared/handler.ts";
+import { createSupabaseRateLimitStore, parseAiDailyLimit } from "../_shared/rateLimit.ts";
 import { createAdminClient, verifySupabaseToken } from "../_shared/supabase.ts";
 import { createChainProvider } from "./chain.ts";
 import { createChatHandler } from "./chat.ts";
@@ -29,6 +30,8 @@ Deno.serve(
       provider,
       charts: createSupabaseChartSource(admin),
       conversations: createSupabaseConversationStore(admin),
+      rateLimits: createSupabaseRateLimitStore(admin),
+      dailyAiLimit: parseAiDailyLimit(Deno.env.get("AI_DAILY_LIMIT")),
     }),
   }),
 );
