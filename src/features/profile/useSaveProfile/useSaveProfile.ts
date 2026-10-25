@@ -24,6 +24,7 @@ export function useSaveProfile(profile: ProfileData): UseSaveProfileResult {
       queryClient.setQueryData(profileQueryKeys.mine(profile.userId), applyUpdate(profile, update));
       if (update.birth !== null) await queryClient.invalidateQueries({ queryKey: queryKeys.chart.all });
     },
+    onError: () => queryClient.invalidateQueries({ queryKey: profileQueryKeys.mine(profile.userId) }),
   });
   const { mutateAsync, reset } = mutation;
 

@@ -106,6 +106,8 @@ export async function saveProfile(
       latitude: birthPlace.latitude,
       longitude: birthPlace.longitude,
       timezone: birthPlace.timezone,
+      declared_ascendant_sign: null,
+      ascendant_source: null,
     })
     .eq("id", profile.birth.id);
   return { error: birth.error ? "save_failed" : null };

@@ -65,4 +65,16 @@ describe("useSaveProfile", () => {
     act(() => result.current.reset());
     await waitFor(() => expect(result.current.errorCode).toBeNull());
   });
+
+  it("invalide le cache du profil quand l'enregistrement échoue", async () => {
+    vi.mocked(saveProfile).mockResolvedValue({ error: "save_failed" });
+    const client = createTestQueryClient();
+    const { result } = setup(client);
+
+    await act(async () => {
+      await result.current.save({ firstName: "Léa", language: "fr", tone: "direct", birth: BIRTH });
+    });
+
+    expect(client.getQueryState(profileQueryKeys.mine("user-1"))?.isInvalidated).toBe(true);
+  });
 });

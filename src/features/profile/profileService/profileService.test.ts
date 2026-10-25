@@ -91,6 +91,14 @@ describe("saveProfile", () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
+  it("remet à zéro l'ascendant déclaré quand la naissance change", async () => {
+    const spy = mockUpdates({ profiles: null, birth_data: null });
+    await saveProfile(authenticatedProfile, update);
+    expect(spy).toHaveBeenLastCalledWith(
+      expect.objectContaining({ declared_ascendant_sign: null, ascendant_source: null }),
+    );
+  });
+
   it("ne touche pas à la naissance si elle est inchangée", async () => {
     const spy = mockUpdates({ profiles: null, birth_data: null });
     await saveProfile(authenticatedProfile, { ...update, birth: null });
