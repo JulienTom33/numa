@@ -49,7 +49,7 @@ afterEach(() => {
 
 beforeEach(() => {
   vi.mocked(loadOnboardingDraft).mockResolvedValue({
-    draft: { step: 5, data: EMPTY_ONBOARDING_DATA },
+    draft: { step: 6, data: EMPTY_ONBOARDING_DATA },
     birthDataId: "bd-1",
     error: null,
   });
@@ -123,7 +123,7 @@ describe("App", () => {
 
     expect(await screen.findByRole("navigation", { name: "Navigation principale" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Aujourd'hui" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("heading", { name: "Aujourd'hui" })).toBeInTheDocument();
+    expect(document.getElementById("app__screen--today")).toBeInTheDocument();
   });
 
   it("switches screen and scrolls back to the top when a tab is selected", async () => {
