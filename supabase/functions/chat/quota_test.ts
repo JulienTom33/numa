@@ -22,15 +22,24 @@ Deno.test("returns the second answer, then refuses the third question", async ()
   const store = createMemoryStore();
   const provider = echoProvider();
 
-  const first = await answerWithQuota(anonymous, "q1", store, provider);
+  const first = await answerWithQuota(
+    anonymous,
+    store,
+    () => provider.answer({ question: "q1", factors: null }),
+  );
   assertEquals(first.quota, { limit: 2, used: 1, remaining: 1 });
 
-  const second = await answerWithQuota(anonymous, "q2", store, provider);
-  assertEquals(second.answer, "réponse à : q2");
+  const second = await answerWithQuota(
+    anonymous,
+    store,
+    () => provider.answer({ question: "q2", factors: null }),
+  );
+  assertEquals(second.value.text, "réponse à : q2");
   assertEquals(second.quota, { limit: 2, used: 2, remaining: 0 });
 
   const error = await assertRejects(
-    () => answerWithQuota(anonymous, "q3", store, provider),
+    () =>
+      answerWithQuota(anonymous, store, () => provider.answer({ question: "q3", factors: null })),
     HttpError,
   );
   assertEquals([error.status, error.code], [429, "question_quota_exceeded"]);
@@ -41,7 +50,12 @@ Deno.test("a provider error does not consume a question", async () => {
   const store = createMemoryStore();
 
   const error = await assertRejects(
-    () => answerWithQuota(anonymous, "q1", store, failingProvider),
+    () =>
+      answerWithQuota(
+        anonymous,
+        store,
+        () => failingProvider.answer({ question: "q1", factors: null }),
+      ),
     HttpError,
   );
 
@@ -52,16 +66,32 @@ Deno.test("a provider error does not consume a question", async () => {
 
 Deno.test("two simultaneous questions cannot exceed the quota", async () => {
   const store = createMemoryStore();
-  await answerWithQuota(anonymous, "q1", store, echoProvider());
+  await answerWithQuota(
+    anonymous,
+    store,
+    () => echoProvider().answer({ question: "q1", factors: null }),
+  );
 
   let release = () => {};
   const slowProvider: QuestionProvider = {
-    answer: () => new Promise((resolve) => (release = () => resolve("lente"))),
+    answer: () =>
+      new Promise((resolve) =>
+        release = () => resolve({ text: "lente", provider: "test", model: "m", promptVersion: "v" })
+      ),
   };
 
-  const pending = answerWithQuota(anonymous, "q2", store, slowProvider);
+  const pending = answerWithQuota(
+    anonymous,
+    store,
+    () => slowProvider.answer({ question: "q2", factors: null }),
+  );
   const concurrent = await assertRejects(
-    () => answerWithQuota(anonymous, "q2-bis", store, echoProvider()),
+    () =>
+      answerWithQuota(
+        anonymous,
+        store,
+        () => echoProvider().answer({ question: "q2-bis", factors: null }),
+      ),
     HttpError,
   );
   assertEquals(concurrent.status, 429);
@@ -75,7 +105,12 @@ Deno.test("identified accounts are not limited by the anonymous quota", async ()
   const provider = echoProvider();
 
   for (const question of ["q1", "q2", "q3"]) {
-    assertEquals((await answerWithQuota(member, question, store, provider)).quota, null);
+    const result = await answerWithQuota(
+      member,
+      store,
+      () => provider.answer({ question, factors: null }),
+    );
+    assertEquals(result.quota, null);
   }
   assertEquals(await readQuota(member, store), null);
 });
@@ -84,7 +119,11 @@ Deno.test("readQuota reports the server-side counter", async () => {
   const store = createMemoryStore();
   assertEquals(await readQuota(anonymous, store), { limit: 2, used: 0, remaining: 2 });
 
-  await answerWithQuota(anonymous, "q1", store, echoProvider());
+  await answerWithQuota(
+    anonymous,
+    store,
+    () => echoProvider().answer({ question: "q1", factors: null }),
+  );
   assertEquals(await readQuota(anonymous, store), { limit: 2, used: 1, remaining: 1 });
 });
 

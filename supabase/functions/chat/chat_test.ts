@@ -1,19 +1,32 @@
 import { assertEquals } from "jsr:@std/assert@1";
 import type { TokenVerifier } from "../_shared/auth.ts";
 import { createHandler } from "../_shared/handler.ts";
+import type { NatalChart } from "../../../shared/contracts/natalChart/natalChart.ts";
 import { createChatHandler, MAX_QUESTION_LENGTH } from "./chat.ts";
-import { type QuestionProvider, stubProvider } from "./provider.ts";
-import { createMemoryStore, echoProvider, failingProvider } from "./test_helpers.ts";
+import type { QuestionProvider } from "./provider.ts";
+import {
+  chartFixture,
+  createMemoryStore,
+  echoProvider,
+  failingProvider,
+  memoryCharts,
+  memoryConversations,
+} from "./test_helpers.ts";
 
 const verifyToken: TokenVerifier = (token) =>
   Promise.resolve(token === "anon" ? { sub: "anon-1", is_anonymous: true } : null);
 
-function chat(provider: QuestionProvider = echoProvider(), store = createMemoryStore()) {
+function chat(
+  provider: QuestionProvider = echoProvider(),
+  store = createMemoryStore(),
+  chart: NatalChart | null = null,
+  conversations = memoryConversations(),
+) {
   return createHandler({
     methods: ["GET", "POST"],
     allowedOrigins: [],
     verifyToken,
-    handle: createChatHandler({ store, provider }),
+    handle: createChatHandler({ store, provider, charts: memoryCharts(chart), conversations }),
   });
 }
 
@@ -40,6 +53,8 @@ Deno.test("POST answers twice then returns 429 on the third question", async () 
   const first = await handler(ask({ question: "Q1 " }));
   assertEquals(await first.json(), {
     answer: "réponse à : Q1",
+    conversationId: "conversation-1",
+    messageId: "message-1",
     quota: { limit: 2, used: 1, remaining: 1 },
   });
 
@@ -52,13 +67,51 @@ Deno.test("POST answers twice then returns 429 on the third question", async () 
   assertEquals((await third.json()).error.code, "question_quota_exceeded");
 });
 
+Deno.test("POST records the factors, prompt version, provider and model with the answer", async () => {
+  const conversations = memoryConversations();
+  const provider = echoProvider();
+  const response = await chat(provider, createMemoryStore(), chartFixture(), conversations)(
+    ask({ question: "Que dit mon Soleil ?" }),
+  );
+
+  assertEquals(response.status, 200);
+  assertEquals(conversations.recorded.length, 1);
+  const [recorded] = conversations.recorded;
+  assertEquals(recorded.userId, "anon-1");
+  assertEquals(recorded.answer.provider, "test");
+  assertEquals(recorded.answer.model, "test-model");
+  assertEquals(recorded.answer.promptVersion, "numa-chat-v1");
+  assertEquals(recorded.factors?.bodies[0].sign, "cancer");
+  assertEquals(JSON.stringify(recorded.factors).includes("Paris"), false);
+});
+
+Deno.test("POST continues an existing conversation", async () => {
+  const conversations = memoryConversations();
+  const id = "11111111-1111-4111-8111-111111111111";
+  const response = await chat(echoProvider(), createMemoryStore(), null, conversations)(
+    ask({ question: "Q1", conversationId: id }),
+  );
+
+  assertEquals((await response.json()).conversationId, id);
+  assertEquals(conversations.recorded[0].factors, null);
+});
+
+Deno.test("POST rejects a malformed conversation id", async () => {
+  const response = await chat()(ask({ question: "Q1", conversationId: "x" }));
+
+  assertEquals(response.status, 400);
+  assertEquals((await response.json()).error.code, "invalid_conversation");
+});
+
 Deno.test("POST returns 502 without consuming a question when the provider fails", async () => {
   const store = createMemoryStore();
-  const response = await chat(failingProvider, store)(ask({ question: "Q1" }));
+  const conversations = memoryConversations();
+  const response = await chat(failingProvider, store, null, conversations)(ask({ question: "Q1" }));
 
   assertEquals(response.status, 502);
   assertEquals((await response.json()).error.code, "provider_unavailable");
   assertEquals(await store.used("anon-1"), 0);
+  assertEquals(conversations.recorded.length, 0);
 });
 
 Deno.test("POST rejects an invalid question without consuming the quota", async () => {
@@ -75,12 +128,26 @@ Deno.test("POST rejects an invalid question without consuming the quota", async 
   assertEquals(await store.used("anon-1"), 0);
 });
 
+Deno.test("POST refuses a question containing personal data before any provider call", async () => {
+  const provider = echoProvider();
+  const handler = chat(provider);
+
+  for (
+    const question of [
+      "Écris à moi@exemple.fr",
+      "Je suis né le 15/06/1975",
+      "Appelle le 06 12 34 56 78",
+    ]
+  ) {
+    const response = await handler(ask({ question }));
+    assertEquals(response.status, 400);
+    assertEquals((await response.json()).error.code, "personal_data_detected");
+  }
+  assertEquals(provider.calls, []);
+});
+
 Deno.test("POST without a valid session is rejected before touching the quota", async () => {
   const response = await chat()(ask({ question: "Q1" }, "forged"));
 
   assertEquals(response.status, 401);
-});
-
-Deno.test("the stub provider answers without any external call", async () => {
-  assertEquals(typeof (await stubProvider.answer("Q")), "string");
 });
