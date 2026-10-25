@@ -1,0 +1,65 @@
+{
+  "title": "Mon profil",
+  "avatarLabel": "Avatar de {{name}}",
+  "placements": {
+    "sun": "Soleil {{sign}}",
+    "ascendant": "Ascendant {{sign}}",
+    "unknown": "Non disponible"
+  },
+  "status": {
+    "anonymous": "Mode découverte",
+    "authenticated": "Compte gratuit"
+  },
+  "loading": "Chargement de votre profil…",
+  "retry": "Réessayer",
+  "info": {
+    "title": "Informations",
+    "firstName": "Prénom",
+    "email": "Email",
+    "emailNone": "Aucun email associé",
+    "birthDate": "Date de naissance",
+    "birthTime": "Heure de naissance",
+    "birthPlace": "Lieu de naissance"
+  },
+  "preferences": {
+    "title": "Préférences",
+    "language": "Langue",
+    "tone": "Ton des lectures"
+  },
+  "languages": {
+    "fr": "Français"
+  },
+  "tones": {
+    "gentle": "Doux",
+    "balanced": "Équilibré",
+    "direct": "Direct"
+  },
+  "edit": {
+    "open": "Modifier mon profil",
+    "title": "Modifier mes informations",
+    "firstName": "Prénom",
+    "birthDate": "Date de naissance",
+    "birthPlace": "Lieu de naissance",
+    "language": "Langue",
+    "tone": "Ton des lectures",
+    "birthWarning": "Vos données de naissance vont changer : votre thème devra être recalculé et vos lectures peuvent évoluer.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler"
+  },
+  "dateParts": {
+    "day": "Jour",
+    "month": "Mois",
+    "year": "Année"
+  },
+  "success": {
+    "saved": "Vos modifications sont enregistrées."
+  },
+  "errors": {
+    "profile_not_found": "Votre profil est introuvable.",
+    "birth_data_not_found": "Vos données de naissance sont introuvables.",
+    "network_error": "Impossible de charger votre profil. Vérifiez votre connexion.",
+    "save_failed": "Vos modifications n'ont pas pu être enregistrées. Réessayez.",
+    "internal_error": "Une erreur est survenue. Réessayez."
+  }
+}

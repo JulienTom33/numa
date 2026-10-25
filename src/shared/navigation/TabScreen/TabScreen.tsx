@@ -4,6 +4,7 @@ import DiscoveryConsultGate from "../../../features/discovery/DiscoveryConsultGa
 import DiscoveryModeBadge from "../../../features/discovery/DiscoveryModeBadge/DiscoveryModeBadge";
 import ChatScreen from "../../../features/chat/ChatScreen/ChatScreen";
 import MyChartFlow from "../../../features/chart/MyChartFlow/MyChartFlow";
+import ProfileFlow from "../../../features/profile/ProfileFlow/ProfileFlow";
 import TodayFlow from "../../../features/today/TodayFlow/TodayFlow";
 import EmptyState from "../../components/ui/EmptyState/EmptyState";
 import { useAppContext } from "../appContext/appContext";
@@ -29,6 +30,8 @@ function TabScreen({ tab }: Props) {
         <TodayFlow />
       ) : tab === "theme" ? (
         <MyChartFlow />
+      ) : tab === "profile" ? (
+        <ProfileFlow />
       ) : tab === "consult" ? (
         <ChatScreen />
       ) : (
