@@ -1,6 +1,7 @@
 import { assertEquals } from "jsr:@std/assert@1";
 import type { TokenVerifier } from "../_shared/auth.ts";
 import { createHandler } from "../_shared/handler.ts";
+import { createMemoryRateLimitStore, type RateLimitStore } from "../_shared/rateLimit.ts";
 import type { NatalChart } from "../../../shared/contracts/natalChart/natalChart.ts";
 import { createChatHandler, MAX_QUESTION_LENGTH } from "./chat.ts";
 import type { QuestionProvider } from "./provider.ts";
@@ -14,19 +15,34 @@ import {
 } from "./test_helpers.ts";
 
 const verifyToken: TokenVerifier = (token) =>
-  Promise.resolve(token === "anon" ? { sub: "anon-1", is_anonymous: true } : null);
+  Promise.resolve(
+    token === "anon"
+      ? { sub: "anon-1", is_anonymous: true }
+      : token === "member"
+      ? { sub: "member-1", is_anonymous: false }
+      : null,
+  );
 
 function chat(
   provider: QuestionProvider = echoProvider(),
   store = createMemoryStore(),
   chart: NatalChart | null = null,
   conversations = memoryConversations(),
+  rateLimits: RateLimitStore = createMemoryRateLimitStore(),
+  dailyAiLimit = 1000,
 ) {
   return createHandler({
     methods: ["GET", "POST"],
     allowedOrigins: [],
     verifyToken,
-    handle: createChatHandler({ store, provider, charts: memoryCharts(chart), conversations }),
+    handle: createChatHandler({
+      store,
+      provider,
+      charts: memoryCharts(chart),
+      conversations,
+      rateLimits,
+      dailyAiLimit,
+    }),
   });
 }
 
@@ -171,4 +187,76 @@ Deno.test("POST without a valid session is rejected before touching the quota", 
   const response = await chat()(ask({ question: "Q1" }, "forged"));
 
   assertEquals(response.status, 401);
+});
+
+Deno.test("POST returns 429 rate_limit_exceeded for a non-anonymous account before the provider", async () => {
+  const provider = echoProvider();
+  const handler = chat(provider, createMemoryStore(), null, memoryConversations(), {
+    consume: (key) => Promise.resolve(!key.startsWith("chat:")),
+  });
+
+  const response = await handler(ask({ question: "Q1" }, "member"));
+
+  assertEquals(response.status, 429);
+  assertEquals((await response.json()).error.code, "rate_limit_exceeded");
+  assertEquals(provider.calls, []);
+});
+
+Deno.test("POST counts the per-user limit under the chat scope and user id", async () => {
+  const rateLimits = createMemoryRateLimitStore();
+  await chat(echoProvider(), createMemoryStore(), null, memoryConversations(), rateLimits)(
+    ask({ question: "Q1" }, "member"),
+  );
+
+  assertEquals(rateLimits.calls, ["chat:member-1", "ai:global"]);
+});
+
+Deno.test("GET does not consume the rate limit", async () => {
+  const rateLimits = createMemoryRateLimitStore();
+  await chat(echoProvider(), createMemoryStore(), null, memoryConversations(), rateLimits)(
+    new Request("https://fn.test/chat", { headers: { Authorization: "Bearer anon" } }),
+  );
+
+  assertEquals(rateLimits.calls, []);
+});
+
+Deno.test("POST returns 429 ai_daily_limit_exceeded without calling the provider or using a question", async () => {
+  const provider = echoProvider();
+  const store = createMemoryStore();
+  const handler = chat(
+    provider,
+    store,
+    null,
+    memoryConversations(),
+    createMemoryRateLimitStore(),
+    1,
+  );
+
+  assertEquals((await handler(ask({ question: "Q1" }, "member"))).status, 200);
+  const response = await handler(ask({ question: "Q2" }, "member"));
+
+  assertEquals(response.status, 429);
+  assertEquals((await response.json()).error.code, "ai_daily_limit_exceeded");
+  assertEquals(provider.calls.length, 1);
+
+  const anon = await handler(ask({ question: "Q3" }));
+  assertEquals(anon.status, 429);
+  assertEquals(store.pending(), 0);
+  assertEquals(await store.used("anon-1"), 0);
+});
+
+Deno.test("POST does not consume the global AI cap when the anonymous quota is exhausted", async () => {
+  const rateLimits = createMemoryRateLimitStore();
+  const handler = chat(
+    echoProvider(),
+    createMemoryStore(),
+    null,
+    memoryConversations(),
+    rateLimits,
+  );
+  await handler(ask({ question: "Q1" }));
+  await handler(ask({ question: "Q2" }));
+  await handler(ask({ question: "Q3" }));
+
+  assertEquals(rateLimits.calls.filter((key) => key === "ai:global").length, 2);
 });
