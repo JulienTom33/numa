@@ -29,6 +29,25 @@ test.describe("Chat Numa", () => {
     await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
   });
 
+  test("inscription proposée après la deuxième réponse, refus sans perte de la conversation", async ({ page }) => {
+    await page.locator("#chat-suggestions__chip--week").click();
+    await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
+    await expect(page.locator("#signup-prompt__dialog--main")).toBeHidden();
+
+    await page.locator("#chat-view__input--question").fill("Et ma vie amoureuse ?");
+    await page.locator("#chat-view__input--question").press("Enter");
+    await expect(page.locator("#chat-message-list__message--m4")).toBeVisible();
+
+    await expect(page.locator("#signup-prompt__dialog--main")).toBeVisible();
+    await expect(page.locator("#signup-prompt__list--benefits")).toBeVisible();
+    await expect(page.locator("#signup-prompt__button--sign-up")).toBeVisible();
+    await expect(page.locator("#signup-prompt__button--sign-in")).toBeVisible();
+
+    await page.locator("#signup-prompt__link--continue").click();
+    await expect(page.locator("#signup-prompt__dialog--main")).toBeHidden();
+    await expect(page.locator("#chat-message-list__message--m4")).toBeVisible();
+  });
+
   test("quota atteint : la saisie est bloquée", async ({ page }) => {
     await askQuestions(page, 2);
     await page.reload();
