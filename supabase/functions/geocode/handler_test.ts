@@ -1,5 +1,6 @@
 import { assertEquals } from "jsr:@std/assert@1";
 import type { TokenVerifier } from "../_shared/auth.ts";
+import { createMemoryRateLimitStore } from "../_shared/rateLimit.ts";
 import { createGeocodeHandler } from "./handler.ts";
 import type { FetchFn } from "./places.ts";
 
@@ -31,6 +32,7 @@ const handler = createGeocodeHandler({
   allowedOrigins: [ORIGIN],
   verifyToken,
   fetch: providerFetch,
+  rateLimits: createMemoryRateLimitStore(),
 });
 
 function request(body: string, token = "valid"): Request {
@@ -74,10 +76,30 @@ Deno.test("requires authentication before calling the provider", async () => {
       called = true;
       return providerFetch(input, init);
     },
+    rateLimits: createMemoryRateLimitStore(),
   });
 
   const response = await guarded(request(JSON.stringify({ query: "Lyon" }), "forged"));
 
   assertEquals(response.status, 401);
   assertEquals(called, false);
+});
+
+Deno.test("returns 429 before calling the provider once the rate limit is exceeded", async () => {
+  let calls = 0;
+  const limited = createGeocodeHandler({
+    allowedOrigins: [ORIGIN],
+    verifyToken,
+    fetch: (input, init) => {
+      calls++;
+      return providerFetch(input, init);
+    },
+    rateLimits: { consume: () => Promise.resolve(false) },
+  });
+
+  const response = await limited(request(JSON.stringify({ query: "Lyon" })));
+
+  assertEquals(response.status, 429);
+  assertEquals((await response.json()).error.code, "rate_limit_exceeded");
+  assertEquals(calls, 0);
 });
