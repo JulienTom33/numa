@@ -43,10 +43,7 @@ function TabScreen({ tab }: Props) {
         />
       )}
       {isAnonymous && tab === "consult" && (
-        <DiscoveryConsultGate
-          onSignUp={() => navigate(paths.signup)}
-          onSignIn={() => navigate(paths.signin)}
-        />
+        <DiscoveryConsultGate onSignUp={() => navigate(paths.signup)} />
       )}
     </div>
   );

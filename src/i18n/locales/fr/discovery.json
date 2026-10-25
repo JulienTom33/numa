@@ -3,14 +3,6 @@
     "title": "Il vous reste 1 lecture gratuite",
     "body": "Créez un compte pour garder vos lectures et poursuivre sans limite."
   },
-  "sheet": {
-    "title": "Gardez votre lecture avec vous",
-    "body": "Vous avez utilisé vos lectures gratuites. Avec un compte, vos lectures, votre thème et vos préférences vous suivent sur tous vos appareils.",
-    "signUp": "Créer un compte",
-    "signIn": "Se connecter",
-    "continue": "Continuer sans compte",
-    "closeLabel": "Fermer la fiche"
-  },
   "locked": {
     "cta": "Créer un compte pour continuer"
   },

@@ -1,8 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import DiscoveryQuotaGate from "./DiscoveryQuotaGate";
-
-afterEach(() => window.localStorage.clear());
 
 const quota = (remaining: number) => ({ limit: 2, used: 2 - remaining, remaining });
 
@@ -12,7 +10,6 @@ describe("DiscoveryQuotaGate", () => {
       <DiscoveryQuotaGate
         quota={remaining === null ? null : quota(remaining)}
         onSignUp={vi.fn()}
-        onSignIn={vi.fn()}
       />,
     );
 
@@ -30,20 +27,9 @@ describe("DiscoveryQuotaGate", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("affiche la fiche et le bouton quand il ne reste rien", () => {
+  it("affiche uniquement le bouton d'inscription quand il ne reste rien", () => {
     renderGate(0);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Créer un compte pour continuer" })).toBeInTheDocument();
-  });
-
-  it("continuer sans compte ferme la fiche et ne la rouvre pas au remontage", () => {
-    const first = renderGate(0);
-    fireEvent.click(screen.getByText("Continuer sans compte"));
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Créer un compte pour continuer" })).toBeInTheDocument();
-    first.unmount();
-
-    renderGate(0);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });
