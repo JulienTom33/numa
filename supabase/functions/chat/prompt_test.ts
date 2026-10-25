@@ -4,14 +4,23 @@ import { buildMessages, PROMPT_VERSION } from "./prompt.ts";
 import { chartFixture } from "./test_helpers.ts";
 
 Deno.test("the prompt is versioned", () => {
-  assertEquals(PROMPT_VERSION, "numa-chat-v1");
+  assertEquals(PROMPT_VERSION, "numa-chat-v2");
 });
 
 Deno.test("the system prompt carries the editorial rules", () => {
   const [system] = buildMessages("Q", null);
 
   assertEquals(system.role, "system");
-  for (const rule of ["N'invente aucune", "jamais l'avenir comme certain", "120 à 200 mots"]) {
+  for (
+    const rule of [
+      "N'invente aucune",
+      "vous êtes",
+      "polar_fallback",
+      "renvoie vers un professionnel",
+      "vouvoyant",
+      "120 à 200 mots",
+    ]
+  ) {
     assertStringIncludes(system.content, rule);
   }
 });

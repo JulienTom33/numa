@@ -9,6 +9,10 @@ Deno.test("detects e-mails, phone numbers and dates", () => {
       "+33 6 12 34 56 78",
       "née le 15/06/1975",
       "née le 1975-06-15",
+      "née le 15 juin 1975",
+      "né le 1er Février 1980",
+      "née le 3 AOUT 1990",
+      "née le 22 décembre 2001",
     ]
   ) {
     assertEquals(containsPersonalData(question), true, question);

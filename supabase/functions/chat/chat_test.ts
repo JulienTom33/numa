@@ -80,7 +80,7 @@ Deno.test("POST records the factors, prompt version, provider and model with the
   assertEquals(recorded.userId, "anon-1");
   assertEquals(recorded.answer.provider, "test");
   assertEquals(recorded.answer.model, "test-model");
-  assertEquals(recorded.answer.promptVersion, "numa-chat-v1");
+  assertEquals(recorded.answer.promptVersion, "numa-chat-v2");
   assertEquals(recorded.factors?.bodies[0].sign, "cancer");
   assertEquals(JSON.stringify(recorded.factors).includes("Paris"), false);
 });

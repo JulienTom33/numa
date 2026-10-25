@@ -60,7 +60,7 @@ Deno.test("the primary provider answers and the fallback is not called", async (
     text: GOOD_TEXT,
     provider: "mistral",
     model: "mistral-small-latest",
-    promptVersion: "numa-chat-v1",
+    promptVersion: "numa-chat-v2",
   });
   assertEquals(calls, ["api.mistral.ai"]);
 });
