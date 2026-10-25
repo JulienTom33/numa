@@ -9,6 +9,16 @@ import { createSupabaseChartSource, createSupabaseConversationStore } from "./st
 
 const admin = createAdminClient();
 
+const provider = Deno.env.get("AI_PROVIDER_STUB") === "1"
+  ? (await import("./stub.ts")).stubProvider
+  : createChainProvider({
+    providers: parseProviders(Deno.env.get("AI_PROVIDERS")),
+    getApiKey: (name) => Deno.env.get(name),
+    fetchFn: fetch,
+    now: Date.now,
+    sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  });
+
 Deno.serve(
   createHandler({
     methods: ["GET", "POST"],
@@ -16,13 +26,7 @@ Deno.serve(
     verifyToken: verifySupabaseToken,
     handle: createChatHandler({
       store: createSupabaseQuotaStore(admin),
-      provider: createChainProvider({
-        providers: parseProviders(Deno.env.get("AI_PROVIDERS")),
-        getApiKey: (name) => Deno.env.get(name),
-        fetchFn: fetch,
-        now: Date.now,
-        sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-      }),
+      provider,
       charts: createSupabaseChartSource(admin),
       conversations: createSupabaseConversationStore(admin),
     }),
