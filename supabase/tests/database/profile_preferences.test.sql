@@ -2,16 +2,18 @@ create extension if not exists pgtap with schema extensions;
 
 begin;
 
-select plan(8);
+select plan(10);
 
 select has_column('public', 'profiles', 'language', 'profiles.language existe');
 select has_column('public', 'profiles', 'tone', 'profiles.tone existe');
 
 insert into auth.users (id, email, is_anonymous) values
-  ('77777777-7777-7777-7777-777777777777', 'user-g@test.local', false);
+  ('77777777-7777-7777-7777-777777777777', 'user-g@test.local', false),
+  ('88888888-8888-8888-8888-888888888888', 'user-h@test.local', false);
 
 insert into public.profiles (id, display_name) values
-  ('77777777-7777-7777-7777-777777777777', 'User G');
+  ('77777777-7777-7777-7777-777777777777', 'User G'),
+  ('88888888-8888-8888-8888-888888888888', 'User H');
 
 select is(
   (select language from public.profiles where id = '77777777-7777-7777-7777-777777777777'),
@@ -51,6 +53,23 @@ select throws_ok(
   '23514',
   null,
   'une langue non supportée est refusée'
+);
+
+update public.profiles set tone = 'gentle', language = 'en'
+  where id = '88888888-8888-8888-8888-888888888888';
+
+reset role;
+
+select is(
+  (select tone from public.profiles where id = '88888888-8888-8888-8888-888888888888'),
+  'balanced',
+  'un autre utilisateur ne modifie pas le ton de ce profil'
+);
+
+select is(
+  (select language from public.profiles where id = '88888888-8888-8888-8888-888888888888'),
+  'fr',
+  'un autre utilisateur ne modifie pas la langue de ce profil'
 );
 
 select * from finish();
