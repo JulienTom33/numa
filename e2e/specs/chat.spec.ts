@@ -19,6 +19,7 @@ test.describe("Chat Numa", () => {
 
     await expect(page.locator("#chat-message-list__message--m1")).toBeVisible();
     await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
+    await expect(page.locator("#chat-message-list__message--m2")).toContainText("Réponse de test déterministe");
     await expect(page.locator("#chat-view__text--quota")).toContainText("1 question gratuite restante");
   });
 

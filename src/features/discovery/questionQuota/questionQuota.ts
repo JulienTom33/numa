@@ -32,6 +32,7 @@ const UNREADABLE_ERROR: QuestionQuotaError = { code: "network_error" };
 const SERVER_CODES: Partial<Record<string, QuestionQuotaErrorCode>> = {
   question_quota_exceeded: "question_quota_exceeded",
   provider_unavailable: "provider_unavailable",
+  ai_unavailable: "provider_unavailable",
   invalid_question: "invalid_question",
   unauthenticated: "unauthenticated",
   invalid_token: "unauthenticated",
