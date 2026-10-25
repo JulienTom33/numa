@@ -16,7 +16,7 @@ select has_column('public', 'messages', 'model', 'messages.model existe');
 create temp table recorded as
 select public.record_answer(
   '88888888-8888-8888-8888-888888888888', null, 'Question H', 'Réponse H',
-  '{"bodies":[{"body":"sun","sign":"leo"}]}'::jsonb, 'numa-chat-v1', 'mistral', 'mistral-small-latest'
+  '{"bodies":[{"body":"sun","sign":"leo"}]}'::jsonb, 'numa-chat-v2', 'mistral', 'mistral-small-latest'
 ) as result;
 
 grant select on recorded to authenticated;
@@ -62,7 +62,7 @@ select is(
 
 select is(
   (select prompt_version from public.messages where role = 'assistant'),
-  'numa-chat-v1',
+  'numa-chat-v2',
   'le propriétaire lit la version du prompt'
 );
 
