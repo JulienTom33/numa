@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import Select, { type SelectOption } from "../../../shared/components/ui/Select/Select";
-import { formatDate } from "../../../i18n/format/format";
-import { MIN_BIRTH_YEAR, type BirthDateParts } from "../../onboarding/birthData/birthData";
+import Select from "../../../shared/components/ui/Select/Select";
+import type { BirthDateParts } from "../../onboarding/birthData/birthData";
+import { dayOptions, monthOptions, toSelectValue, yearOptions } from "../../onboarding/DateStep/DateStep";
 
 interface Props {
   id: string;
@@ -10,29 +10,6 @@ interface Props {
   onChange: (value: BirthDateParts) => void;
   error?: string;
   today?: Date;
-}
-
-const dayOptions: SelectOption[] = Array.from({ length: 31 }, (_, index) => ({
-  value: String(index + 1),
-  label: String(index + 1),
-}));
-
-function monthOptions(language: string): SelectOption[] {
-  return Array.from({ length: 12 }, (_, index) => {
-    const name = formatDate(new Date(Date.UTC(2000, index, 1)), language, { month: "long", timeZone: "UTC" });
-    return { value: String(index + 1), label: name.charAt(0).toLocaleUpperCase(language) + name.slice(1) };
-  });
-}
-
-function yearOptions(currentYear: number): SelectOption[] {
-  return Array.from({ length: currentYear - MIN_BIRTH_YEAR + 1 }, (_, index) => {
-    const year = String(currentYear - index);
-    return { value: year, label: year };
-  });
-}
-
-function toSelectValue(part: number | null): string {
-  return part === null ? "" : String(part);
 }
 
 function BirthDateFields({ id, value, onChange, error, today = new Date() }: Props) {

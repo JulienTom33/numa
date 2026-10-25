@@ -19,7 +19,7 @@ interface Props {
   today?: Date;
 }
 
-const dayOptions: SelectOption[] = Array.from({ length: 31 }, (_, index) => ({
+export const dayOptions:SelectOption[] = Array.from({ length: 31 }, (_, index) => ({
   value: String(index + 1),
   label: String(index + 1),
 }));
@@ -31,7 +31,7 @@ function monthName(month: number, language: string): string {
   });
 }
 
-function monthOptions(language: string): SelectOption[] {
+export function monthOptions(language: string): SelectOption[] {
   return Array.from({ length: 12 }, (_, index) => {
     const name = monthName(index + 1, language);
     return {
@@ -41,14 +41,14 @@ function monthOptions(language: string): SelectOption[] {
   });
 }
 
-function yearOptions(currentYear: number): SelectOption[] {
+export function yearOptions(currentYear: number): SelectOption[] {
   return Array.from({ length: currentYear - MIN_BIRTH_YEAR + 1 }, (_, index) => {
     const year = String(currentYear - index);
     return { value: year, label: year };
   });
 }
 
-function toSelectValue(part: number | null): string {
+export function toSelectValue(part: number | null): string {
   return part === null ? "" : String(part);
 }
 
