@@ -43,6 +43,18 @@ describe("Welcome", () => {
     expect(props.onDiscover).toHaveBeenCalledTimes(1);
   });
 
+  it("offers the privacy policy link only when a handler is provided", async () => {
+    const onPrivacy = vi.fn();
+    const { unmount } = render(<Welcome onSignUp={vi.fn()} onSignIn={vi.fn()} onDiscover={vi.fn()} />);
+    expect(screen.queryByRole("button", { name: "Politique de confidentialité" })).not.toBeInTheDocument();
+    unmount();
+
+    render(<Welcome onSignUp={vi.fn()} onSignIn={vi.fn()} onDiscover={vi.fn()} onPrivacy={onPrivacy} />);
+    await userEvent.click(screen.getByRole("button", { name: "Politique de confidentialité" }));
+
+    expect(onPrivacy).toHaveBeenCalledTimes(1);
+  });
+
   it("shows the discovery error when the anonymous session could not start", () => {
     render(
       <Welcome onSignUp={vi.fn()} onSignIn={vi.fn()} onDiscover={vi.fn()} discoverError="Session anonyme non créée." />,

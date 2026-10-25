@@ -17,6 +17,7 @@ function WelcomeRoute() {
       onSignUp={() => navigate(paths.signup)}
       onSignIn={() => navigate(paths.signin)}
       onDiscover={discover}
+      onPrivacy={() => navigate(paths.privacy)}
       discoverError={discoverFailed ? t("anonymousSession.notCreated") : null}
     />
   );

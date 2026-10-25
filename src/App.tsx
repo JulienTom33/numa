@@ -3,6 +3,7 @@ import AppRoot from "./shared/navigation/AppRoot/AppRoot";
 import AuthCallbackRoute from "./shared/navigation/AuthCallbackRoute/AuthCallbackRoute";
 import AuthRoute from "./shared/navigation/AuthRoute/AuthRoute";
 import OnboardingRoute from "./shared/navigation/OnboardingRoute/OnboardingRoute";
+import PrivacyPolicyRoute from "./shared/navigation/PrivacyPolicyRoute/PrivacyPolicyRoute";
 import RequireOnboarding from "./shared/navigation/RequireOnboarding/RequireOnboarding";
 import RequireSession from "./shared/navigation/RequireSession/RequireSession";
 import { paths } from "./shared/navigation/routes/routes";
@@ -18,6 +19,7 @@ export const routes: RouteObject[] = [
       { path: paths.signup, element: <AuthRoute mode="signup" /> },
       { path: paths.signin, element: <AuthRoute mode="signin" /> },
       { path: paths.authCallback, element: <AuthCallbackRoute /> },
+      { path: paths.privacy, element: <PrivacyPolicyRoute /> },
       {
         element: <RequireSession />,
         children: [

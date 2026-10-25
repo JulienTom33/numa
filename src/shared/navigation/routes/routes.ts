@@ -5,6 +5,7 @@ export const paths = {
   signup: "/inscription",
   signin: "/connexion",
   authCallback: "/auth/callback",
+  privacy: "/confidentialite",
   onboarding: "/onboarding",
   today: "/aujourdhui",
   consult: "/consulter",

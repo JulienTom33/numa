@@ -76,6 +76,22 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "Se connecter" })).toBeInTheDocument();
   });
 
+  it("opens the privacy policy from the welcome screen and comes back", async () => {
+    const router = renderApp();
+    await userEvent.click(await screen.findByRole("button", { name: /confidentialité/i }));
+    expect(router.state.location.pathname).toBe("/confidentialite");
+    expect(await screen.findByRole("heading", { level: 1, name: "Politique de confidentialité" })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: /retour/i }));
+    expect(router.state.location.pathname).toBe("/");
+  });
+
+  it("serves the privacy policy without a session", async () => {
+    renderApp("/confidentialite");
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Politique de confidentialité" })).toBeInTheDocument();
+  });
+
   it("opens the sign in flow from the welcome screen", async () => {
     renderApp();
 
