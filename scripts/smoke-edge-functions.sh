@@ -24,7 +24,9 @@ request() {
   curl -s -o "$BODY_FILE" -w "%{http_code}" "$@" || echo "000"
 }
 
-supabase functions serve >"$SERVE_LOG" 2>&1 &
+ENV_FILE=$(mktemp)
+echo "AI_PROVIDER_STUB=1" >"$ENV_FILE"
+supabase functions serve --env-file "$ENV_FILE" >"$SERVE_LOG" 2>&1 &
 SERVE_PID=$!
 trap 'kill "$SERVE_PID" 2>/dev/null || true' EXIT
 

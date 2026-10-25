@@ -73,14 +73,14 @@ isOneToOne: false
                   ]
                 },"messages": {
                   Row: {
-                    "content": string,"conversation_id": string,"created_at": string,"id": string,"role": string
+                    "content": string,"conversation_id": string,"created_at": string,"factors": Json | null,"id": string,"model": string | null,"prompt_version": string | null,"provider": string | null,"role": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "content": string,"conversation_id": string,"created_at"?: string,"id"?: string,"role": string
+                    "content": string,"conversation_id": string,"created_at"?: string,"factors"?: Json | null,"id"?: string,"model"?: string | null,"prompt_version"?: string | null,"provider"?: string | null,"role": string
                   }
                   Update: {
-                    "content"?: string,"conversation_id"?: string,"created_at"?: string,"id"?: string,"role"?: string
+                    "content"?: string,"conversation_id"?: string,"created_at"?: string,"factors"?: Json | null,"id"?: string,"model"?: string | null,"prompt_version"?: string | null,"provider"?: string | null,"role"?: string
                   }
                   Relationships: [
                     {
@@ -187,6 +187,9 @@ isOneToOne: false
                            },
 "question_count":
 { Args: { "p_user_id": string }; Returns: number
+                           },
+"record_answer":
+{ Args: { "p_answer": string,"p_conversation_id": string,"p_factors": Json,"p_model": string,"p_prompt_version": string,"p_provider": string,"p_question": string,"p_user_id": string }; Returns: Json
                            },
 "release_question":
 { Args: { "p_reservation_id": string }; Returns: undefined
