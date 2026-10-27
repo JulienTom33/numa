@@ -57,6 +57,13 @@
     "midheaven": "Milieu du ciel en {{sign}}, à {{degree}}° du signe",
     "anglesUnavailable": "Ascendant et Milieu du ciel : non disponibles, l'heure de naissance est inconnue ou insuffisante.",
     "housesUnavailable": "Maisons : non disponibles pour ce thème.",
+    "houseSystem": "Maisons calculées avec le système {{system}}.",
+    "houseSystems": {
+      "placidus": "Placidus",
+      "porphyry": "Porphyre",
+      "equal": "des maisons égales",
+      "whole-sign": "des signes entiers"
+    },
     "aspectsTitle": "Aspects utilisés",
     "aspectsEmpty": "Aucun aspect n'a été retenu pour cette réponse.",
     "aspect": "{{bodyA}} et {{bodyB}} en {{type}} (écart de {{orb}}°). {{meaning}}",
@@ -68,13 +75,21 @@
       "opposition": "opposition"
     },
     "aspectMeanings": {
-      "conjunction": "Les deux astres sont très proches : leurs thèmes se mêlent.",
+      "conjunction": "Les deux astres sont très proches : leurs influences peuvent se mêler.",
       "sextile": "Les deux astres s'entendent plutôt bien : une facilité possible.",
-      "square": "Les deux astres se heurtent : une tension qui peut stimuler.",
-      "trine": "Les deux astres s'accordent : une fluidité naturelle.",
+      "square": "Les deux astres peuvent entrer en tension : une friction qui peut aussi stimuler.",
+      "trine": "Les deux astres s'accordent : une fluidité possible.",
       "opposition": "Les deux astres se font face : un équilibre à trouver."
     },
     "glossary": "Le degré situe l'astre dans son signe (de 0 à 30°). L'écart indique la précision de l'aspect : plus il est petit, plus l'aspect est marqué.",
+    "glossaryTitle": "Repères",
+    "glossaryTerms": {
+      "retrograde": { "label": "Rétrograde", "definition": "l'astre semble reculer dans le ciel, vu de la Terre." },
+      "house": { "label": "Maison", "definition": "les maisons découpent le ciel en 12 secteurs liés aux domaines de vie." },
+      "ascendant": { "label": "Ascendant", "definition": "le signe qui se levait à l'horizon à votre naissance." },
+      "midheaven": { "label": "Milieu du ciel", "definition": "le point le plus haut du ciel à ce moment." },
+      "transits": { "label": "Transits", "definition": "positions actuelles des astres comparées à votre thème." }
+    },
     "confidence": "Fiabilité du calcul : {{level}}.",
     "confidenceLevels": {
       "high": "élevée",
@@ -83,13 +98,13 @@
     },
     "warningsTitle": "Points d'incertitude",
     "warnings": {
-      "unknown_time": "L'heure de naissance est inconnue : l'ascendant et les maisons ne sont pas calculés.",
+      "unknown_time": "L'heure de naissance est inconnue : l'ascendant et les maisons ne sont pas calculés, et la position de la Lune est estimée à midi.",
       "approximate_time": "L'heure de naissance est approximative : l'ascendant et les maisons peuvent être décalés.",
       "ambiguous_local_time": "L'heure locale de naissance est ambiguë (changement d'heure) : l'ascendant peut être incertain.",
       "nonexistent_local_time": "L'heure locale de naissance n'a pas existé (changement d'heure) : l'ascendant peut être incertain.",
       "local_mean_time": "L'heure légale de l'époque n'était pas connue : l'heure solaire locale a été utilisée.",
-      "polar_fallback": "Le système de maisons Porphyre a remplacé Placidus, non calculable à cette latitude.",
-      "moon_sign_uncertain": "Le signe de la Lune est incertain : elle change de signe ce jour-là."
+      "polar_fallback": "Le système de maisons habituel (Placidus) n'a pas pu être calculé pour ce thème : un système de repli (Porphyre) a été utilisé.",
+      "moon_sign_uncertain": "Le signe de la Lune est incertain : elle change de signe autour de votre heure de naissance."
     }
   },
   "error": {

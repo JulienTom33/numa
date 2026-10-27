@@ -30,6 +30,13 @@ describe("ChatAnswerBasis", () => {
     expect(screen.getByText(/Milieu du ciel en Lion/)).toBeInTheDocument();
     expect(screen.getByText(/Soleil et Lune en carré \(écart de 2,1°\)/)).toBeInTheDocument();
     expect(screen.getByText(/Le degré situe l'astre/)).toBeInTheDocument();
+    expect(document.getElementById("chat-answer-basis__section--m2-aspect--sun-moon-square")).toBeInTheDocument();
+    expect(screen.getByText("Maisons calculées avec le système Placidus.")).toBeInTheDocument();
+    expect(document.getElementById("chat-answer-basis__section--m2-glossary--retrograde")).toHaveTextContent(
+      "l'astre semble reculer dans le ciel, vu de la Terre",
+    );
+    expect(screen.getByText(/Les deux astres peuvent entrer en tension/)).toBeInTheDocument();
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
     expect(screen.getByText("Fiabilité du calcul : moyenne.")).toBeInTheDocument();
     expect(screen.getByText(/heure de naissance est approximative/)).toBeInTheDocument();
   });
