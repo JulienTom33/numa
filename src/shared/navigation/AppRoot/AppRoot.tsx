@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import MigrationScreen from "../../../features/discovery/MigrationScreen/MigrationScreen";
 import { useAnonymousSession } from "../../../features/auth/useAnonymousSession/useAnonymousSession";
 import { useAuth } from "../../../features/auth/useAuth/useAuth";
@@ -7,9 +7,13 @@ import { useOnboardingStatus } from "../../../features/onboarding/useOnboardingS
 import CookieBanner from "../../cookieConsent/CookieBanner/CookieBanner";
 import CookieConsentProvider from "../../cookieConsent/CookieConsentProvider";
 import { AppContext, type AppContextValue } from "../appContext/appContext";
-import { authCallbackUrl } from "../routes/routes";
+import { authCallbackUrl, paths, tabPaths } from "../routes/routes";
+
+const tabBarPaths: string[] = [...Object.values(tabPaths), paths.history];
 
 function AppRoot() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const auth = useAuth({ redirectTo: authCallbackUrl() });
   const { start, error } = useAnonymousSession();
   const session = auth.session;
@@ -24,6 +28,10 @@ function AppRoot() {
 
   return (
     <CookieConsentProvider>
+      <CookieBanner
+        aboveTabBar={tabBarPaths.includes(pathname)}
+        onPrivacy={pathname === paths.privacy ? undefined : () => navigate(paths.privacy)}
+      />
       {auth.converted ? (
         <MigrationScreen onContinue={auth.acknowledgeConversion} />
       ) : (
@@ -31,7 +39,6 @@ function AppRoot() {
           <Outlet />
         </AppContext.Provider>
       )}
-      <CookieBanner />
     </CookieConsentProvider>
   );
 }

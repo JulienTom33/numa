@@ -1,7 +1,8 @@
 {
   "banner": {
     "title": "Cookies",
-    "body": "Sidéra utilise un cookie indispensable pour garder votre session ouverte. Aucun traceur publicitaire ou de mesure d'audience n'est utilisé. Votre choix ne concerne que d'éventuels traceurs optionnels futurs.",
+    "body": "Sidéra utilise un cookie indispensable pour garder votre session ouverte. Aucun traceur publicitaire ou de mesure d'audience n'est utilisé. Votre choix ne concerne que les éventuels cookies facultatifs ajoutés plus tard.",
+    "privacy": "Lire la politique de confidentialité",
     "accept": "Accepter",
     "refuse": "Refuser"
   }
