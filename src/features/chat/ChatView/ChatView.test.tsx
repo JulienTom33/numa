@@ -31,6 +31,9 @@ describe("ChatView", () => {
       "id",
       "chat-view__text--privacy-hint",
     );
+    expect(screen.getByRole("textbox")).toHaveAccessibleDescription(
+      "Évitez d'y saisir e-mail, téléphone ou date de naissance précise.",
+    );
   });
 
   it("envoie une suggestion", async () => {

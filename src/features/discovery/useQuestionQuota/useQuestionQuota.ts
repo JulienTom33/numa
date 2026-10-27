@@ -24,6 +24,10 @@ export interface UseQuestionQuotaResult {
 const QUOTA_ERROR_CODES: readonly QuestionQuotaErrorCode[] = [
   "question_quota_exceeded",
   "provider_unavailable",
+  "ai_unavailable",
+  "personal_data_detected",
+  "rate_limit_exceeded",
+  "ai_daily_limit_exceeded",
   "invalid_question",
   "unauthenticated",
   "network_error",
