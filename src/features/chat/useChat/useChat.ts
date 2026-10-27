@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import type { ChatAuthor } from "../../../shared/components/ui/ChatBubble/ChatBubble";
 import type { QuestionQuota, QuestionQuotaErrorCode } from "../../discovery/questionQuota/questionQuota";
-import type { AnswerBasis } from "../answerBasis/answerBasis";
 import { useQuestionQuota } from "../../discovery/useQuestionQuota/useQuestionQuota";
+import type { AnswerBasis } from "../answerBasis/answerBasis";
 
 export interface ChatMessage {
   id: string;
@@ -51,8 +51,8 @@ export function useChat(): UseChatResult {
         setErrorCode(result.error?.code ?? "unknown_error");
         return false;
       }
-      const answer = result.answer;
-      setMessages((current) => [...current, { id: nextId(), author: "sidera", text: answer }]);
+      const { answer, basis } = result;
+      setMessages((current) => [...current, { id: nextId(), author: "sidera", text: answer, basis }]);
       return true;
     },
     [ask, nextId],
