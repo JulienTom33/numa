@@ -10,6 +10,7 @@ const meta = {
     data: sampleHoroscope,
     errorCode: null,
     onRetry: () => undefined,
+    onOpenProfile: () => undefined,
   },
   decorators: [
     (Story) => (
@@ -31,4 +32,12 @@ export const Loading: Story = { args: { status: "loading", data: null } };
 
 export const AiUnavailable: Story = {
   args: { status: "error", data: null, errorCode: "ai_unavailable" },
+};
+
+export const BirthDataMissing: Story = {
+  args: { status: "error", data: null, errorCode: "birth_data_not_found" },
+};
+
+export const DailyLimitReached: Story = {
+  args: { status: "error", data: null, errorCode: "ai_daily_limit_exceeded" },
 };

@@ -37,6 +37,14 @@ Deno.test("parseSections rejects categorical wording", () => {
     null,
   );
   assertEquals(parseSections(VALID.replace("tend à", "va certainement")), null);
+  assertEquals(parseSections(VALID.replace("tend à", "va forcément")), null);
+  assertEquals(parseSections(VALID.replace("tend à", "sera inévitablement")), null);
+  assertEquals(parseSections(VALID.replace("tend à", "sans aucun doute")), null);
+  assertEquals(parseSections(VALID.replace("Vous pouvez", "Vous êtes prêt à")), null);
+  assertEquals(
+    parseSections(VALID.replace("Vous pouvez", "Vous êtes peut-être prêt à"))?.work,
+    "Vous êtes peut-être prêt à avancer pas à pas.",
+  );
 });
 
 Deno.test("readSections validates a stored payload", () => {

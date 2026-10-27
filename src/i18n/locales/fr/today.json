@@ -42,10 +42,26 @@
     },
     "why": {
       "title": "Pourquoi cette lecture ?",
-      "intro": "Cette lecture s'appuie sur votre thème natal et sur les liens que les planètes d'aujourd'hui forment avec lui. Les repères retenus :",
+      "intro": "Cette lecture s'appuie sur votre thème natal et sur les liens que les planètes d'aujourd'hui forment avec lui.",
       "calm": "Aucun lien serré aujourd'hui : la lecture reste générale et s'appuie surtout sur votre thème natal.",
-      "disclaimer": "Texte rédigé par une IA à partir de ces seuls repères. Il décrit des tendances possibles, pas des prévisions, et ne remplace aucun avis médical, financier ou juridique."
+      "orb": "(écart de {{orb}}°)",
+      "aspectMeanings": {
+        "conjunction": "Les deux astres sont très proches : leurs influences peuvent se mêler.",
+        "sextile": "Les deux astres peuvent bien s'entendre : une facilité possible.",
+        "square": "Les deux astres peuvent entrer en tension : une friction qui peut aussi stimuler.",
+        "trine": "Les deux astres s'accordent : une fluidité possible.",
+        "opposition": "Les deux astres se font face : un équilibre peut être à trouver."
+      },
+      "glossary": "L'écart indique la précision de l'aspect : plus il est petit, plus l'aspect est marqué.",
+      "confidence": "Fiabilité du calcul : {{level}}.",
+      "confidenceLevels": {
+        "high": "élevée",
+        "medium": "moyenne",
+        "low": "faible"
+      },
+      "disclaimer": "Texte rédigé par une IA à partir de votre thème natal et des positions du jour, dont les repères ci-dessus. Il décrit des tendances possibles, pas des prévisions, et ne remplace aucun avis médical, financier ou juridique."
     },
+    "completeProfile": "Renseigner mes données",
     "errors": {
       "birth_data_not_found": "Votre horoscope a besoin de vos données de naissance, qui ne sont pas encore renseignées.",
       "unauthenticated": "Votre session a expiré. Reconnectez-vous pour lire votre horoscope.",

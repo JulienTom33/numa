@@ -11,7 +11,7 @@ function TodayFlow() {
   const { isAnonymous } = useAppContext();
   const { status, data, errorCode, retry } = useMyChart();
   const today = new Date();
-  const horoscope = useHoroscope(localIsoDate(today));
+  const horoscope = useHoroscope(localIsoDate(today), status === "ready");
 
   return (
     <TodayScreen

@@ -3,6 +3,7 @@ import type { TokenVerifier } from "../_shared/auth.ts";
 import { createHandler } from "../_shared/handler.ts";
 import { createMemoryRateLimitStore, type RateLimitStore } from "../_shared/rateLimit.ts";
 import { chartFixture } from "../chat/test_helpers.ts";
+import { buildFactors } from "./context.ts";
 import { createHoroscopeHandler } from "./horoscope.ts";
 import type { HoroscopeProvider } from "./provider.ts";
 import { stubHoroscopeProvider } from "./stub.ts";
@@ -158,4 +159,15 @@ Deno.test("applies the global daily AI limit only when generating", async () => 
   assertEquals(blocked.status, 429);
   assertEquals((await blocked.json()).error.code, "ai_daily_limit_exceeded");
   assertEquals((await handler(post({ date: "2026-10-26" }))).status, 200);
+});
+
+Deno.test("computes transits at noon UTC of the requested date", async () => {
+  const { handler, horoscopes } = setup();
+
+  await handler(post({ date: "2026-10-26" }));
+
+  assertEquals(
+    horoscopes.saved[0].factors,
+    buildFactors(chartFixture(), "2026-10-26", new Date("2026-10-26T12:00:00Z")),
+  );
 });

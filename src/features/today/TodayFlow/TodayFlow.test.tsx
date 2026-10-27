@@ -6,6 +6,7 @@ import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper
 import { paths } from "../../../shared/navigation/routes/routes";
 import { completeChart } from "../../chart/MyChart/myChartFixtures";
 import { fetchMyChart } from "../../chart/skyChart/skyChart";
+import { fetchHoroscope } from "../horoscope/horoscope";
 import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
 import TodayFlow from "./TodayFlow";
 
@@ -33,6 +34,7 @@ vi.mock("../../../shared/navigation/appContext/appContext", () => ({
 }));
 
 const fetchMock = vi.mocked(fetchMyChart);
+const horoscopeMock = vi.mocked(fetchHoroscope);
 
 function renderFlow() {
   render(
@@ -62,6 +64,24 @@ describe("TodayFlow", () => {
     await userEvent.click(await screen.findByRole("button", { name: "Consulter Sidéra" }));
 
     expect(document.getElementById("test__text--consult")).toBeInTheDocument();
+  });
+
+  it("ne demande l'horoscope qu'une fois le thème prêt", async () => {
+    fetchMock.mockResolvedValue({ data: null, error: "birth_data_not_found" });
+    renderFlow();
+
+    await screen.findByRole("alert");
+
+    expect(horoscopeMock).not.toHaveBeenCalled();
+  });
+
+  it("demande l'horoscope quand le thème est prêt", async () => {
+    fetchMock.mockResolvedValue({ data: completeChart, error: null });
+    renderFlow();
+
+    await screen.findByRole("button", { name: "Consulter Sidéra" });
+
+    expect(horoscopeMock).toHaveBeenCalledTimes(1);
   });
 
   it("ouvre l'inscription depuis la pastille en mode découverte", async () => {

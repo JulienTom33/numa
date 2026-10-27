@@ -177,6 +177,7 @@ function TodayScreen({
             data={horoscope.data}
             errorCode={horoscope.errorCode}
             onRetry={horoscope.retry}
+            onOpenProfile={onOpenProfile}
           />
 
           <Card id="today__card--sources" as="section" tone="surface">

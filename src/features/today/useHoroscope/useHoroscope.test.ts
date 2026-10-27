@@ -30,6 +30,13 @@ describe("useHoroscope", () => {
     expect(fetchMock).toHaveBeenCalledWith("2026-10-27");
   });
 
+  it("n'appelle pas le serveur tant que la requête est désactivée", () => {
+    const { result } = renderHook(() => useHoroscope("2026-10-27", false), { wrapper: createQueryWrapper() });
+
+    expect(result.current.status).toBe("loading");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("expose le code d'erreur puis réessaie", async () => {
     fetchMock.mockResolvedValueOnce({ data: null, error: "ai_unavailable" });
     fetchMock.mockResolvedValueOnce({ data: sampleHoroscope, error: null });

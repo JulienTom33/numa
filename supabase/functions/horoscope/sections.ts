@@ -7,7 +7,8 @@ export type SectionKey = typeof SECTION_KEYS[number];
 export type HoroscopeSections = Record<SectionKey, string>;
 
 const HEADER = /^\[(general|relations|work|energy)\]$/;
-const CATEGORICAL = /\b(vous allez|toujours|jamais|certainement)\b/i;
+const CATEGORICAL =
+  /\b(vous allez|toujours|jamais|certainement|forcément|inévitablement|sans aucun doute)\b|\bvous êtes\b(?!\s+peut-être\b)/i;
 
 function isSectionKey(value: string): value is SectionKey {
   return SECTION_KEYS.some((key) => key === value);

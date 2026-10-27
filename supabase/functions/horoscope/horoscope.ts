@@ -70,7 +70,7 @@ export function createHoroscopeHandler(
     }
 
     await enforceAiDailyLimit(rateLimits, dailyAiLimit);
-    const factors = buildFactors(stored.chart, date, instant);
+    const factors = buildFactors(stored.chart, date, new Date(`${date}T12:00:00Z`));
     const generated = await provider.generate(factors);
     return respond(
       await horoscopes.save({

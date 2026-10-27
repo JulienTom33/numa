@@ -26,8 +26,8 @@ export function horoscopeQueryOptions(date: string) {
   });
 }
 
-export function useHoroscope(date: string): UseHoroscopeResult {
-  const query = useQuery(horoscopeQueryOptions(date));
+export function useHoroscope(date: string, enabled = true): UseHoroscopeResult {
+  const query = useQuery({ ...horoscopeQueryOptions(date), enabled });
   const { refetch } = query;
 
   return {
