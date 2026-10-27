@@ -11,6 +11,7 @@ export const paths = {
   consult: "/consulter",
   theme: "/mon-theme",
   profile: "/profil",
+  history: "/historique",
 } as const;
 
 export const tabPaths: Record<MainTab, string> = {
@@ -23,7 +24,7 @@ export const tabPaths: Record<MainTab, string> = {
 export function tabFromPathname(pathname: string): MainTab {
   if (pathname === paths.consult) return "consult";
   if (pathname === paths.theme) return "theme";
-  if (pathname === paths.profile) return "profile";
+  if (pathname === paths.profile || pathname === paths.history) return "profile";
   return "today";
 }
 
