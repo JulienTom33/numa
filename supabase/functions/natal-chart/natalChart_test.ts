@@ -100,7 +100,8 @@ Deno.test("donnees invalides : 422 invalid_birth_data sans detail technique", as
   const response = await handlerFor(store)(request(authorized));
   assertEquals(response.status, 422);
   const body = await response.json();
-  assertEquals(body.error, { code: "invalid_birth_data", message: "invalid_birth_data" });
+  assertEquals(body.error.code, "invalid_birth_data");
+  assertEquals(body.error.message, "invalid_birth_data");
 });
 
 Deno.test("succes : theme calcule pour le sub du JWT, jamais pour un id du corps", async () => {

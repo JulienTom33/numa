@@ -1,3 +1,4 @@
+import { ExternalFailure, fetchExternal } from "../_shared/external.ts";
 import { HttpError } from "../_shared/http.ts";
 
 export const MIN_QUERY_LENGTH = 2;
@@ -117,20 +118,20 @@ export async function searchPlaces(
 
   let response: Response;
   try {
-    response = await fetch(url.toString(), { signal: AbortSignal.timeout(timeoutMs) });
+    response = await fetchExternal(url.toString(), {}, {
+      fetchFn: fetch,
+      service: "open-meteo",
+      timeoutMs,
+      retries: 1,
+    });
   } catch (error) {
-    if (error instanceof DOMException && error.name === "TimeoutError") {
+    if (error instanceof ExternalFailure && error.kind === "timeout") {
       throw new HttpError(
         504,
         "provider_timeout",
         "Le service de recherche de lieux ne répond pas.",
       );
     }
-    throw providerUnavailable();
-  }
-
-  if (!response.ok) {
-    await response.body?.cancel();
     throw providerUnavailable();
   }
 

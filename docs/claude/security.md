@@ -26,3 +26,9 @@
 
 - Logs applicatifs sans données personnelles ni secrets.
 - Logs d'erreur suffisamment détaillés pour debug (stack, contexte technique) sans contenu utilisateur sensible.
+
+## Appels externes
+
+- Tout appel sortant (fournisseurs IA, géocodage) passe par `fetchExternal` (`supabase/functions/_shared/external.ts`) : timeout obligatoire, erreurs 4xx/5xx/429 classées, retry borné aux erreurs transitoires (timeout, réseau, 5xx).
+- Les réponses d'erreur portent `error.correlationId`, également journalisé côté serveur ; le journal ne contient que service, nature de l'échec et statut (jamais URL, en-têtes, corps ni clé).
+- Une panne de la chaîne IA renvoie `503 ai_unavailable` (pas de réponse dégradée).
