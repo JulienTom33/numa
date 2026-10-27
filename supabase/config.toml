@@ -432,3 +432,6 @@ verify_jwt = true
 
 [functions.ephemeris]
 verify_jwt = true
+
+[functions.horoscope]
+verify_jwt = true
