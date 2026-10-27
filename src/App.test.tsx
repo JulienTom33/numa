@@ -78,7 +78,7 @@ describe("App", () => {
 
   it("opens the privacy policy from the welcome screen and comes back", async () => {
     const router = renderApp();
-    await userEvent.click(await screen.findByRole("button", { name: /confidentialité/i }));
+    await userEvent.click(await screen.findByRole("button", { name: "Politique de confidentialité" }));
     expect(router.state.location.pathname).toBe("/confidentialite");
     expect(await screen.findByRole("heading", { level: 1, name: "Politique de confidentialité" })).toBeInTheDocument();
 
