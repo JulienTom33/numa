@@ -21,25 +21,27 @@ export function uniqueEmail(prefix: string): string {
   return `${prefix}-${suffix}@example.test`;
 }
 
-async function findMessageId(address: string): Promise<string | null> {
+async function findMessageId(address: string, minCount: number): Promise<string | null> {
   const response = await fetch(`${MAILPIT_URL}/api/v1/search?query=${encodeURIComponent(`to:${address}`)}`);
   if (!response.ok) throw new Error(`Mailpit indisponible (${response.status})`);
   const list = (await response.json()) as MailpitList;
+  if (list.messages.length < minCount) return null;
   return list.messages[0]?.ID ?? null;
 }
 
-export async function waitForEmail(address: string): Promise<MailpitDetail> {
+export async function waitForEmail(address: string, minCount = 1): Promise<MailpitDetail> {
   let messageId: string | null = null;
   await expect
     .poll(
       async () => {
-        messageId = await findMessageId(address);
+        messageId = await findMessageId(address, minCount);
         return messageId;
       },
       { timeout: 20_000, message: `Aucun email reçu pour ${address}` },
     )
     .not.toBeNull();
   const response = await fetch(`${MAILPIT_URL}/api/v1/message/${messageId}`);
+  if (!response.ok) throw new Error(`Message Mailpit illisible (${response.status})`);
   return (await response.json()) as MailpitDetail;
 }
 
@@ -47,6 +49,9 @@ export async function resolveMagicLinkHash(message: MailpitDetail): Promise<stri
   const match = /https?:\/\/[^\s"'<>]+\/auth\/v1\/verify[^\s"'<>]*/.exec(message.Text + message.HTML);
   if (!match) throw new Error("Lien magique introuvable dans l'email");
   const response = await fetch(match[0].replace(/&amp;/g, "&"), { redirect: "manual" });
+  if (response.status < 300 || response.status >= 400) {
+    throw new Error(`Le lien magique n'a pas redirigé (statut ${response.status})`);
+  }
   const location = response.headers.get("location") ?? "";
   const hashIndex = location.indexOf("#");
   if (hashIndex < 0) throw new Error(`Redirection du lien magique sans jeton (statut ${response.status})`);
