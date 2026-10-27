@@ -1,3 +1,4 @@
+import { ExternalFailure, fetchExternal } from "../_shared/external.ts";
 import type { ProviderSettings } from "./config.ts";
 import { isRecord } from "./guards.ts";
 import { type ChatMessage, MAX_OUTPUT_TOKENS } from "./prompt.ts";
@@ -14,12 +15,6 @@ export class ProviderFailure extends Error {
 export interface Completion {
   text: string;
   truncated: boolean;
-}
-
-function parseRetryAfter(header: string | null): number | null {
-  if (header === null) return null;
-  const seconds = Number(header);
-  return Number.isFinite(seconds) && seconds >= 0 ? seconds * 1000 : null;
 }
 
 function readCompletion(body: unknown): Completion {
@@ -40,7 +35,7 @@ export async function requestCompletion(
 ): Promise<Completion> {
   let response: Response;
   try {
-    response = await fetchFn(`${settings.baseUrl}/chat/completions`, {
+    response = await fetchExternal(`${settings.baseUrl}/chat/completions`, {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -50,21 +45,14 @@ export async function requestCompletion(
         max_tokens: MAX_OUTPUT_TOKENS,
         temperature: 0.6,
       }),
-      signal: AbortSignal.timeout(settings.timeoutMs),
-    });
+    }, { fetchFn, service: settings.id, timeoutMs: settings.timeoutMs });
   } catch (error) {
-    if (error instanceof DOMException && error.name === "TimeoutError") {
+    if (error instanceof ExternalFailure && error.kind === "timeout") {
       throw new ProviderFailure("timeout");
     }
-    throw new ProviderFailure("http_error");
-  }
-
-  if (response.status === 429) {
-    await response.body?.cancel();
-    throw new ProviderFailure("rate_limited", parseRetryAfter(response.headers.get("retry-after")));
-  }
-  if (!response.ok) {
-    await response.body?.cancel();
+    if (error instanceof ExternalFailure && error.kind === "rate_limited") {
+      throw new ProviderFailure("rate_limited", error.retryAfterMs);
+    }
     throw new ProviderFailure("http_error");
   }
   try {
