@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { formatDate } from "../../../i18n/format/format";
 import Avatar from "../../../shared/components/ui/Avatar/Avatar";
-import Badge from "../../../shared/components/ui/Badge/Badge";
 import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
 import Card, { type CardTone } from "../../../shared/components/ui/Card/Card";
@@ -11,12 +10,15 @@ import DiscoveryModeBadge from "../../discovery/DiscoveryModeBadge/DiscoveryMode
 import type { NatalChartErrorCode } from "../../chart/natalChart/natalChart";
 import type { MyChartStatus } from "../../chart/useMyChart/useMyChart";
 import type { MyChartData } from "../../chart/skyChart/skyChart";
+import HoroscopeCard from "../HoroscopeCard/HoroscopeCard";
+import type { UseHoroscopeResult } from "../useHoroscope/useHoroscope";
 import { readEnergy, type Influence, type IntensityLevel } from "../todayEnergy/todayEnergy";
 
 interface Props {
   status: MyChartStatus;
   data: MyChartData | null;
   errorCode: NatalChartErrorCode | null;
+  horoscope: UseHoroscopeResult;
   isAnonymous: boolean;
   today: Date;
   onRetry: () => void;
@@ -44,6 +46,7 @@ function TodayScreen({
   status,
   data,
   errorCode,
+  horoscope,
   isAnonymous,
   today,
   onRetry,
@@ -112,14 +115,9 @@ function TodayScreen({
       {status === "ready" && (
         <>
           <Card id="today__card--energy" as="section" tone="violet" padding="lg">
-            <div className="flex items-start justify-between gap-3">
-              <h2 id="today__title--energy" className="font-display text-lg font-bold text-violet-ink">
-                {t("today:energy.title")}
-              </h2>
-              <Badge id="today__badge--horoscope-soon" tone="neutral">
-                {t("today:energy.horoscopeSoon")}
-              </Badge>
-            </div>
+            <h2 id="today__title--energy" className="font-display text-lg font-bold text-violet-ink">
+              {t("today:energy.title")}
+            </h2>
             {energy ? (
               <p id="today__text--energy" className="mt-3 text-base text-ink">
                 {energy.headline
@@ -173,6 +171,14 @@ function TodayScreen({
               </ul>
             </section>
           )}
+
+          <HoroscopeCard
+            status={horoscope.status}
+            data={horoscope.data}
+            errorCode={horoscope.errorCode}
+            onRetry={horoscope.retry}
+            onOpenProfile={onOpenProfile}
+          />
 
           <Card id="today__card--sources" as="section" tone="surface">
             <h2 id="today__title--sources" className="font-display text-sm font-bold text-ink">

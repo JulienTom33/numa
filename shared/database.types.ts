@@ -53,14 +53,14 @@ export type Database = {
                   ]
                 },"daily_horoscopes": {
                   Row: {
-                    "content": string,"created_at": string,"horoscope_date": string,"id": string,"natal_chart_id": string,"user_id": string
+                    "content": string,"created_at": string,"factors": Json | null,"horoscope_date": string,"id": string,"model": string | null,"natal_chart_id": string,"prompt_version": string | null,"provider": string | null,"sections": Json | null,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "content": string,"created_at"?: string,"horoscope_date": string,"id"?: string,"natal_chart_id": string,"user_id": string
+                    "content": string,"created_at"?: string,"factors"?: Json | null,"horoscope_date": string,"id"?: string,"model"?: string | null,"natal_chart_id": string,"prompt_version"?: string | null,"provider"?: string | null,"sections"?: Json | null,"user_id": string
                   }
                   Update: {
-                    "content"?: string,"created_at"?: string,"horoscope_date"?: string,"id"?: string,"natal_chart_id"?: string,"user_id"?: string
+                    "content"?: string,"created_at"?: string,"factors"?: Json | null,"horoscope_date"?: string,"id"?: string,"model"?: string | null,"natal_chart_id"?: string,"prompt_version"?: string | null,"provider"?: string | null,"sections"?: Json | null,"user_id"?: string
                   }
                   Relationships: [
                     {
