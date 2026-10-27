@@ -11,6 +11,7 @@
 ## Données personnelles
 
 - Données utilisateur (date/heure/lieu de naissance, lectures générées) protégées par RLS. Voir `supabase.md`.
+- Suppression en libre-service (#33) : une conversation est supprimée par l'utilisateur (policy RLS `conversations_delete_own`, ses messages partent en cascade). Le compte est supprimé par l'Edge Function `delete-account` (POST, authentifiée, rate limitée à 3 requêtes/min), qui appelle `auth.admin.deleteUser` avec le client `service_role` côté serveur uniquement. Les clés étrangères `on delete cascade` effacent profil, données de naissance, thèmes, horoscopes, conversations, messages et compteurs d'usage. Le client confirme explicitement (saisie d'un mot), termine la session puis vide son cache. En cas d'erreur, le compte est conservé et l'erreur signalée. La politique de confidentialité (`legal.json`) décrit cette suppression.
 - Pas de log de données personnelles en clair.
 - Pas de transmission de données personnelles à un service tiers non explicitement validé pour cet usage.
 

@@ -5,7 +5,7 @@ import ConversationList from "./ConversationList";
 
 describe("ConversationList", () => {
   it("affiche l'état vide sans conversation", () => {
-    render(<ConversationList conversations={[]} onOpen={vi.fn()} />);
+    render(<ConversationList conversations={[]} onOpen={vi.fn()} onDelete={vi.fn()} />);
     expect(screen.getByText("Aucune conversation pour l'instant")).toBeInTheDocument();
   });
 
@@ -17,6 +17,7 @@ describe("ConversationList", () => {
           { id: "c1", title: null, updatedAt: "2026-10-20T10:00:00Z" },
         ]}
         onOpen={vi.fn()}
+        onDelete={vi.fn()}
       />,
     );
     const items = screen.getAllByRole("listitem");
@@ -27,8 +28,21 @@ describe("ConversationList", () => {
 
   it("ouvre une conversation au clic", async () => {
     const onOpen = vi.fn();
-    render(<ConversationList conversations={[{ id: "c1", title: "A", updatedAt: "2026-10-20T10:00:00Z" }]} onOpen={onOpen} />);
-    await userEvent.click(screen.getByRole("button", { name: /A/ }));
+    render(<ConversationList conversations={[{ id: "c1", title: "A", updatedAt: "2026-10-20T10:00:00Z" }]} onOpen={onOpen} onDelete={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: /^A/ }));
     expect(onOpen).toHaveBeenCalledWith("c1");
+  });
+
+  it("demande la suppression d'une conversation", async () => {
+    const onDelete = vi.fn();
+    render(
+      <ConversationList
+        conversations={[{ id: "c1", title: "A", updatedAt: "2026-10-20T10:00:00Z" }]}
+        onOpen={vi.fn()}
+        onDelete={onDelete}
+      />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer la conversation « A »" }));
+    expect(onDelete).toHaveBeenCalledWith("c1");
   });
 });

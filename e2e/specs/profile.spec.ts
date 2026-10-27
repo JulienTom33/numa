@@ -56,6 +56,27 @@ test.describe("Profil", () => {
     await expect(page.locator("#profile__callout--saved")).toHaveCount(0);
   });
 
+  test("supprimer le compte exige une confirmation explicite puis termine la session", async ({ page }) => {
+    await page.locator("#profile__button--delete-account").click();
+    await expect(page.locator("#delete-account__text--scope")).toBeVisible();
+    await expect(page.locator("#delete-account__button--confirm")).toBeDisabled();
+
+    await page.locator("#delete-account__input--keyword").fill("supprimer");
+    await page.locator("#delete-account__button--confirm").click();
+
+    await expect(page.locator("#welcome__link--discover")).toBeVisible();
+    await page.reload();
+    await expect(page.locator("#welcome__link--discover")).toBeVisible();
+  });
+
+  test("annuler la suppression du compte conserve le profil", async ({ page }) => {
+    await page.locator("#profile__button--delete-account").click();
+    await page.locator("#delete-account__button--cancel").click();
+
+    await expect(page.locator("#delete-account__sheet--main")).toHaveCount(0);
+    await expect(page.locator("#profile__title--main")).toHaveText("Camille");
+  });
+
   test("annuler ramène à la lecture sans modifier", async ({ page }) => {
     await page.locator("#profile__button--edit").click();
     await page.locator("#profile-edit__input--first-name").fill("Autre");

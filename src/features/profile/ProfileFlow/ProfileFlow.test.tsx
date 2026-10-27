@@ -5,6 +5,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppContext, type AppContextValue } from "../../../shared/navigation/appContext/appContext";
 import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
+import { deleteAccount } from "../accountService/accountService";
 import { authenticatedProfile } from "../profileData/profileFixtures";
 import { fetchProfile, saveProfile } from "../profileService/profileService";
 import ProfileFlow from "./ProfileFlow";
@@ -29,11 +30,15 @@ vi.mock("../profileService/profileService", async (importOriginal) => ({
   saveProfile: vi.fn(),
 }));
 
+vi.mock("../accountService/accountService", () => ({ deleteAccount: vi.fn() }));
+
+const signOut = vi.fn();
+
 const session = { user: { id: "user-1", email: "camille@example.com" } } as unknown as Session;
 
 function renderFlow() {
   const Wrapper = createQueryWrapper();
-  const context = { session } as unknown as AppContextValue;
+  const context = { session, auth: { signOut } } as unknown as AppContextValue;
   render(
     <Wrapper>
       <AppContext.Provider value={context}>
@@ -52,9 +57,34 @@ describe("ProfileFlow", () => {
   beforeEach(() => {
     chartMock.status = "ready";
     chartMock.retry.mockClear();
+    signOut.mockReset();
+    vi.mocked(deleteAccount).mockReset();
     vi.mocked(saveProfile).mockClear();
     vi.mocked(fetchProfile).mockResolvedValue({ data: authenticatedProfile, error: null });
     vi.mocked(saveProfile).mockResolvedValue({ error: null });
+  });
+
+  it("supprime le compte après confirmation puis termine la session", async () => {
+    vi.mocked(deleteAccount).mockResolvedValue({ error: null });
+    signOut.mockResolvedValue(null);
+    renderFlow();
+    await userEvent.click(await screen.findByRole("button", { name: "Supprimer mon compte" }));
+    await userEvent.type(screen.getByLabelText(/Pour confirmer/), "supprimer");
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer définitivement mon compte" }));
+
+    await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
+    expect(deleteAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("signale l'échec sans terminer la session", async () => {
+    vi.mocked(deleteAccount).mockResolvedValue({ error: "delete_failed" });
+    renderFlow();
+    await userEvent.click(await screen.findByRole("button", { name: "Supprimer mon compte" }));
+    await userEvent.type(screen.getByLabelText(/Pour confirmer/), "supprimer");
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer définitivement mon compte" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("n'a pas été supprimé");
+    expect(signOut).not.toHaveBeenCalled();
   });
 
   it("ouvre l'historique depuis l'entrée Mes conversations", async () => {

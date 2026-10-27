@@ -1,14 +1,18 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { Session } from "@supabase/supabase-js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppContext, type AppContextValue } from "../../../shared/navigation/appContext/appContext";
 import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
-import { fetchConversationDetail, fetchConversations } from "../historyService/historyService";
+import { deleteConversation, fetchConversationDetail, fetchConversations } from "../historyService/historyService";
 import HistoryFlow from "./HistoryFlow";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
-vi.mock("../historyService/historyService", () => ({ fetchConversations: vi.fn(), fetchConversationDetail: vi.fn() }));
+vi.mock("../historyService/historyService", () => ({
+  fetchConversations: vi.fn(),
+  fetchConversationDetail: vi.fn(),
+  deleteConversation: vi.fn(),
+}));
 
 const session = { user: { id: "user-1" } } as unknown as Session;
 
@@ -28,6 +32,45 @@ describe("HistoryFlow", () => {
   beforeEach(() => {
     vi.mocked(fetchConversations).mockReset();
     vi.mocked(fetchConversationDetail).mockReset();
+    vi.mocked(deleteConversation).mockReset();
+  });
+
+  const LIST = [{ id: "c1", title: "Ma question", updatedAt: "2026-10-20T10:00:00Z" }];
+
+  it("supprime une conversation après confirmation", async () => {
+    vi.mocked(fetchConversations).mockResolvedValueOnce({ data: LIST, error: null });
+    vi.mocked(deleteConversation).mockResolvedValue({ error: null });
+    renderFlow();
+    await userEvent.click(await screen.findByRole("button", { name: "Supprimer la conversation « Ma question »" }));
+    expect(deleteConversation).not.toHaveBeenCalled();
+
+    vi.mocked(fetchConversations).mockResolvedValueOnce({ data: [], error: null });
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer la conversation" }));
+
+    expect(await screen.findByText("Aucune conversation pour l'instant")).toBeInTheDocument();
+    expect(deleteConversation).toHaveBeenCalledWith("user-1", "c1");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  it("annule la suppression sans rien effacer", async () => {
+    vi.mocked(fetchConversations).mockResolvedValue({ data: LIST, error: null });
+    renderFlow();
+    await userEvent.click(await screen.findByRole("button", { name: "Supprimer la conversation « Ma question »" }));
+    await userEvent.click(screen.getByRole("button", { name: "Conserver" }));
+
+    expect(deleteConversation).not.toHaveBeenCalled();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("signale l'échec de la suppression et garde la conversation", async () => {
+    vi.mocked(fetchConversations).mockResolvedValue({ data: LIST, error: null });
+    vi.mocked(deleteConversation).mockResolvedValue({ error: "delete_failed" });
+    renderFlow();
+    await userEvent.click(await screen.findByRole("button", { name: "Supprimer la conversation « Ma question »" }));
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer la conversation" }));
+
+    expect(await screen.findByText(/n'a pas pu être supprimée/)).toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
   it("affiche l'état vide", async () => {
@@ -60,7 +103,7 @@ describe("HistoryFlow", () => {
       error: null,
     });
     renderFlow();
-    await userEvent.click(await screen.findByRole("button", { name: /Ma question/ }));
+    await userEvent.click(await screen.findByRole("button", { name: /^Ma question/ }));
     expect(await screen.findByText("Bonjour")).toBeInTheDocument();
     expect(fetchConversationDetail).toHaveBeenCalledWith("user-1", "c1");
 

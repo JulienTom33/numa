@@ -5,7 +5,7 @@
     "intro": "Cette page explique, simplement, quelles données Sidéra utilise, pourquoi, où elles vont et comment les supprimer.",
     "summary": {
       "title": "L'essentiel",
-      "body": "Vos données de naissance servent uniquement à calculer votre thème. Elles ne sont jamais envoyées au fournisseur d'IA. Vous pouvez demander la suppression de votre compte à tout moment, et vous ne recevez aucune communication marketing."
+      "body": "Vos données de naissance servent uniquement à calculer votre thème. Elles ne sont jamais envoyées au fournisseur d'IA. Vous pouvez supprimer votre compte à tout moment depuis votre profil, et vous ne recevez aucune communication marketing."
     },
     "sections": {
       "collected": {
@@ -34,7 +34,7 @@
       },
       "deletion": {
         "title": "Suppression du compte",
-        "body": "Vous pouvez demander la suppression de votre compte à tout moment, en nous écrivant à l'adresse de contact ci-dessous. La suppression efface votre profil, vos données de naissance, votre thème, vos conversations et vos compteurs d'usage."
+        "body": "Vous pouvez supprimer votre compte vous-même à tout moment depuis votre profil (« Supprimer mon compte »), ou nous écrire à l'adresse de contact ci-dessous. La suppression efface votre profil, vos données de naissance, votre thème, vos conversations et vos compteurs d'usage."
       },
       "rights": {
         "title": "Vos droits",

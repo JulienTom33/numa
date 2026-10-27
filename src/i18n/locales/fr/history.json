@@ -16,7 +16,16 @@
     "messages": "Messages de la conversation",
     "empty": "Cette conversation ne contient aucun message."
   },
+  "delete": {
+    "open": "Supprimer la conversation « {{title}} »",
+    "title": "Supprimer cette conversation ?",
+    "message": "La conversation « {{title}} » et tous ses messages seront définitivement supprimés. Votre profil et vos autres conversations ne sont pas touchés.",
+    "confirm": "Supprimer la conversation",
+    "deleting": "Suppression…",
+    "cancel": "Conserver"
+  },
   "errors": {
+    "delete_failed": "La conversation n'a pas pu être supprimée. Elle est toujours dans votre historique : réessayez.",
     "network_error": "Impossible de charger les données. Vérifiez votre connexion puis réessayez.",
     "conversation_not_found": "Cette conversation est introuvable.",
     "internal_error": "Une erreur est survenue. Réessayez dans un instant."
