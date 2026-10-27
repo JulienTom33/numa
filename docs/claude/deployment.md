@@ -14,6 +14,15 @@
 - `docker-compose.yml` : orchestration du conteneur `app`, volumes persistants pour les certificats Caddy (`caddy_data`, `caddy_config`), rotation des logs Docker.
 - `.github/workflows/deploy.yml` : déploiement automatique sur push vers `master` (ou déclenchement manuel).
 
+## En-têtes de sécurité HTTP
+
+Le `Caddyfile` pose `Content-Security-Policy` (`default-src 'self'`, `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'`), `Strict-Transport-Security`, `Permissions-Policy`, `X-Content-Type-Options`, `X-Frame-Options` et `Referrer-Policy`. Aucun domaine n'est écrit en dur.
+
+- `connect-src` autorise `'self'` et l'URL du projet Supabase via la variable d'environnement Caddy `SUPABASE_URL`, alimentée par `docker-compose.yml` depuis `VITE_SUPABASE_URL` (déjà présente dans `/opt/numa/.env`). Elle doit être définie : vide, la CSP bloquerait Auth et les Edge Functions.
+- Polices (Manrope, Inter) via `@fontsource`, inlinées en `data:` par Vite : `font-src 'self' data:`. Pas de script ni de style inline : toute nouvelle ressource externe exige d'étendre la CSP dans le `Caddyfile`.
+- Storybook n'est pas servi par Caddy : la CSP ne s'y applique pas.
+- Vérification : `e2e/specs/csp.spec.ts` rejoue la CSP du `Caddyfile` sur le build et échoue sur toute violation.
+
 ## Secrets GitHub Actions requis
 
 Configurés dans Settings → Secrets and variables → Actions (environnement `production`) :
