@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,7 +24,7 @@ vi.mock("../../chart/skyChart/skyChart", async (importOriginal) => ({
 
 vi.mock("../horoscope/horoscope", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../horoscope/horoscope")>()),
-  fetchHoroscope: vi.fn().mockResolvedValue({ data: sampleHoroscope, error: null }),
+  fetchHoroscope: vi.fn(),
 }));
 
 const anonymous = vi.hoisted(() => ({ value: false }));
@@ -52,6 +52,7 @@ function renderFlow() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  horoscopeMock.mockResolvedValue({ data: sampleHoroscope, error: null });
   anonymous.value = false;
 });
 
@@ -81,7 +82,7 @@ describe("TodayFlow", () => {
 
     await screen.findByRole("button", { name: "Consulter Sidéra" });
 
-    expect(horoscopeMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(horoscopeMock).toHaveBeenCalledTimes(1));
   });
 
   it("ouvre l'inscription depuis la pastille en mode découverte", async () => {
