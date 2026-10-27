@@ -8,6 +8,8 @@ import { completeChart } from "../../chart/MyChart/myChartFixtures";
 import { fetchMyChart } from "../../chart/skyChart/skyChart";
 import { fetchHoroscope } from "../horoscope/horoscope";
 import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
+import { fetchWeeklyHoroscope } from "../../horoscope/weeklyHoroscope/weeklyHoroscope";
+import { sampleWeeklyHoroscope } from "../../horoscope/WeeklyHoroscopeCard/weeklyHoroscopeFixtures";
 import TodayFlow from "./TodayFlow";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
@@ -27,6 +29,11 @@ vi.mock("../horoscope/horoscope", async (importOriginal) => ({
   fetchHoroscope: vi.fn(),
 }));
 
+vi.mock("../../horoscope/weeklyHoroscope/weeklyHoroscope", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../horoscope/weeklyHoroscope/weeklyHoroscope")>()),
+  fetchWeeklyHoroscope: vi.fn(),
+}));
+
 const anonymous = vi.hoisted(() => ({ value: false }));
 
 vi.mock("../../../shared/navigation/appContext/appContext", () => ({
@@ -35,6 +42,7 @@ vi.mock("../../../shared/navigation/appContext/appContext", () => ({
 
 const fetchMock = vi.mocked(fetchMyChart);
 const horoscopeMock = vi.mocked(fetchHoroscope);
+const weeklyMock = vi.mocked(fetchWeeklyHoroscope);
 
 function renderFlow() {
   render(
@@ -53,6 +61,7 @@ function renderFlow() {
 beforeEach(() => {
   vi.clearAllMocks();
   horoscopeMock.mockResolvedValue({ data: sampleHoroscope, error: null });
+  weeklyMock.mockResolvedValue({ data: sampleWeeklyHoroscope, error: null });
   anonymous.value = false;
 });
 
@@ -83,6 +92,31 @@ describe("TodayFlow", () => {
     await screen.findByRole("button", { name: "Consulter Sidéra" });
 
     await waitFor(() => expect(horoscopeMock).toHaveBeenCalledTimes(1));
+  });
+
+  it("ne charge la lecture hebdomadaire qu'à la bascule sur « Semaine »", async () => {
+    fetchMock.mockResolvedValue({ data: completeChart, error: null });
+    renderFlow();
+
+    const weekOption = await screen.findByRole("radio", { name: "Semaine" });
+    expect(weeklyMock).not.toHaveBeenCalled();
+
+    await userEvent.click(weekOption);
+
+    expect(await screen.findByRole("heading", { name: "Votre horoscope de la semaine" })).toBeInTheDocument();
+    expect(weeklyMock).toHaveBeenCalledTimes(1);
+    expect(document.getElementById("weekly-horoscope__text--general")).toBeInTheDocument();
+  });
+
+  it("revient à l'horoscope du jour depuis la semaine", async () => {
+    fetchMock.mockResolvedValue({ data: completeChart, error: null });
+    renderFlow();
+
+    await userEvent.click(await screen.findByRole("radio", { name: "Semaine" }));
+    await userEvent.click(screen.getByRole("radio", { name: "Jour" }));
+
+    expect(document.getElementById("horoscope__card--root")).toBeInTheDocument();
+    expect(document.getElementById("weekly-horoscope__card--root")).toBeNull();
   });
 
   it("ouvre l'inscription depuis la pastille en mode découverte", async () => {

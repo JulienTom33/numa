@@ -10,6 +10,9 @@ import DiscoveryModeBadge from "../../discovery/DiscoveryModeBadge/DiscoveryMode
 import type { NatalChartErrorCode } from "../../chart/natalChart/natalChart";
 import type { MyChartStatus } from "../../chart/useMyChart/useMyChart";
 import type { MyChartData } from "../../chart/skyChart/skyChart";
+import SegmentedControl from "../../../shared/components/ui/SegmentedControl/SegmentedControl";
+import WeeklyHoroscopeCard from "../../horoscope/WeeklyHoroscopeCard/WeeklyHoroscopeCard";
+import type { UseWeeklyHoroscopeResult } from "../../horoscope/weeklyHoroscope/useWeeklyHoroscope";
 import HoroscopeCard from "../HoroscopeCard/HoroscopeCard";
 import type { UseHoroscopeResult } from "../useHoroscope/useHoroscope";
 import { readEnergy, type Influence, type IntensityLevel } from "../todayEnergy/todayEnergy";
@@ -19,13 +22,20 @@ interface Props {
   data: MyChartData | null;
   errorCode: NatalChartErrorCode | null;
   horoscope: UseHoroscopeResult;
+  weeklyHoroscope: UseWeeklyHoroscopeResult;
+  period: HoroscopePeriod;
   isAnonymous: boolean;
   today: Date;
+  onPeriodChange: (period: HoroscopePeriod) => void;
   onRetry: () => void;
   onOpenProfile: () => void;
   onSignUp: () => void;
   onAskQuestion: () => void;
 }
+
+export type HoroscopePeriod = "day" | "week";
+
+const PERIOD_OPTIONS: HoroscopePeriod[] = ["day", "week"];
 
 const INFLUENCE_TONES: Record<Influence, CardTone> = {
   relations: "coral",
@@ -47,14 +57,17 @@ function TodayScreen({
   data,
   errorCode,
   horoscope,
+  weeklyHoroscope,
+  period,
   isAnonymous,
   today,
+  onPeriodChange,
   onRetry,
   onOpenProfile,
   onSignUp,
   onAskQuestion,
 }: Props) {
-  const { t, i18n } = useTranslation(["today", "chart", "astrology"]);
+  const { t, i18n } = useTranslation(["today", "chart", "astrology", "horoscope"]);
   const firstName = data?.summary.firstName ?? null;
   const transits = data?.transits ?? null;
   const energy = transits ? readEnergy(transits) : null;
@@ -172,13 +185,31 @@ function TodayScreen({
             </section>
           )}
 
-          <HoroscopeCard
-            status={horoscope.status}
-            data={horoscope.data}
-            errorCode={horoscope.errorCode}
-            onRetry={horoscope.retry}
-            onOpenProfile={onOpenProfile}
+          <SegmentedControl
+            id="today__control--period"
+            label={t("horoscope:periodLabel")}
+            options={PERIOD_OPTIONS.map((value) => ({ value, label: t(`horoscope:period.${value}`) }))}
+            value={period}
+            onChange={onPeriodChange}
           />
+
+          {period === "day" ? (
+            <HoroscopeCard
+              status={horoscope.status}
+              data={horoscope.data}
+              errorCode={horoscope.errorCode}
+              onRetry={horoscope.retry}
+              onOpenProfile={onOpenProfile}
+            />
+          ) : (
+            <WeeklyHoroscopeCard
+              status={weeklyHoroscope.status}
+              data={weeklyHoroscope.data}
+              errorCode={weeklyHoroscope.errorCode}
+              onRetry={weeklyHoroscope.retry}
+              onOpenProfile={onOpenProfile}
+            />
+          )}
 
           <Card id="today__card--sources" as="section" tone="surface">
             <h2 id="today__title--sources" className="font-display text-sm font-bold text-ink">
