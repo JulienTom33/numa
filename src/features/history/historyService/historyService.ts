@@ -72,3 +72,12 @@ export async function fetchConversationDetail(userId: string, conversationId: st
     error: null,
   };
 }
+
+export interface DeleteConversationResult {
+  error: HistoryErrorCode | null;
+}
+
+export async function deleteConversation(userId: string, conversationId: string): Promise<DeleteConversationResult> {
+  const { error } = await supabase.from("conversations").delete().eq("id", conversationId).eq("user_id", userId);
+  return { error: error ? "delete_failed" : null };
+}

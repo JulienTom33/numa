@@ -3,7 +3,7 @@ import { errorCodeOf, unwrapResult } from "../../../shared/queryClient/CodedQuer
 import type { HistoryErrorCode } from "../historyData/historyData";
 import { fetchConversationDetail, fetchConversations } from "../historyService/historyService";
 
-export const HISTORY_ERROR_CODES: readonly HistoryErrorCode[] = ["network_error", "conversation_not_found", "internal_error"];
+export const HISTORY_ERROR_CODES: readonly HistoryErrorCode[] = ["network_error", "conversation_not_found", "delete_failed", "internal_error"];
 
 const historyRoot = ["history"] as const;
 

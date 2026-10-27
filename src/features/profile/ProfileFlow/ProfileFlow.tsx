@@ -8,6 +8,8 @@ import { paths } from "../../../shared/navigation/routes/routes";
 import { useMyChart } from "../../chart/useMyChart/useMyChart";
 import { searchPlaces } from "../../onboarding/placeSearch/placeSearch";
 import { toPlaceSearch, type PlaceSearch } from "../../onboarding/placeSearchAdapter/placeSearchAdapter";
+import DeleteAccountSection from "../DeleteAccountSection/DeleteAccountSection";
+import { useDeleteAccount } from "../useDeleteAccount/useDeleteAccount";
 import ProfileEditForm from "../ProfileEditForm/ProfileEditForm";
 import ProfileScreen from "../ProfileScreen/ProfileScreen";
 import type { ProfileData, ProfileUpdate } from "../profileData/profileData";
@@ -34,6 +36,8 @@ function LoadedProfile({ profile, email, search }: LoadedProps) {
   const navigate = useNavigate();
   const { data: chart, status: chartStatus, retry: retryChart } = useMyChart();
   const { save, saving, errorCode, reset } = useSaveProfile(profile);
+  const { auth } = useAppContext();
+  const deletion = useDeleteAccount(auth.signOut);
 
   const handleSave = (update: ProfileUpdate) => {
     void save(update).then((ok) => {
@@ -84,6 +88,12 @@ function LoadedProfile({ profile, email, search }: LoadedProps) {
           setSaved(false);
           setEditing(true);
         }}
+      />
+      <DeleteAccountSection
+        deleting={deletion.deleting}
+        errorCode={deletion.errorCode}
+        onConfirm={() => void deletion.remove()}
+        onReset={deletion.reset}
       />
     </div>
   );

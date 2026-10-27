@@ -1,4 +1,4 @@
-export type HistoryErrorCode = "network_error" | "conversation_not_found" | "internal_error";
+export type HistoryErrorCode = "network_error" | "conversation_not_found" | "delete_failed" | "internal_error";
 
 export type HistoryAuthor = "user" | "sidera";
 

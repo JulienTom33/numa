@@ -5,6 +5,8 @@ import Callout from "../../../shared/components/ui/Callout/Callout";
 import { useAppContext } from "../../../shared/navigation/appContext/appContext";
 import ConversationDetail from "../ConversationDetail/ConversationDetail";
 import ConversationList from "../ConversationList/ConversationList";
+import DeleteConversationSheet from "../DeleteConversationSheet/DeleteConversationSheet";
+import { useDeleteConversation } from "../useDeleteConversation/useDeleteConversation";
 import { useConversationMessages } from "../useConversationMessages/useConversationMessages";
 import { useConversations } from "../useConversations/useConversations";
 
@@ -25,7 +27,22 @@ function OpenConversation({ userId, conversationId, onBack }: OpenProps) {
 function HistoryFlowContent({ userId }: Props) {
   const { t } = useTranslation("history");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const { status, conversations, errorCode, retry } = useConversations(userId);
+  const { remove, deleting, errorCode: deleteErrorCode, reset } = useDeleteConversation(userId);
+  const pending = conversations.find((conversation) => conversation.id === pendingDeleteId) ?? null;
+
+  const closeDeletion = () => {
+    reset();
+    setPendingDeleteId(null);
+  };
+
+  const confirmDeletion = () => {
+    if (pendingDeleteId === null) return;
+    void remove(pendingDeleteId).then((ok) => {
+      if (ok) setPendingDeleteId(null);
+    });
+  };
 
   if (openId !== null) {
     return <OpenConversation userId={userId} conversationId={openId} onBack={() => setOpenId(null)} />;
@@ -54,7 +71,22 @@ function HistoryFlowContent({ userId }: Props) {
       <h1 id="history__title--main" className="font-display text-title font-bold text-ink">
         {t("title")}
       </h1>
-      <ConversationList conversations={conversations} onOpen={setOpenId} />
+      <ConversationList
+        conversations={conversations}
+        onOpen={setOpenId}
+        onDelete={(conversationId) => {
+          reset();
+          setPendingDeleteId(conversationId);
+        }}
+      />
+      <DeleteConversationSheet
+        open={pending !== null}
+        title={pending?.title ?? t("untitled")}
+        deleting={deleting}
+        errorCode={deleteErrorCode}
+        onConfirm={confirmDeletion}
+        onCancel={closeDeletion}
+      />
     </div>
   );
 }

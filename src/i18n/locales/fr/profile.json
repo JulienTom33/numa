@@ -56,6 +56,25 @@
       "back": "Revenir"
     }
   },
+  "deleteAccount": {
+    "title": "Supprimer mon compte",
+    "description": "Vous gardez le contrôle de vos données : vous pouvez supprimer votre compte à tout moment, sans nous écrire.",
+    "open": "Supprimer mon compte",
+    "confirmTitle": "Supprimer votre compte ?",
+    "scope": "Seront supprimés : votre compte et votre adresse e-mail, votre profil, vos données de naissance, votre thème, vos horoscopes, toutes vos conversations et vos compteurs d'usage. Vous serez ensuite déconnecté.",
+    "irreversible": "Cette suppression est définitive : nous ne pourrons pas récupérer vos données. Vous pourrez toujours créer un nouveau compte plus tard.",
+    "keyword": "supprimer",
+    "keywordLabel": "Pour confirmer, saisissez « {{keyword}} »",
+    "confirm": "Supprimer définitivement mon compte",
+    "deleting": "Suppression…",
+    "cancel": "Garder mon compte",
+    "errors": {
+      "rate_limit_exceeded": "Trop de tentatives. Patientez un instant puis réessayez.",
+      "network_error": "Connexion impossible. Nous n'avons pas pu confirmer la suppression de votre compte : vérifiez votre connexion puis réessayez.",
+      "delete_failed": "La suppression a échoué. Votre compte n'a pas été supprimé : réessayez.",
+      "internal_error": "Une erreur est survenue. Votre compte n'a pas été supprimé : réessayez."
+    }
+  },
   "recalc": {
     "failed": "Vos informations sont enregistrées, mais le recalcul de votre thème a échoué. Réessayez."
   },

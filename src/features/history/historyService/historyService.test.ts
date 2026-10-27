@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { supabase } from "../../../shared/supabaseClient/supabaseClient";
-import { fetchConversationDetail, fetchConversations, toHistoryMessages } from "./historyService";
+import { deleteConversation, fetchConversationDetail, fetchConversations, toHistoryMessages } from "./historyService";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: { from: vi.fn() } }));
 
@@ -52,6 +52,30 @@ describe("fetchConversations", () => {
   it("signale une erreur réseau", async () => {
     mockTables({ conversations: { data: null, error: { message: "boom" } } });
     expect(await fetchConversations("u1")).toEqual({ data: null, error: "network_error" });
+  });
+});
+
+describe("deleteConversation", () => {
+  function mockDelete(result: Result) {
+    const eq = vi.fn();
+    const chain = { eq };
+    eq.mockReturnValueOnce(chain).mockResolvedValueOnce(result);
+    const del = vi.fn(() => chain);
+    vi.mocked(supabase.from).mockReturnValue({ delete: del } as never);
+    return { eq };
+  }
+
+  it("supprime la conversation de l'utilisateur", async () => {
+    const { eq } = mockDelete({ data: null, error: null });
+    expect(await deleteConversation("u1", "c1")).toEqual({ error: null });
+    expect(supabase.from).toHaveBeenCalledWith("conversations");
+    expect(eq).toHaveBeenNthCalledWith(1, "id", "c1");
+    expect(eq).toHaveBeenNthCalledWith(2, "user_id", "u1");
+  });
+
+  it("signale un échec de suppression", async () => {
+    mockDelete({ data: null, error: { message: "boom" } });
+    expect(await deleteConversation("u1", "c1")).toEqual({ error: "delete_failed" });
   });
 });
 
