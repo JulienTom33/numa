@@ -14,6 +14,13 @@ test.describe("Profil", () => {
     await expect(page.locator("#profile__row--tone")).toContainText("Équilibré");
   });
 
+  test("l'entrée Mes conversations ouvre l'historique", async ({ page }) => {
+    await page.locator("#profile__row--history").click();
+
+    await expect(page).toHaveURL(/\/historique$/);
+    await expect(page.locator("#history__title--main")).toBeVisible();
+  });
+
   test("modifier le prénom et le ton est confirmé et persiste après rechargement", async ({ page }) => {
     await page.locator("#profile__button--edit").click();
     await page.locator("#profile-edit__input--first-name").fill("Léa");

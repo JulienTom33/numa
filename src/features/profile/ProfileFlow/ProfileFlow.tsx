@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
 import { useAppContext } from "../../../shared/navigation/appContext/appContext";
+import { paths } from "../../../shared/navigation/routes/routes";
 import { useMyChart } from "../../chart/useMyChart/useMyChart";
 import { searchPlaces } from "../../onboarding/placeSearch/placeSearch";
 import { toPlaceSearch, type PlaceSearch } from "../../onboarding/placeSearchAdapter/placeSearchAdapter";
@@ -29,6 +31,7 @@ function LoadedProfile({ profile, email, search }: LoadedProps) {
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
   const { t } = useTranslation("profile");
+  const navigate = useNavigate();
   const { data: chart, status: chartStatus, retry: retryChart } = useMyChart();
   const { save, saving, errorCode, reset } = useSaveProfile(profile);
 
@@ -76,6 +79,7 @@ function LoadedProfile({ profile, email, search }: LoadedProps) {
         sun={chart?.summary.sun?.sign ?? null}
         ascendant={chart?.summary.ascendant?.sign ?? null}
         saved={saved}
+        onOpenHistory={() => navigate(paths.history)}
         onEdit={() => {
           setSaved(false);
           setEditing(true);

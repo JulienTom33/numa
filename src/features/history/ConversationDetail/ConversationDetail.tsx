@@ -21,9 +21,12 @@ function ConversationDetail({ result, onBack }: Props) {
 
   if (status === "loading") {
     return (
-      <p id="conversation-detail__text--loading" role="status" className="text-sm text-ink-secondary">
-        {t("detail.loading")}
-      </p>
+      <div id="conversation-detail__container--loading" className="flex w-full flex-col gap-3">
+        <p id="conversation-detail__text--loading" role="status" className="text-sm text-ink-secondary">
+          {t("detail.loading")}
+        </p>
+        {backButton}
+      </div>
     );
   }
   if (status === "error" || data === null) {

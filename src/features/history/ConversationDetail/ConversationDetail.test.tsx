@@ -20,6 +20,7 @@ describe("ConversationDetail", () => {
   it("affiche un état de chargement", () => {
     render(<ConversationDetail result={result({ status: "loading", data: null })} onBack={vi.fn()} />);
     expect(screen.getByRole("status")).toHaveTextContent("Chargement de la conversation");
+    expect(screen.getByRole("button", { name: "Retour aux conversations" })).toBeInTheDocument();
   });
 
   it("affiche les messages dans l'ordre reçu", () => {

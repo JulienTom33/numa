@@ -17,7 +17,7 @@
     "empty": "Cette conversation ne contient aucun message."
   },
   "errors": {
-    "network_error": "Impossible de charger vos conversations. Vérifiez votre connexion puis réessayez.",
+    "network_error": "Impossible de charger les données. Vérifiez votre connexion puis réessayez.",
     "conversation_not_found": "Cette conversation est introuvable.",
     "internal_error": "Une erreur est survenue. Réessayez dans un instant."
   }

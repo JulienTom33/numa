@@ -12,6 +12,7 @@ const meta = {
     ascendant: "taurus",
     saved: false,
     onEdit: () => undefined,
+    onOpenHistory: () => undefined,
   },
   decorators: [
     (Story) => (
