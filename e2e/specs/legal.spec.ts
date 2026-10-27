@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../support/test";
 
 test.describe("Politique de confidentialité", () => {
   test("l'accueil mène à la politique, accessible sans session, puis revient à l'accueil", async ({ page }) => {

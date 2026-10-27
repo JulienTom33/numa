@@ -1,7 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../support/test";
 import { completeOnboarding } from "../support/discovery";
 
 test.describe("Cookies", () => {
+  test.use({ cookieConsent: null });
+
   test("la bannière s'affiche au premier lancement, disparaît après un choix et ne revient pas", async ({ page }) => {
     await page.goto("/");
 
@@ -15,9 +17,10 @@ test.describe("Cookies", () => {
   });
 
   test("refuser mémorise le choix sans interrompre la session, stockée en cookie", async ({ page }) => {
-    await completeOnboarding(page);
+    await page.goto("/");
     await page.locator("#cookie-banner__button--refuse").click();
     await expect(page.locator("#cookie-banner__section--root")).toHaveCount(0);
+    await completeOnboarding(page);
 
     await page.reload();
 
