@@ -53,6 +53,19 @@ test.describe("Chat Sidéra", () => {
     await expect(page.locator("#chat-message-list__message--m4")).toBeVisible();
   });
 
+  test("le fondement de la réponse affiche positions et période non disponible", async ({ page }) => {
+    await page.locator("#chat-suggestions__chip--week").click();
+    await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
+    await expect(page.locator("#chat-message-list__message--m2")).toContainText("non disponible");
+
+    await page.locator("#chat-message-list__message--m2-why").click();
+
+    await expect(page.locator("#chat-answer-basis__section--m2-placements")).toBeVisible();
+    await expect(page.locator("#chat-answer-basis__section--m2-body--sun")).toBeVisible();
+    await expect(page.locator("#chat-answer-basis__section--m2-ascendant")).toBeVisible();
+    await expect(page.locator("#chat-message-list__message--m1-why")).toHaveCount(0);
+  });
+
   test("quota atteint : la saisie est bloquée", async ({ page }) => {
     await askQuestions(page, 2);
     await page.reload();
@@ -60,5 +73,19 @@ test.describe("Chat Sidéra", () => {
 
     await expect(page.locator("#chat-view__callout--exhausted")).toBeVisible();
     await expect(page.locator("#chat-view__input--question")).toBeDisabled();
+  });
+});
+
+test.describe("Chat Sidéra, heure de naissance inconnue", () => {
+  test("le fondement signale l'incertitude et l'ascendant indisponible", async ({ page }) => {
+    await completeOnboarding(page, { birthTime: "unknown" });
+    await page.locator("#app__tabbar--main-consult").click();
+    await page.locator("#chat-suggestions__chip--week").click();
+    await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
+
+    await page.locator("#chat-message-list__message--m2-why").click();
+
+    await expect(page.locator("#chat-answer-basis__section--m2-angles-unavailable")).toBeVisible();
+    await expect(page.locator("#chat-answer-basis__section--m2-warning--unknown_time")).toBeVisible();
   });
 });
