@@ -4,6 +4,8 @@ import MigrationScreen from "../../../features/discovery/MigrationScreen/Migrati
 import { useAnonymousSession } from "../../../features/auth/useAnonymousSession/useAnonymousSession";
 import { useAuth } from "../../../features/auth/useAuth/useAuth";
 import { useOnboardingStatus } from "../../../features/onboarding/useOnboardingStatus/useOnboardingStatus";
+import CookieBanner from "../../cookieConsent/CookieBanner/CookieBanner";
+import CookieConsentProvider from "../../cookieConsent/CookieConsentProvider";
 import { AppContext, type AppContextValue } from "../appContext/appContext";
 import { authCallbackUrl } from "../routes/routes";
 
@@ -20,14 +22,17 @@ function AppRoot() {
     [auth, session, isAnonymous, onboarding, start, discoverFailed],
   );
 
-  if (auth.converted) {
-    return <MigrationScreen onContinue={auth.acknowledgeConversion} />;
-  }
-
   return (
-    <AppContext.Provider value={value}>
-      <Outlet />
-    </AppContext.Provider>
+    <CookieConsentProvider>
+      {auth.converted ? (
+        <MigrationScreen onContinue={auth.acknowledgeConversion} />
+      ) : (
+        <AppContext.Provider value={value}>
+          <Outlet />
+        </AppContext.Provider>
+      )}
+      <CookieBanner />
+    </CookieConsentProvider>
   );
 }
 

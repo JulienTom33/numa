@@ -8,6 +8,7 @@ import {
   type UpgradeError,
   type UpgradeErrorCode,
 } from "../accountUpgrade/accountUpgrade";
+import { cookieStorage } from "../../../shared/supabaseClient/cookieStorage";
 import { supabase } from "../../../shared/supabaseClient/supabaseClient";
 
 export type AuthMode = "signup" | "signin";
@@ -155,25 +156,13 @@ export function clearAuthRedirectError(): void {
 }
 
 export function markPendingConversion(userId: string): void {
-  try {
-    window.localStorage.setItem(PENDING_CONVERSION_STORAGE_KEY, userId);
-  } catch {
-    return;
-  }
+  cookieStorage.setItem(PENDING_CONVERSION_STORAGE_KEY, userId);
 }
 
 export function readPendingConversion(): string | null {
-  try {
-    return window.localStorage.getItem(PENDING_CONVERSION_STORAGE_KEY);
-  } catch {
-    return null;
-  }
+  return cookieStorage.getItem(PENDING_CONVERSION_STORAGE_KEY);
 }
 
 export function clearPendingConversion(): void {
-  try {
-    window.localStorage.removeItem(PENDING_CONVERSION_STORAGE_KEY);
-  } catch {
-    return;
-  }
+  cookieStorage.removeItem(PENDING_CONVERSION_STORAGE_KEY);
 }

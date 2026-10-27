@@ -60,6 +60,9 @@ beforeEach(() => {
 afterEach(() => {
   vi.clearAllMocks();
   window.localStorage.clear();
+  document.cookie.split("; ").forEach((part) => {
+    document.cookie = `${part.split("=")[0]}=; Path=/; Max-Age=0`;
+  });
   window.history.replaceState(null, "", "/");
 });
 

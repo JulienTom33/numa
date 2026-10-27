@@ -62,9 +62,22 @@ export async function completeOnboarding(page: Page, options: OnboardingOptions 
 export async function askQuestions(page: Page, count: number): Promise<void> {
   const { apiUrl, publishableKey } = loadSupabaseEnv();
   const accessToken = await page.evaluate(() => {
-    const key = Object.keys(window.localStorage).find((name) => /^sb-.*-auth-token$/.test(name));
+    const cookies = new Map<string, string>();
+    document.cookie.split("; ").forEach((part) => {
+      const separator = part.indexOf("=");
+      if (separator > 0) cookies.set(decodeURIComponent(part.slice(0, separator)), decodeURIComponent(part.slice(separator + 1)));
+    });
+    const key = [...cookies.keys()].find((name) => /^sb-.*-auth-token$/.test(name));
     if (!key) return null;
-    const session = JSON.parse(window.localStorage.getItem(key) ?? "null") as { access_token?: string } | null;
+    const marker = cookies.get(key) ?? "";
+    let raw = marker;
+    if (marker.startsWith("__chunks:")) {
+      raw = "";
+      for (let index = 0; index < Number.parseInt(marker.slice(9), 10); index += 1) {
+        raw += cookies.get(`${key}.${index}`) ?? "";
+      }
+    }
+    const session = JSON.parse(raw || "null") as { access_token?: string } | null;
     return session?.access_token ?? null;
   });
   expect(accessToken).not.toBeNull();
