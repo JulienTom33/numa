@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { readCookieConsent } from "../cookieConsent";
 import CookieConsentProvider from "../CookieConsentProvider";
 import CookieBanner from "./CookieBanner";
@@ -55,6 +55,22 @@ describe("CookieBanner", () => {
 
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Accepter" })).not.toBeInTheDocument();
+  });
+
+  it("shows a privacy link only when a handler is given", async () => {
+    const onPrivacy = vi.fn();
+    const { unmount } = render(
+      <CookieConsentProvider>
+        <CookieBanner onPrivacy={onPrivacy} />
+      </CookieConsentProvider>,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Lire la politique de confidentialité" }));
+    expect(onPrivacy).toHaveBeenCalledTimes(1);
+    unmount();
+
+    renderBanner();
+    expect(document.getElementById("cookie-banner__link--privacy")).not.toBeInTheDocument();
   });
 
   it("is operable with the keyboard", async () => {
