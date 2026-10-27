@@ -76,7 +76,10 @@ describe("askQuestion", () => {
   it.each([
     ["invalid_token", "unauthenticated"],
     ["invalid_question", "invalid_question"],
-    ["ai_unavailable", "provider_unavailable"],
+    ["ai_unavailable", "ai_unavailable"],
+    ["personal_data_detected", "personal_data_detected"],
+    ["rate_limit_exceeded", "rate_limit_exceeded"],
+    ["ai_daily_limit_exceeded", "ai_daily_limit_exceeded"],
     ["internal_error", "unknown_error"],
   ])("maps the %s server code to %s", async (serverCode, expected) => {
     vi.mocked(supabase.functions.invoke).mockResolvedValue({

@@ -72,6 +72,9 @@ function ChatView({
         disabled={sending || exhausted}
         placeholder={exhausted ? t("input.disabledPlaceholder") : undefined}
       />
+      <p id="chat-view__text--privacy-hint" className="px-4 text-xs text-ink-secondary">
+        {t("input.privacyHint")}
+      </p>
     </section>
   );
 }

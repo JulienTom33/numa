@@ -14,6 +14,10 @@ test.describe("Chat Sidéra", () => {
     await expect(page.locator("#chat-view__text--quota")).toContainText("2 questions gratuites");
   });
 
+  test("indication de confidentialité visible sous la saisie", async ({ page }) => {
+    await expect(page.locator("#chat-view__text--privacy-hint")).toContainText("Évitez d'y saisir e-mail");
+  });
+
   test("une suggestion envoie la question et affiche une réponse", async ({ page }) => {
     await page.locator("#chat-suggestions__chip--week").click();
 
