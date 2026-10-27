@@ -34,7 +34,7 @@
       },
       "deletion": {
         "title": "Suppression du compte",
-        "body": "Vous pouvez supprimer votre compte vous-même à tout moment depuis votre profil (« Supprimer mon compte »), ou nous écrire à l'adresse de contact ci-dessous. La suppression efface votre profil, vos données de naissance, votre thème, vos conversations et vos compteurs d'usage."
+        "body": "Vous pouvez supprimer votre compte vous-même à tout moment depuis votre profil (« Supprimer mon compte »), ou nous écrire à l'adresse de contact ci-dessous. La suppression efface votre adresse e-mail, votre profil, vos données de naissance, votre thème, vos horoscopes, vos conversations et vos compteurs d'usage."
       },
       "rights": {
         "title": "Vos droits",

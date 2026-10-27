@@ -41,9 +41,17 @@ describe("DeleteAccountSection", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("affiche l'erreur en précisant que le compte est conservé", async () => {
+  it("affiche l'erreur en alerte sans affirmer que le compte est supprimé", async () => {
     renderSection({ errorCode: "network_error" });
     await userEvent.click(screen.getByRole("button", { name: "Supprimer mon compte" }));
-    expect(screen.getByRole("alert")).toHaveTextContent("n'a pas été supprimé");
+    expect(screen.getByRole("alert")).toHaveTextContent("pas pu confirmer la suppression");
+  });
+
+  it("ignore Échap pendant la suppression", async () => {
+    const { rerender } = render(<DeleteAccountSection deleting={false} errorCode={null} onConfirm={vi.fn()} onReset={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer mon compte" }));
+    rerender(<DeleteAccountSection deleting errorCode={null} onConfirm={vi.fn()} onReset={vi.fn()} />);
+    await userEvent.keyboard("{Escape}");
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 });

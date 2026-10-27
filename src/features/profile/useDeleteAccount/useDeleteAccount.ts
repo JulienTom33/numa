@@ -19,8 +19,14 @@ export function useDeleteAccount(signOut: () => Promise<unknown>): UseDeleteAcco
       if (error) throw new CodedQueryError(error);
     },
     onSuccess: async () => {
-      await signOut();
-      queryClient.clear();
+      await Promise.resolve()
+        .then(signOut)
+        .catch(() => undefined);
+      try {
+        queryClient.clear();
+      } catch {
+        return;
+      }
     },
   });
   const { mutateAsync, reset } = mutation;

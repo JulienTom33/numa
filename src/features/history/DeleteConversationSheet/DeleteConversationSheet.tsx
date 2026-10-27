@@ -20,7 +20,9 @@ function DeleteConversationSheet({ open, title, deleting, errorCode, onConfirm, 
     <BottomSheet
       id="delete-conversation__sheet--main"
       open={open}
-      onClose={onCancel}
+      onClose={() => {
+        if (!deleting) onCancel();
+      }}
       title={t("delete.title")}
       footer={
         <>

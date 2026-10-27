@@ -28,6 +28,23 @@ describe("useDeleteAccount", () => {
     expect(client.getQueryData(["profile"])).toBeUndefined();
   });
 
+  it("réussit même si la fin de session échoue", async () => {
+    vi.mocked(deleteAccount).mockResolvedValue({ error: null });
+    const signOut = vi.fn().mockRejectedValue(new Error("boom"));
+    const client = createTestQueryClient();
+    client.setQueryData(["profile"], { a: 1 });
+    const { result } = renderHook(() => useDeleteAccount(signOut), { wrapper: createQueryWrapper(client) });
+
+    let ok = false;
+    await act(async () => {
+      ok = await result.current.remove();
+    });
+
+    expect(ok).toBe(true);
+    expect(result.current.errorCode).toBeNull();
+    expect(client.getQueryData(["profile"])).toBeUndefined();
+  });
+
   it("expose l'erreur sans terminer la session", async () => {
     vi.mocked(deleteAccount).mockResolvedValue({ error: "rate_limit_exceeded" });
     const signOut = vi.fn();

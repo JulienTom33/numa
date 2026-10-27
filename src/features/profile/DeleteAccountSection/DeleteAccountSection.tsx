@@ -21,6 +21,7 @@ function DeleteAccountSection({ deleting, errorCode, onConfirm, onReset }: Props
   const confirmed = typed.trim().toLowerCase() === keyword.toLowerCase();
 
   const close = () => {
+    if (deleting) return;
     onReset();
     setTyped("");
     setOpen(false);

@@ -44,6 +44,7 @@ function ConversationList({ conversations, onOpen, onDelete }: Props) {
             id={`conversation-list__delete--${conversation.id}`}
             icon="trash"
             label={t("delete.open", { title: conversation.title ?? t("untitled") })}
+            className="h-11 w-11"
             onClick={() => onDelete(conversation.id)}
           />
         </li>
