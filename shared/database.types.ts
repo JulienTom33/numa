@@ -171,7 +171,7 @@ isOneToOne: false
                     "count"?: number,"key"?: string,"window_start"?: string
                   }
                   Relationships: [
-
+                    
                   ]
                 },"usage_counters": {
                   Row: {
