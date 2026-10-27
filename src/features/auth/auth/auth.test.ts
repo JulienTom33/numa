@@ -46,6 +46,9 @@ function mockAnonymousUser() {
 afterEach(() => {
   vi.clearAllMocks();
   window.localStorage.clear();
+  document.cookie.split("; ").forEach((part) => {
+    document.cookie = `${part.split("=")[0]}=; Path=/; Max-Age=0`;
+  });
   window.history.replaceState(null, "", "/");
 });
 
@@ -252,18 +255,23 @@ describe("pending conversion", () => {
     expect(readPendingConversion()).toBeNull();
 
     markPendingConversion("anon-1");
-    expect(window.localStorage.getItem(PENDING_CONVERSION_STORAGE_KEY)).toBe("anon-1");
+    expect(window.localStorage.getItem(PENDING_CONVERSION_STORAGE_KEY)).toBeNull();
     expect(readPendingConversion()).toBe("anon-1");
 
     clearPendingConversion();
     expect(readPendingConversion()).toBeNull();
   });
 
-  it("tolerates an unavailable storage", () => {
+  it("migrates a legacy localStorage flag to a cookie", () => {
+    window.localStorage.setItem(PENDING_CONVERSION_STORAGE_KEY, "anon-legacy");
+
+    expect(readPendingConversion()).toBe("anon-legacy");
+    expect(window.localStorage.getItem(PENDING_CONVERSION_STORAGE_KEY)).toBeNull();
+    expect(readPendingConversion()).toBe("anon-legacy");
+  });
+
+  it("tolerates an unavailable localStorage", () => {
     const spies = [
-      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-        throw new Error("blocked");
-      }),
       vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
         throw new Error("blocked");
       }),
@@ -273,7 +281,7 @@ describe("pending conversion", () => {
     ];
 
     expect(() => markPendingConversion("anon-1")).not.toThrow();
-    expect(readPendingConversion()).toBeNull();
+    expect(readPendingConversion()).toBe("anon-1");
     expect(() => clearPendingConversion()).not.toThrow();
 
     spies.forEach((spy) => spy.mockRestore());
