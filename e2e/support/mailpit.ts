@@ -49,6 +49,6 @@ export async function resolveMagicLinkHash(message: MailpitDetail): Promise<stri
   const response = await fetch(match[0].replace(/&amp;/g, "&"), { redirect: "manual" });
   const location = response.headers.get("location") ?? "";
   const hashIndex = location.indexOf("#");
-  if (hashIndex < 0) throw new Error("Redirection du lien magique sans jeton");
+  if (hashIndex < 0) throw new Error(`Redirection du lien magique sans jeton (statut ${response.status})`);
   return location.slice(hashIndex);
 }

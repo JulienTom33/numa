@@ -7,7 +7,9 @@ test.describe("Parcours MVP complet", () => {
   test("accueil, découverte, thème, horoscope, deux questions, inscription, migration et reconnexion", async ({
     page,
     browser,
+    baseURL,
   }) => {
+    if (!baseURL) throw new Error("baseURL indisponible");
     await completeOnboarding(page);
     await expect(page.locator("#today__title--greeting")).toHaveText("Bonjour Camille");
     await expect(page.locator("#horoscope__card--root")).toBeVisible();
@@ -39,6 +41,7 @@ test.describe("Parcours MVP complet", () => {
     await expect(page.locator("#discovery-mode-badge__badge--main")).toHaveCount(0);
 
     const context = await browser.newContext();
+    await context.addCookies([{ name: "sidera-cookie-consent", value: "accepted", url: baseURL }]);
     const returning = await context.newPage();
     await mockGeocode(returning);
     await returning.goto("/");
