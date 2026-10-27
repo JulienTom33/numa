@@ -224,3 +224,9 @@ Alternatives écartées : un unique fichier `CLAUDE.md` exhaustif — jugé moin
 Contexte : traiter plusieurs tickets en parallèle sans conflit ni dérive de qualité, avec une consommation de tokens maîtrisée (issues #155, #157, epic #145).
 Décision : orchestrateur Opus medium (`/orchestrate`) et workers Sonnet medium, 5 en parallèle maximum sur des fichiers disjoints ; reviewer unique `pr-reviewer` partagé local/CI, score sur 100, approbation à 80 sans bloquant ; jusqu'à 5 corrections automatiques, arrêt si le score stagne 2 tours ; le reviewer est lu depuis la branche de base ; merge toujours humain.
 Alternatives écartées : verdict binaire sans score (pas de mesure de progression) ; boucle de correction non bornée (coût et risque de dérive).
+
+## 2026-10-27 — Panne de la chaîne IA : 503 conservé
+
+Contexte : quand Mistral puis Groq échouent, la fonction `chat` répond `503 ai_unavailable` (issue #26). Une réponse dégradée (texte générique ou lecture pré-calculée) a été envisagée.
+Décision : garder le `503 ai_unavailable`, traduit côté client par un message clair invitant à réessayer ; la réservation de question est libérée (`release_question`), donc aucun quota n'est consommé sur une panne.
+Alternatives écartées : réponse dégradée générée sans IA (risque de lecture générique présentée comme personnalisée, contraire à la transparence de Sidéra) ; réponse mise en cache d'une question précédente (même risque, plus la fuite de données entre utilisateurs).
