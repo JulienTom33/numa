@@ -32,6 +32,7 @@ Configurés dans Settings → Secrets and variables → Actions (environnement `
 | `SSH_HOST` | IP ou hostname du VPS |
 | `SSH_USER` | Utilisateur de déploiement (`ubuntu`, avec accès Docker) |
 | `SSH_PRIVATE_KEY` | Clé privée SSH dédiée au déploiement (jamais celle d'un compte personnel) |
+| `SSH_KNOWN_HOSTS` | Ligne `known_hosts` épinglée du VPS (`ssh-keyscan -t ed25519 <hôte>`, empreinte vérifiée hors bande) : le déploiement refuse tout autre hôte |
 | `SITE_ADDRESS` | Domaine ou sous-domaine sslip.io servi par Caddy |
 | `VITE_SUPABASE_URL` | URL du projet Supabase (build-time, injectée dans le bundle) |
 
@@ -90,6 +91,9 @@ Si l'un des quatre manque pour `staging`, le job se termine sans déployer (aver
 
 - Logs applicatifs (Caddy) : `docker compose logs -f app` sur le serveur, ou fichier `access.log` dans le volume `caddy_data` (rotation automatique, 10 Mo × 5 fichiers).
 - Logs Docker : rotation configurée (`json-file`, 10 Mo × 3 fichiers) pour éviter la saturation disque.
+- Conservation : les journaux d'accès Caddy couvrent au plus environ 50 Mo (5 fichiers de 10 Mo), les logs Docker environ 30 Mo (3 fichiers de 10 Mo), soit quelques jours à quelques semaines selon le trafic. Ils contiennent des adresses IP : aucune conservation au-delà de la rotation.
+- Le conteneur tourne sans root (utilisateur `sidera`, uid 10001) ; un volume `caddy_data`/`caddy_config` créé avant ce changement doit être réassigné une fois : `docker run --rm -v numa_caddy_data:/data -v numa_caddy_config:/config alpine chown -R 10001:10001 /data /config`.
+- Healthcheck Docker : endpoint d'administration Caddy local (`127.0.0.1:2019`) ; état visible dans `docker compose ps` (`healthy`).
 - Redémarrage automatique du conteneur en cas de crash (`restart: unless-stopped`).
 - Redémarrage manuel : `cd /opt/numa && docker compose restart`.
 - Statut des conteneurs : `docker compose ps`.
