@@ -236,3 +236,9 @@ Alternatives écartées : réponse dégradée générée sans IA (risque de lect
 Contexte : timeouts, erreurs 4xx/5xx, quotas et logs sans données sensibles devaient être traités de la même façon pour tous les fournisseurs externes (issue #34).
 Décision : tout appel sortant des Edge Functions passe par `fetchExternal` (`supabase/functions/_shared/external.ts`) : timeout, classification des erreurs (4xx, 5xx, 429), retry borné aux erreurs transitoires, journalisation sans donnée personnelle, secret, URL, en-tête ni corps. Un `correlationId` est journalisé et renvoyé au client dans `error.correlationId`. La panne de la chaîne IA reste un `503 ai_unavailable`.
 Alternatives écartées : gestion d'erreurs propre à chaque fonction (comportements et logs divergents) ; réponse dégradée en cas de panne IA (voir l'entrée du 2026-10-27 sur le 503).
+
+## 2026-10-27 — Réglages Auth de production
+
+Contexte : `supabase/config.toml` n'est pas poussé en production, les réglages réels dépendent du dashboard (issue #185).
+Décision : mot de passe minimum 8 caractères dans `config.toml` ; en production, Site URL et redirections sans localhost, protection contre les mots de passe divulgués (dashboard uniquement, plan Pro requis), confirmation d'email activée et SMTP dédié avant l'ouverture publique. `enable_confirmations` reste à `false` en local pour les tests E2E. Checklist dans `docs/claude/supabase.md`.
+Alternatives écartées : confirmation d'email désactivée en production (comptes non vérifiés) ; SMTP Supabase par défaut en public (quota et délivrabilité insuffisants).
