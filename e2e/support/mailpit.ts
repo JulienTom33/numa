@@ -42,3 +42,13 @@ export async function waitForEmail(address: string): Promise<MailpitDetail> {
   const response = await fetch(`${MAILPIT_URL}/api/v1/message/${messageId}`);
   return (await response.json()) as MailpitDetail;
 }
+
+export async function resolveMagicLinkHash(message: MailpitDetail): Promise<string> {
+  const match = /https?:\/\/[^\s"'<>]+\/auth\/v1\/verify[^\s"'<>]*/.exec(message.Text + message.HTML);
+  if (!match) throw new Error("Lien magique introuvable dans l'email");
+  const response = await fetch(match[0].replace(/&amp;/g, "&"), { redirect: "manual" });
+  const location = response.headers.get("location") ?? "";
+  const hashIndex = location.indexOf("#");
+  if (hashIndex < 0) throw new Error("Redirection du lien magique sans jeton");
+  return location.slice(hashIndex);
+}
