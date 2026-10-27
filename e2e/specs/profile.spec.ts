@@ -35,6 +35,8 @@ test.describe("Profil", () => {
 
     await expect(page.locator("#profile-edit__callout--birth-warning")).toBeVisible();
     await page.locator("#profile-edit__button--save").click();
+    await expect(page.locator("#profile-edit__confirm--birth")).toBeVisible();
+    await page.locator("#profile-edit__button--confirm").click();
     await expect(page.locator("#profile__row--birth-date")).toContainText("1985");
   });
 

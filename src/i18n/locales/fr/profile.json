@@ -45,7 +45,16 @@
     "birthWarning": "Vos données de naissance vont changer : votre thème devra être recalculé et vos lectures peuvent évoluer.",
     "save": "Enregistrer",
     "saving": "Enregistrement…",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "confirm": {
+      "title": "Recalculer votre thème ?",
+      "message": "Modifier vos données de naissance remplace votre thème actuel. Il sera recalculé et vos prochaines lectures s'appuieront sur le nouveau thème.",
+      "accept": "Confirmer et recalculer",
+      "back": "Revenir"
+    }
+  },
+  "recalc": {
+    "failed": "Vos informations sont enregistrées, mais le recalcul de votre thème a échoué. Réessayez."
   },
   "dateParts": {
     "day": "Jour",
