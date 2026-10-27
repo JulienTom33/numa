@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { approximateTimeChart, completeChart, unknownTimeChart } from "../../chart/MyChart/myChartFixtures";
+import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
 import TodayScreen from "./TodayScreen";
 
 const meta = {
@@ -9,6 +10,7 @@ const meta = {
     status: "ready",
     data: completeChart,
     errorCode: null,
+    horoscope: { status: "ready", data: sampleHoroscope, errorCode: null, retry: () => undefined },
     isAnonymous: false,
     today: new Date("2026-10-24T10:00:00Z"),
     onRetry: () => undefined,
