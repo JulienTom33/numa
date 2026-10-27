@@ -1,0 +1,24 @@
+{
+  "title": "Mes conversations",
+  "loading": "Chargement de vos conversations…",
+  "retry": "Réessayer",
+  "untitled": "Conversation sans titre",
+  "list": {
+    "label": "Liste des conversations"
+  },
+  "empty": {
+    "title": "Aucune conversation pour l'instant",
+    "description": "Vos échanges avec Sidéra apparaîtront ici dès votre première question."
+  },
+  "detail": {
+    "loading": "Chargement de la conversation…",
+    "back": "Retour aux conversations",
+    "messages": "Messages de la conversation",
+    "empty": "Cette conversation ne contient aucun message."
+  },
+  "errors": {
+    "network_error": "Impossible de charger vos conversations. Vérifiez votre connexion puis réessayez.",
+    "conversation_not_found": "Cette conversation est introuvable.",
+    "internal_error": "Une erreur est survenue. Réessayez dans un instant."
+  }
+}
