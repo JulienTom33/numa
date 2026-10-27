@@ -6,6 +6,7 @@ import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper
 import { paths } from "../../../shared/navigation/routes/routes";
 import { completeChart } from "../../chart/MyChart/myChartFixtures";
 import { fetchMyChart } from "../../chart/skyChart/skyChart";
+import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
 import TodayFlow from "./TodayFlow";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
@@ -18,6 +19,11 @@ vi.mock("../../chart/natalChartSummary/natalChartSummary", async (importOriginal
 vi.mock("../../chart/skyChart/skyChart", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../chart/skyChart/skyChart")>()),
   fetchMyChart: vi.fn(),
+}));
+
+vi.mock("../horoscope/horoscope", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../horoscope/horoscope")>()),
+  fetchHoroscope: vi.fn().mockResolvedValue({ data: sampleHoroscope, error: null }),
 }));
 
 const anonymous = vi.hoisted(() => ({ value: false }));

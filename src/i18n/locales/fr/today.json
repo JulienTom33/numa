@@ -11,7 +11,6 @@
     "title": "Votre énergie du jour",
     "headline": "Le repère du jour : {{aspect}}.",
     "calm": "Le ciel est calme aujourd'hui : aucun lien serré avec votre Soleil, votre Lune ou votre Ascendant.",
-    "horoscopeSoon": "Horoscope du jour",
     "unavailable": "Les positions actuelles n'ont pas pu être chargées, la synthèse du jour est indisponible pour le moment."
   },
   "influences": {
@@ -31,6 +30,30 @@
     "moonSkipped": "Votre Lune natale n'est pas utilisée : son signe reste à confirmer.",
     "ascendantSkipped": "Sans heure de naissance, votre Ascendant n'est pas utilisé.",
     "unavailable": "Le ciel du jour n’est pas disponible : seules vos données natales sont connues pour le moment."
+  },
+  "horoscope": {
+    "title": "Votre horoscope du jour",
+    "loading": "Rédaction de votre horoscope…",
+    "sections": {
+      "general": "Général",
+      "relations": "Relations",
+      "work": "Travail",
+      "energy": "Énergie"
+    },
+    "why": {
+      "title": "Pourquoi cette lecture ?",
+      "intro": "Cette lecture s'appuie sur votre thème natal et sur les liens que les planètes d'aujourd'hui forment avec lui. Les repères retenus :",
+      "calm": "Aucun lien serré aujourd'hui : la lecture reste générale et s'appuie surtout sur votre thème natal.",
+      "disclaimer": "Texte rédigé par une IA à partir de ces seuls repères. Il décrit des tendances possibles, pas des prévisions, et ne remplace aucun avis médical, financier ou juridique."
+    },
+    "errors": {
+      "birth_data_not_found": "Votre horoscope a besoin de vos données de naissance, qui ne sont pas encore renseignées.",
+      "unauthenticated": "Votre session a expiré. Reconnectez-vous pour lire votre horoscope.",
+      "ai_unavailable": "La rédaction de votre horoscope est momentanément indisponible. Réessayez dans quelques instants.",
+      "rate_limit_exceeded": "Trop de demandes en peu de temps. Patientez quelques secondes puis réessayez.",
+      "ai_daily_limit_exceeded": "Le service est saturé pour aujourd'hui. Revenez demain.",
+      "network_error": "Votre horoscope n'a pas pu être chargé. Vérifiez votre connexion puis réessayez."
+    }
   },
   "chat": {
     "title": "Poser une question à Sidéra",
