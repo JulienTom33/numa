@@ -44,14 +44,29 @@ describe("ProfileEditForm", () => {
     expect(onSave).toHaveBeenCalledWith({ firstName: "Camille", language: "fr", tone: "direct", birth: null });
   });
 
-  it("avertit quand la naissance change et l'envoie à l'enregistrement", async () => {
+  it("avertit quand la naissance change et n'enregistre qu'après confirmation", async () => {
     const { onSave } = renderForm();
 
     await userEvent.selectOptions(screen.getByLabelText("Année"), "1985");
 
     expect(document.getElementById("profile-edit__callout--birth-warning")).toHaveTextContent("recalculé");
     await userEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
+    expect(onSave).not.toHaveBeenCalled();
+    expect(screen.getByRole("alertdialog")).toHaveTextContent("Recalculer votre thème");
+
+    await userEvent.click(screen.getByRole("button", { name: "Confirmer et recalculer" }));
     expect(onSave.mock.calls[0][0].birth.birthDate).toBe("1985-03-12");
+  });
+
+  it("permet de revenir sur la confirmation sans enregistrer", async () => {
+    const { onSave } = renderForm();
+
+    await userEvent.selectOptions(screen.getByLabelText("Année"), "1985");
+    await userEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
+    await userEvent.click(screen.getByRole("button", { name: "Revenir" }));
+
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(onSave).not.toHaveBeenCalled();
   });
 
   it("bloque l'enregistrement et affiche les erreurs de validation", async () => {

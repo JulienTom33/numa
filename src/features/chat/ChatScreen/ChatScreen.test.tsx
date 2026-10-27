@@ -44,8 +44,8 @@ function LocationProbe() {
 
 async function askTwice() {
   vi.mocked(askQuestion)
-    .mockResolvedValueOnce({ answer: "Première réponse", quota: { limit: 2, used: 1, remaining: 1 }, error: null })
-    .mockResolvedValueOnce({ answer: "Seconde réponse", quota: { limit: 2, used: 2, remaining: 0 }, error: null });
+    .mockResolvedValueOnce({ answer: "Première réponse", basis: null, quota: { limit: 2, used: 1, remaining: 1 }, error: null })
+    .mockResolvedValueOnce({ answer: "Seconde réponse", basis: null, quota: { limit: 2, used: 2, remaining: 0 }, error: null });
   await userEvent.type(screen.getByLabelText("Votre question"), "Une{Enter}");
   expect(await screen.findByText("Première réponse")).toBeInTheDocument();
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -63,6 +63,7 @@ describe("ChatScreen", () => {
   it("envoie une question au clavier et affiche la réponse", async () => {
     vi.mocked(askQuestion).mockResolvedValue({
       answer: "Réponse de Sidéra",
+      basis: null,
       quota: { limit: 2, used: 1, remaining: 1 },
       error: null,
     });
@@ -78,6 +79,7 @@ describe("ChatScreen", () => {
   it("restaure la saisie et affiche l'erreur quand le quota est dépassé", async () => {
     vi.mocked(askQuestion).mockResolvedValue({
       answer: null,
+      basis: null,
       quota: null,
       error: { code: "question_quota_exceeded" },
     });

@@ -82,11 +82,12 @@ export function createChatHandler(
         answer,
         factors,
       });
-      return { answer: answer.text, ...recorded };
+      return { answer: answer.text, basis: factors, ...recorded };
     });
 
     return json({
       answer: value.answer,
+      basis: value.basis,
       conversationId: value.conversationId,
       messageId: value.messageId,
       quota,

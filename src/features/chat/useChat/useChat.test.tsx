@@ -24,7 +24,7 @@ beforeEach(() => {
 
 describe("useChat", () => {
   it("ajoute la question puis la réponse", async () => {
-    ask.mockResolvedValue({ answer: "Réponse", quota: null, error: null });
+    ask.mockResolvedValue({ answer: "Réponse", basis: null, quota: null, error: null });
     const { result } = renderHook(() => useChat());
 
     let sent = false;
@@ -39,8 +39,28 @@ describe("useChat", () => {
     ]);
   });
 
+  it("rattache le fondement à la réponse et laisse la question sans fondement", async () => {
+    const basis = {
+      confidence: "high" as const,
+      houseSystem: "placidus",
+      bodies: [],
+      ascendant: null,
+      midheaven: null,
+      aspects: [],
+      warnings: [],
+    };
+    ask.mockResolvedValue({ answer: "Réponse", basis, quota: null, error: null });
+    const { result } = renderHook(() => useChat());
+
+    await act(async () => {
+      await result.current.send("Question");
+    });
+
+    expect(result.current.messages.map((message) => message.basis)).toEqual([undefined, basis]);
+  });
+
   it("retire la question et expose le code en cas d'erreur", async () => {
-    ask.mockResolvedValue({ answer: null, quota: null, error: { code: "provider_unavailable" } });
+    ask.mockResolvedValue({ answer: null, basis: null, quota: null, error: { code: "provider_unavailable" } });
     const { result } = renderHook(() => useChat());
 
     await act(async () => {

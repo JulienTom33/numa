@@ -44,6 +44,54 @@
     "continue": "Continuer sans compte",
     "closeLabel": "Fermer la fiche"
   },
+  "basis": {
+    "noChart": "Aucun thème natal n'était disponible : cette réponse ne s'appuie sur aucune donnée de votre profil.",
+    "intro": "Cette réponse s'appuie sur les éléments de votre thème de naissance listés ci-dessous.",
+    "period": "non disponible, cette lecture s'appuie sur votre thème de naissance et non sur des transits.",
+    "placementsTitle": "Positions utilisées",
+    "placement": "{{body}} en {{sign}}, à {{degree}}° du signe",
+    "placementHouse": "{{body}} en {{sign}}, à {{degree}}° du signe, maison {{house}}",
+    "placementRetrograde": "{{body}} en {{sign}}, à {{degree}}° du signe, rétrograde",
+    "placementHouseRetrograde": "{{body}} en {{sign}}, à {{degree}}° du signe, maison {{house}}, rétrograde",
+    "ascendant": "Ascendant en {{sign}}, à {{degree}}° du signe",
+    "midheaven": "Milieu du ciel en {{sign}}, à {{degree}}° du signe",
+    "anglesUnavailable": "Ascendant et Milieu du ciel : non disponibles, l'heure de naissance est inconnue ou insuffisante.",
+    "housesUnavailable": "Maisons : non disponibles pour ce thème.",
+    "aspectsTitle": "Aspects utilisés",
+    "aspectsEmpty": "Aucun aspect n'a été retenu pour cette réponse.",
+    "aspect": "{{bodyA}} et {{bodyB}} en {{type}} (écart de {{orb}}°). {{meaning}}",
+    "aspectTypes": {
+      "conjunction": "conjonction",
+      "sextile": "sextile",
+      "square": "carré",
+      "trine": "trigone",
+      "opposition": "opposition"
+    },
+    "aspectMeanings": {
+      "conjunction": "Les deux astres sont très proches : leurs thèmes se mêlent.",
+      "sextile": "Les deux astres s'entendent plutôt bien : une facilité possible.",
+      "square": "Les deux astres se heurtent : une tension qui peut stimuler.",
+      "trine": "Les deux astres s'accordent : une fluidité naturelle.",
+      "opposition": "Les deux astres se font face : un équilibre à trouver."
+    },
+    "glossary": "Le degré situe l'astre dans son signe (de 0 à 30°). L'écart indique la précision de l'aspect : plus il est petit, plus l'aspect est marqué.",
+    "confidence": "Fiabilité du calcul : {{level}}.",
+    "confidenceLevels": {
+      "high": "élevée",
+      "medium": "moyenne",
+      "low": "faible"
+    },
+    "warningsTitle": "Points d'incertitude",
+    "warnings": {
+      "unknown_time": "L'heure de naissance est inconnue : l'ascendant et les maisons ne sont pas calculés.",
+      "approximate_time": "L'heure de naissance est approximative : l'ascendant et les maisons peuvent être décalés.",
+      "ambiguous_local_time": "L'heure locale de naissance est ambiguë (changement d'heure) : l'ascendant peut être incertain.",
+      "nonexistent_local_time": "L'heure locale de naissance n'a pas existé (changement d'heure) : l'ascendant peut être incertain.",
+      "local_mean_time": "L'heure légale de l'époque n'était pas connue : l'heure solaire locale a été utilisée.",
+      "polar_fallback": "Le système de maisons Porphyre a remplacé Placidus, non calculable à cette latitude.",
+      "moon_sign_uncertain": "Le signe de la Lune est incertain : elle change de signe ce jour-là."
+    }
+  },
   "error": {
     "title": "Votre question n'a pas pu être envoyée"
   }

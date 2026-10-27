@@ -28,7 +28,8 @@ const defaultPlaceSearch = toPlaceSearch(searchPlaces);
 function LoadedProfile({ profile, email, search }: LoadedProps) {
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
-  const { data: chart } = useMyChart();
+  const { t } = useTranslation("profile");
+  const { data: chart, status: chartStatus, retry: retryChart } = useMyChart();
   const { save, saving, errorCode, reset } = useSaveProfile(profile);
 
   const handleSave = (update: ProfileUpdate) => {
@@ -58,17 +59,29 @@ function LoadedProfile({ profile, email, search }: LoadedProps) {
   }
 
   return (
-    <ProfileScreen
-      profile={profile}
-      email={email}
-      sun={chart?.summary.sun?.sign ?? null}
-      ascendant={chart?.summary.ascendant?.sign ?? null}
-      saved={saved}
-      onEdit={() => {
-        setSaved(false);
-        setEditing(true);
-      }}
-    />
+    <div className="flex w-full flex-col gap-4">
+      {chartStatus === "error" && (
+        <div id="profile__container--recalc-error" className="flex flex-col gap-3">
+          <Callout id="profile__callout--recalc-error" tone="error">
+            {t("recalc.failed")}
+          </Callout>
+          <Button id="profile__button--recalc-retry" variant="outline" onClick={retryChart}>
+            {t("retry")}
+          </Button>
+        </div>
+      )}
+      <ProfileScreen
+        profile={profile}
+        email={email}
+        sun={chart?.summary.sun?.sign ?? null}
+        ascendant={chart?.summary.ascendant?.sign ?? null}
+        saved={saved}
+        onEdit={() => {
+          setSaved(false);
+          setEditing(true);
+        }}
+      />
+    </div>
   );
 }
 
