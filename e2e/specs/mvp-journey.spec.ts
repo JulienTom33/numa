@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../support/test";
 import { completeOnboarding } from "../support/discovery";
 import { mockGeocode } from "../support/geocode";
 import { resolveMagicLinkHash, uniqueEmail, waitForEmail } from "../support/mailpit";

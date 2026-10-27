@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../support/test";
 import { BORDEAUX, mockGeocode, mockGeocodeUnavailable } from "../support/geocode";
 
 test.describe("Onboarding : recherche de ville indisponible", () => {

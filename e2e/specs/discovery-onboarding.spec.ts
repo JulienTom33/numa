@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../support/test";
 import { completeOnboarding, fillOnboarding, startDiscovery } from "../support/discovery";
 
 test.describe("Découvrir sans compte, onboarding et résumé du thème", () => {

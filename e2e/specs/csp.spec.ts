@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../support/test";
 import { loadSupabaseEnv } from "../support/env";
 
 function loadCaddyCsp(supabaseUrl: string): string {
