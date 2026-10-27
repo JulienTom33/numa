@@ -46,6 +46,7 @@ function ProfileEditForm({ profile, search, saving, errorCode, onSave, onCancel,
   const { t: tOnboarding } = useTranslation("onboarding");
   const [draft, setDraft] = useState<ProfileDraft>(() => toProfileDraft(profile));
   const [errors, setErrors] = useState<ProfileFieldErrors | null>(null);
+  const [pending, setPending] = useState<ProfileUpdate | null>(null);
 
   const patch = (changes: Partial<ProfileDraft>) => setDraft((current) => ({ ...current, ...changes }));
   const birthChanged = hasBirthChanged(profile, draft);
@@ -54,7 +55,13 @@ function ProfileEditForm({ profile, search, saving, errorCode, onSave, onCancel,
     event.preventDefault();
     const result = validateProfileDraft(profile, draft, today);
     setErrors(result.errors);
-    if (result.update) onSave(result.update);
+    if (!result.update) return;
+    if (result.update.birth !== null) setPending(result.update);
+    else onSave(result.update);
+  };
+
+  const handleConfirm = () => {
+    if (pending) onSave(pending);
   };
 
   const languageOptions = PROFILE_LANGUAGES.map((language) => ({ value: language, label: t(`languages.${language}`) }));
@@ -141,11 +148,47 @@ function ProfileEditForm({ profile, search, saving, errorCode, onSave, onCancel,
           {t(`errors.${errorCode}`)}
         </Callout>
       )}
+      {pending && (
+        <div
+          id="profile-edit__confirm--birth"
+          role="alertdialog"
+          aria-labelledby="profile-edit__confirm-title--birth"
+          aria-describedby="profile-edit__confirm-text--birth"
+          className="flex flex-col gap-3 rounded-card border border-line bg-white p-4"
+        >
+          <h3 id="profile-edit__confirm-title--birth" className="font-display text-sm font-bold text-ink">
+            {t("edit.confirm.title")}
+          </h3>
+          <p id="profile-edit__confirm-text--birth" className="text-sm text-ink-secondary">
+            {t("edit.confirm.message")}
+          </p>
+          <div className="flex flex-col gap-3 sm:flex-row-reverse">
+            <Button
+              id="profile-edit__button--confirm"
+              loading={saving}
+              loadingLabel={t("edit.saving")}
+              onClick={handleConfirm}
+              className="sm:flex-1"
+            >
+              {t("edit.confirm.accept")}
+            </Button>
+            <Button
+              id="profile-edit__button--confirm-back"
+              variant="outline"
+              onClick={() => setPending(null)}
+              className="sm:flex-1"
+            >
+              {t("edit.confirm.back")}
+            </Button>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col gap-3 sm:flex-row-reverse">
         <Button
           id="profile-edit__button--save"
           type="submit"
-          loading={saving}
+          disabled={pending !== null}
+          loading={saving && pending === null}
           loadingLabel={t("edit.saving")}
           className="sm:flex-1"
         >

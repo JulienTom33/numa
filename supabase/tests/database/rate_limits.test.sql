@@ -10,7 +10,10 @@ select plan(12);
 
 select has_table('public', 'rate_limits', 'rate_limits: la table existe');
 
-select row_security_is_enabled('public', 'rate_limits', 'rate_limits: RLS activée');
+select ok(
+  (select relrowsecurity from pg_class where oid = 'public.rate_limits'::regclass),
+  'rate_limits: RLS activée'
+);
 
 select is(
   public.consume_rate_limit('test:a', 2, 60), true,
