@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { approximateTimeChart, completeChart, unknownTimeChart } from "../../chart/MyChart/myChartFixtures";
 import type { MyChartData } from "../../chart/skyChart/skyChart";
 import type { MyChartStatus } from "../../chart/useMyChart/useMyChart";
+import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
 import TodayScreen from "./TodayScreen";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
@@ -26,6 +27,7 @@ function renderScreen({ status = "ready", data = completeChart, isAnonymous = fa
       status={status}
       data={data}
       errorCode={status === "error" ? "network_error" : null}
+      horoscope={{ status: "ready", data: sampleHoroscope, errorCode: null, retry: handlers.onRetry }}
       isAnonymous={isAnonymous}
       today={new Date("2026-10-24T10:00:00Z")}
       {...handlers}
@@ -44,7 +46,8 @@ describe("TodayScreen", () => {
     expect(document.getElementById("today__text--influence-relations")).toHaveTextContent("Forte");
     expect(document.getElementById("today__text--influence-work")).toHaveTextContent("Modérée");
     expect(document.getElementById("today__text--sources")).toHaveTextContent("16 octobre 2026");
-    expect(document.getElementById("today__badge--horoscope-soon")).toBeInTheDocument();
+    expect(document.getElementById("horoscope__text--general")).toHaveTextContent("La journée peut inviter");
+    expect(document.getElementById("horoscope__button--why")).toBeInTheDocument();
   });
 
   it("masque la pastille découverte quand l'utilisateur est connecté", () => {
