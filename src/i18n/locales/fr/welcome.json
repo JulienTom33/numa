@@ -12,9 +12,9 @@
   },
   "discoveryMode": "Mode découverte",
   "about": {
-    "title": "Qui est Numa ?",
+    "title": "Qui est Sidéra ?",
     "closeLabel": "Fermer la fiche",
-    "intro": "Numa lit votre thème astral à partir de votre date, de votre heure et de votre lieu de naissance, puis vous explique ce qu'il dit, sans jargon.",
+    "intro": "Sidéra lit votre thème astral à partir de votre date, de votre heure et de votre lieu de naissance, puis vous explique ce qu'il dit, sans jargon.",
     "approach": "Chaque lecture montre d'où elle vient et reste nuancée : l'astrologie propose des pistes de réflexion, jamais des certitudes."
   }
 }

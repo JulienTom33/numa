@@ -7,21 +7,21 @@ describe("Logo", () => {
   it("renders the wordmark with a decorative mark", () => {
     const { container } = render(<Logo id="test__logo--main" />);
 
-    expect(screen.getByText("Numa")).toBeInTheDocument();
+    expect(screen.getByText("Sidéra")).toBeInTheDocument();
     expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
   });
 
   it("exposes the mark as an image when the wordmark is hidden", () => {
     render(<Logo id="test__logo--main" showWordmark={false} />);
 
-    expect(screen.getByRole("img", { name: "Numa" })).toBeInTheDocument();
-    expect(screen.queryByText("Numa")).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Sidéra" })).toBeInTheDocument();
+    expect(screen.queryByText("Sidéra")).not.toBeInTheDocument();
   });
 
   it("makes the wordmark a button opening a dialog when clickable", async () => {
     const onWordmarkClick = vi.fn();
     render(<Logo id="test__logo--main" onWordmarkClick={onWordmarkClick} />);
-    const wordmark = screen.getByRole("button", { name: "Numa" });
+    const wordmark = screen.getByRole("button", { name: "Sidéra" });
 
     await userEvent.click(wordmark);
 

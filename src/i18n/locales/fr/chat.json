@@ -1,7 +1,7 @@
 {
   "intro": {
-    "title": "Posez votre question à Numa",
-    "description": "Numa répond à partir de votre thème, avec nuance. Choisissez une suggestion ou écrivez la vôtre."
+    "title": "Posez votre question à Sidéra",
+    "description": "Sidéra répond à partir de votre thème, avec nuance. Choisissez une suggestion ou écrivez la vôtre."
   },
   "suggestions": {
     "label": "Suggestions de questions",
@@ -19,7 +19,7 @@
     "unavailable": "Profil analysé : en cours de chargement"
   },
   "messages": {
-    "label": "Conversation avec Numa"
+    "label": "Conversation avec Sidéra"
   },
   "quota": {
     "remaining_one": "{{count}} question gratuite restante",
@@ -31,11 +31,11 @@
   },
   "signupPrompt": {
     "title": "Gardez vos lectures avec vous",
-    "intro": "Vous avez reçu deux réponses de Numa. Avec un compte :",
+    "intro": "Vous avez reçu deux réponses de Sidéra. Avec un compte :",
     "benefits": {
       "history": "retrouvez vos conversations et vos lectures",
       "chart": "conservez votre thème et vos préférences",
-      "devices": "accédez à Numa depuis tous vos appareils"
+      "devices": "accédez à Sidéra depuis tous vos appareils"
     },
     "reassurance": "Sans compte, votre session reste active : vous pouvez continuer à explorer.",
     "signUp": "Créer un compte",

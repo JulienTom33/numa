@@ -14,12 +14,12 @@ describe("EmptyState", () => {
       <EmptyState
         id="test__empty--history"
         title="Aucune conversation"
-        description="Vos échanges avec Numa apparaîtront ici."
+        description="Vos échanges avec Sidéra apparaîtront ici."
         action={<button type="button">Poser une question</button>}
       />,
     );
 
-    expect(screen.getByText("Vos échanges avec Numa apparaîtront ici.")).toBeInTheDocument();
+    expect(screen.getByText("Vos échanges avec Sidéra apparaîtront ici.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Poser une question" })).toBeInTheDocument();
   });
 

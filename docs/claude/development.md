@@ -60,7 +60,7 @@ Tests de non-régression de bout en bout, dans `e2e/` (hors `src/`, ignoré par 
 - `useEffect`/`useCallback`/`useMemo` : dependency arrays complètes et exactes.
 - Pas de duplication évitable ; pas d'abstraction créée avant qu'un second usage réel existe.
 - Pas de code mort.
-- **Aucun commentaire dans le code, JSDoc compris** : ni `//`, ni `/* */`, ni `/** */`, ni `{/* */}`. Commentaires libres uniquement dans les fichiers de test (`*.test.ts(x)`, `src/test/**`). Le nom du code doit suffire ; un « pourquoi » non évident va dans la PR ou le `decision-log.md`. Seules les directives techniques sont tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). S'applique aussi au code Deno de `supabase/functions/`. La règle ESLint locale `numa/no-comments` tolère encore les JSDoc de fonction exportée : elle sera durcie avec le retrait des commentaires existants (#134) ; en attendant, n'en ajouter aucun.
+- **Aucun commentaire dans le code, JSDoc compris** : ni `//`, ni `/* */`, ni `/** */`, ni `{/* */}`. Commentaires libres uniquement dans les fichiers de test (`*.test.ts(x)`, `src/test/**`). Le nom du code doit suffire ; un « pourquoi » non évident va dans la PR ou le `decision-log.md`. Seules les directives techniques sont tolérées (`/// <reference …>`, `eslint-disable…`, `@ts-expect-error`). S'applique aussi au code Deno de `supabase/functions/`. La règle ESLint locale `sidera/no-comments` tolère encore les JSDoc de fonction exportée : elle sera durcie avec le retrait des commentaires existants (#134) ; en attendant, n'en ajouter aucun.
 - Taille : fichier ≤ 300 lignes (ESLint `max-lines`, erreur), fonction ≤ 60 lignes et complexité ≤ 12 (avertissements, à résorber progressivement). `import type` obligatoire pour les imports de types.
 - **Aucun `console.log`** dans le code poussé. Bloqué par ESLint (`no-console`).
 
@@ -74,7 +74,7 @@ Tout élément significatif (conteneur, titre, champ, bouton, lien, item de list
 
 ## Design system
 
-- Tailwind CSS 4, configuration CSS-first : plugin Vite `@tailwindcss/vite` (pas de PostCSS ni de `tailwind.config.ts`). Les tokens de la maquette (couleurs, typographie, rayons, `max-w-app`) sont déclarés une seule fois dans le bloc `@theme` de `src/index.css`. `--color-*: initial` retire la palette Tailwind par défaut : seules les couleurs Numa existent. Aucune couleur en dur (`bg-[#…]`).
+- Tailwind CSS 4, configuration CSS-first : plugin Vite `@tailwindcss/vite` (pas de PostCSS ni de `tailwind.config.ts`). Les tokens de la maquette (couleurs, typographie, rayons, `max-w-app`) sont déclarés une seule fois dans le bloc `@theme` de `src/index.css`. `--color-*: initial` retire la palette Tailwind par défaut : seules les couleurs Sidéra existent. Aucune couleur en dur (`bg-[#…]`).
 - Fichiers scannés : listés explicitement par `@source` dans `src/index.css` (`index.html`, `src/**/*.{ts,tsx,mdx}`, `.storybook/**/*.{ts,tsx}`). Un nouveau dossier contenant des classes doit y être ajouté.
 - Nommage v4 : `rounded-sm` (4 px) et `rounded-xs` (2 px), `shadow-sm` (ombre légère), `outline-hidden` (et non `outline-none`) pour masquer l'outline au focus. `ring-*` s'accompagne toujours d'une couleur (`ring-violet/30`) : la couleur par défaut est `currentColor`. `hover:` s'applique à tout survol (variante redéfinie, comme en v3).
 - Les écrans suivent la maquette Claude Design (`Astraia.dc.html`) ; chaque écran a son ticket `[Design]`. Correspondance écran → ticket → composants, états et responsive : `docs/design/handoff.md`.

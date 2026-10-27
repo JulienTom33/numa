@@ -9,7 +9,7 @@ const meta = {
   args: {
     id: "storybook__empty--history",
     title: "Aucune conversation",
-    description: "Vos échanges avec Numa apparaîtront ici.",
+    description: "Vos échanges avec Sidéra apparaîtront ici.",
     icon: "history",
   },
   decorators: [
@@ -30,8 +30,8 @@ export const ChatWelcome: Story = {
   args: {
     id: "storybook__empty--chat",
     icon: "consult",
-    title: "Posez votre question à Numa",
-    description: "Numa répond à partir de votre thème et des transits du moment.",
+    title: "Posez votre question à Sidéra",
+    description: "Sidéra répond à partir de votre thème et des transits du moment.",
   },
 };
 

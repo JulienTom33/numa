@@ -9,7 +9,7 @@ describe("ChatMessageList", () => {
         sending={false}
         messages={[
           { id: "m1", author: "user", text: "Bonjour" },
-          { id: "m2", author: "numa", text: "Salutations" },
+          { id: "m2", author: "sidera", text: "Salutations" },
         ]}
       />,
     );
@@ -21,6 +21,6 @@ describe("ChatMessageList", () => {
 
   it("affiche l'indicateur d'écriture pendant l'envoi", () => {
     render(<ChatMessageList messages={[]} sending />);
-    expect(screen.getByText("Numa écrit…")).toBeInTheDocument();
+    expect(screen.getByText("Sidéra écrit…")).toBeInTheDocument();
   });
 });

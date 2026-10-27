@@ -39,8 +39,8 @@ describe("pickTokens", () => {
 });
 
 describe("colors", () => {
-  // Garde-fou : la palette Numa est la seule source des pages Fondations.
-  it("exposes exactly the Numa palette declared in src/index.css", () => {
+  // Garde-fou : la palette Sidéra est la seule source des pages Fondations.
+  it("exposes exactly the Sidéra palette declared in src/index.css", () => {
     expect(Object.keys(colors)).toHaveLength(26);
     expect(colors.coral).toBe("#F27D72");
     expect(colors["violet-ink"]).toBe("#6E5A99");

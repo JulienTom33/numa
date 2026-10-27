@@ -38,7 +38,7 @@ export const Success: Story = {
   args: {
     messages: [
       { id: "m1", author: "user", text: "Comment se présente ma semaine ?" },
-      { id: "m2", author: "numa", text: "Cette semaine invite à ralentir, sans certitude : à vous d'évaluer." },
+      { id: "m2", author: "sidera", text: "Cette semaine invite à ralentir, sans certitude : à vous d'évaluer." },
     ],
   },
 };

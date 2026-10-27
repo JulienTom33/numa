@@ -44,7 +44,7 @@ export const ProfileSection: Story = {
           <ListRow
             {...args}
             id="storybook__row--trust"
-            label="Comment Numa construit ses lectures"
+            label="Comment Sidéra construit ses lectures"
           />
         </li>
       </ul>

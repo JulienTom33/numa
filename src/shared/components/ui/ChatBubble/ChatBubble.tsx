@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { cx } from "../../../cx/cx";
 import Disclosure from "../Disclosure/Disclosure";
 
-export type ChatAuthor = "user" | "numa";
+export type ChatAuthor = "user" | "sidera";
 
 interface Props {
   id: string;
@@ -17,7 +17,7 @@ interface Props {
 
 const bubbleClasses: Record<ChatAuthor, string> = {
   user: "ml-auto rounded-br-md bg-ink text-white",
-  numa: "mr-auto rounded-bl-md border border-line bg-white text-ink",
+  sidera: "mr-auto rounded-bl-md border border-line bg-white text-ink",
 };
 
 const typingDotDelays = [

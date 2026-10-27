@@ -6,7 +6,7 @@ const meta = {
   component: ChatBubble,
   args: {
     id: "storybook__bubble--answer",
-    author: "numa",
+    author: "sidera",
     children:
       "Cette semaine invite à ralentir : la Lune traverse votre maison IV, un bon moment pour vous recentrer sur vos proches.",
     period: "du 14 au 20 octobre",
@@ -24,7 +24,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const NumaAnswer: Story = {};
+export const SideraAnswer: Story = {};
 
 export const UserQuestion: Story = {
   args: {
@@ -46,7 +46,7 @@ export const Conversation: Story = {
       </ChatBubble>
       <ChatBubble
         id="storybook__bubble--2"
-        author="numa"
+        author="sidera"
         period="octobre à décembre"
         why="Jupiter en transit dans votre maison X."
       >
@@ -56,7 +56,7 @@ export const Conversation: Story = {
       <ChatBubble id="storybook__bubble--3" author="user">
         Et pour ma vie amoureuse ?
       </ChatBubble>
-      <ChatBubble id="storybook__bubble--4" author="numa" pending />
+      <ChatBubble id="storybook__bubble--4" author="sidera" pending />
     </div>
   ),
 };

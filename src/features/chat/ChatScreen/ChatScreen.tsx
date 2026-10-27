@@ -29,7 +29,7 @@ function ChatScreen() {
     [send],
   );
 
-  const answerCount = messages.filter((message) => message.author === "numa").length;
+  const answerCount = messages.filter((message) => message.author === "sidera").length;
   const promptOpen = isAnonymous && !promptDismissed && !sending && answerCount >= SIGNUP_PROMPT_ANSWERS;
 
   return (

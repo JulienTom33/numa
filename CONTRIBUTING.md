@@ -1,4 +1,4 @@
-# Guide de contribution — Numa
+# Guide de contribution — Sidéra
 
 Ce guide permet à un·e contributeur·rice de comprendre le projet, l'installer et proposer des modifications rapidement.
 

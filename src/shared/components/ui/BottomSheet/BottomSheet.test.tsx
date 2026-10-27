@@ -14,14 +14,14 @@ function Harness({ onClose = vi.fn() }: { onClose?: () => void }) {
       <BottomSheet
         id="test__sheet--about"
         open={open}
-        title="Qui est Numa ?"
+        title="Qui est Sidéra ?"
         onClose={() => {
           onClose();
           setOpen(false);
         }}
         footer={<button type="button">Créer un compte</button>}
       >
-        Numa lit votre thème astral.
+        Sidéra lit votre thème astral.
       </BottomSheet>
     </>
   );
@@ -43,10 +43,10 @@ describe("BottomSheet", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Ouvrir" }));
 
-    const dialog = screen.getByRole("dialog", { name: "Qui est Numa ?" });
+    const dialog = screen.getByRole("dialog", { name: "Qui est Sidéra ?" });
     expect(dialog).toHaveAttribute("aria-modal", "true");
     expect(screen.getByRole("button", { name: "Fermer" })).toHaveFocus();
-    expect(screen.getByText("Numa lit votre thème astral.")).toBeInTheDocument();
+    expect(screen.getByText("Sidéra lit votre thème astral.")).toBeInTheDocument();
   });
 
   it("closes with the close button and restores focus to the trigger", async () => {

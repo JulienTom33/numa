@@ -162,7 +162,7 @@ select results_eq(
 -- Rôle Postgres anon (appel API non authentifié, sans session). Selon
 -- l'environnement, l'accès est bloqué au niveau GRANT (permission denied)
 -- ou laissé à RLS ; les deux sont acceptés par visible_count(). Les
--- "sessions anonymes" Numa (découverte sans compte) s'authentifient avec
+-- "sessions anonymes" Sidéra (découverte sans compte) s'authentifient avec
 -- le rôle authenticated (auth.users.is_anonymous = true) et sont déjà
 -- couvertes par les policies testées ci-dessus (User A / User B).
 reset role;

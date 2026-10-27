@@ -50,7 +50,7 @@ export function useChat(): UseChatResult {
         return false;
       }
       const answer = result.answer;
-      setMessages((current) => [...current, { id: nextId(), author: "numa", text: answer }]);
+      setMessages((current) => [...current, { id: nextId(), author: "sidera", text: answer }]);
       return true;
     },
     [ask, nextId],

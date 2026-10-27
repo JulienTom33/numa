@@ -89,14 +89,14 @@ describe("AscendantStep", () => {
     expect(continueButton()).toBeDisabled();
   });
 
-  it("recommends letting Numa compute when the user does not know", async () => {
+  it("recommends letting Sidéra compute when the user does not know", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<Harness precise={false} computed={null} onChange={onChange} />);
 
     await user.click(screen.getByRole("radio", { name: "Non" }));
 
-    expect(screen.getByText(/nous recommandons de laisser Numa le calculer/)).toBeInTheDocument();
+    expect(screen.getByText(/nous recommandons de laisser Sidéra le calculer/)).toBeInTheDocument();
     expect(continueButton()).toBeEnabled();
     expect(onChange).toHaveBeenLastCalledWith({ source: "computed", declaredSign: null });
   });
@@ -122,7 +122,7 @@ describe("AscendantStep", () => {
     await user.click(screen.getByRole("radio", { name: "Oui" }));
     await user.click(screen.getByRole("radio", { name: "Scorpion" }));
 
-    expect(screen.queryByText(/Numa a calculé/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Sidéra a calculé/)).not.toBeInTheDocument();
     expect(continueButton()).toBeEnabled();
   });
 
@@ -134,7 +134,7 @@ describe("AscendantStep", () => {
     await user.click(screen.getByRole("radio", { name: "Oui" }));
     await user.click(screen.getByRole("radio", { name: "Lion" }));
 
-    expect(screen.getByText(/Numa a calculé Scorpion, alors que vous indiquez Lion/)).toBeInTheDocument();
+    expect(screen.getByText(/Sidéra a calculé Scorpion, alors que vous indiquez Lion/)).toBeInTheDocument();
     expect(continueButton()).toBeDisabled();
 
     await user.click(screen.getByRole("radio", { name: /Garder mon ascendant/ }));
@@ -174,7 +174,7 @@ describe("AscendantStep", () => {
     expect(screen.getByRole("radio", { name: "Lion" })).toBeChecked();
     expect(continueButton()).toBeEnabled();
 
-    await user.click(screen.getByRole("button", { name: "Revenir au calcul de Numa" }));
+    await user.click(screen.getByRole("button", { name: "Revenir au calcul de Sidéra" }));
 
     expect(screen.getByText("Scorpion à 14°")).toBeInTheDocument();
   });

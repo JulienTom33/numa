@@ -35,7 +35,7 @@ describe("useChat", () => {
     expect(sent).toBe(true);
     expect(result.current.messages.map((message) => [message.author, message.text])).toEqual([
       ["user", "Question"],
-      ["numa", "Réponse"],
+      ["sidera", "Réponse"],
     ]);
   });
 

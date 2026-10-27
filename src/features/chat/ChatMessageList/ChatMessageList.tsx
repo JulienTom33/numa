@@ -29,7 +29,7 @@ function ChatMessageList({ messages, sending }: Props) {
           {message.text}
         </ChatBubble>
       ))}
-      {sending && <ChatBubble id="chat-message-list__message--pending" author="numa" pending />}
+      {sending && <ChatBubble id="chat-message-list__message--pending" author="sidera" pending />}
       <div ref={endRef} />
     </div>
   );

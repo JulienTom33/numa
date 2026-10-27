@@ -1,6 +1,6 @@
 # Fournisseurs IA : quotas, coûts et stratégie (#51)
 
-Recherche préalable à #26 (intégration du fournisseur IA et du prompt Numa). Sources consultées le **2026-10-17**. Tarifs et limites changent souvent : toute valeur est à revérifier avant la mise en production. « Non vérifié » = introuvable ou non confirmé par une source officielle. Ce document n'est pas un avis juridique.
+Recherche préalable à #26 (intégration du fournisseur IA et du prompt Sidéra). Sources consultées le **2026-10-17**. Tarifs et limites changent souvent : toute valeur est à revérifier avant la mise en production. « Non vérifié » = introuvable ou non confirmé par une source officielle. Ce document n'est pas un avis juridique.
 
 ## Décision du mainteneur : gratuit uniquement
 
@@ -43,7 +43,7 @@ Chaîne : **Mistral (principal)**, **Groq `openai/gpt-oss-120b` (secours 1)**, *
 
 - Sur `429`, `5xx` ou timeout du principal : une seule nouvelle tentative si `retry-after` est présent et inférieur à 2 s, sinon bascule immédiate sur le secours suivant. Pas de répartition de charge au MVP (elle consommerait inutilement le quota du secours) ; la bascule intervient seulement sur erreur.
 - Un compteur de quota maison (jour courant, par fournisseur) est une amélioration optionnelle : avant d'atteindre la limite connue, passer directement au suivant. Les valeurs de limites viennent de la configuration, pas du code.
-- Secours 2 (sans IA) : message i18n expliquant que Numa est très sollicité et invitant à réessayer, avec rappel que la question n'est pas comptée. Un résumé statique du thème (déjà affiché ailleurs) reste disponible.
+- Secours 2 (sans IA) : message i18n expliquant que Sidéra est très sollicité et invitant à réessayer, avec rappel que la question n'est pas comptée. Un résumé statique du thème (déjà affiché ailleurs) reste disponible.
 - Chaque erreur fournisseur ou bascule libère la réservation (`release_question`) : la question n'est jamais décomptée si aucune réponse n'est livrée (cohérent avec #27). Une réponse livrée par n'importe quel maillon de la chaîne déclenche `commit_question`.
 - Disjoncteur en mémoire de quelques minutes après un `429` sans `retry-after` ou une indisponibilité répétée, pour éviter les appels voués à l'échec.
 - Aucun texte de réponse d'erreur en dur côté serveur : code stable (`ai_unavailable`), le front traduit via `t()`.

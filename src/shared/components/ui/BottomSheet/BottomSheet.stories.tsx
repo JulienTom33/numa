@@ -9,10 +9,10 @@ const meta = {
   args: {
     id: "storybook__sheet--about",
     open: true,
-    title: "Qui est Numa ?",
+    title: "Qui est Sidéra ?",
     onClose: () => undefined,
     children:
-      "Numa lit votre thème astral à partir de vos données de naissance et vous explique ce qu'il dit, sans certitude ni jargon.",
+      "Sidéra lit votre thème astral à partir de vos données de naissance et vous explique ce qu'il dit, sans certitude ni jargon.",
   },
   parameters: {
     layout: "fullscreen",

@@ -13,7 +13,7 @@ Conventions :
 - **Fournisseur retenu : Astronomy Engine** (`astronomy-engine`, MIT), exécuté localement dans une Edge Function.
 - Raisons :
   - gratuit et sans quota ;
-  - licence MIT, sans contrainte pour Numa ;
+  - licence MIT, sans contrainte pour Sidéra ;
   - aucune donnée de naissance envoyée à un tiers ;
   - JS pur, sans WASM ni fichier d'éphémérides ;
   - précision mesurée ≤ 3″ sur le Soleil et la Lune ;
@@ -30,7 +30,7 @@ La synthèse et l'analyse ci-dessous décrivent l'étude telle qu'elle a été s
 
 | | Recommandation initiale |
 |---|---|
-| **Principal (proposé, non retenu)** | **Swiss Ephemeris** (bibliothèque C de référence d'Astrodienst) via le portage WebAssembly `sweph-wasm`, exécuté dans une Edge Function. Écart mesuré avec la NASA/JPL : ≤ 0,3″ sur le Soleil et la Lune. Maisons Placidus et 24 autres systèmes. Aucun quota, aucune donnée envoyée à un tiers. **Condition : choisir la licence** (AGPL-3.0 pour tout Numa, ou licence professionnelle à 700 CHF). |
+| **Principal (proposé, non retenu)** | **Swiss Ephemeris** (bibliothèque C de référence d'Astrodienst) via le portage WebAssembly `sweph-wasm`, exécuté dans une Edge Function. Écart mesuré avec la NASA/JPL : ≤ 0,3″ sur le Soleil et la Lune. Maisons Placidus et 24 autres systèmes. Aucun quota, aucune donnée envoyée à un tiers. **Condition : choisir la licence** (AGPL-3.0 pour tout Sidéra, ou licence professionnelle à 700 CHF). |
 | **Secours (proposé, retenu comme principal)** | **Astronomy Engine** (MIT) : écart mesuré ≤ 3″ sur le Soleil et la Lune, ascendant et MC identiques à Swiss Ephemeris (≤ 0,1″). Ne calcule pas les maisons : seules les maisons égales et signe entier sont simples à coder ; Placidus serait à implémenter et à tester. C'est l'option à retenir si la licence de Swiss Ephemeris est refusée. |
 | **API hébergées** | Non recommandées pour le MVP : clé et facturation, envoi des données de naissance à un tiers hors UE, restrictions de stockage incompatibles avec #22 (Prokerala), conditions muettes sur le stockage (AstrologyAPI, FreeAstrologyAPI), fuseau passé en décalage numérique (FreeAstrologyAPI) donc historique à gérer de notre côté. Aucune n'a pu être testée sans clé. |
 
@@ -143,7 +143,7 @@ Degrés tronqués à la minute.
 
 ## Risques
 
-- **Licence (Swiss Ephemeris)** : l'AGPL s'applique au service en ligne ; utiliser `sweph-wasm` sous AGPL impose de publier l'ensemble de Numa sous AGPL-3.0 (ou licence compatible) et de fournir le code source aux utilisateurs du service. Le dépôt est public mais **sans licence** à ce jour. Sinon, licence professionnelle (700 CHF). Ne pas mettre en production avant la décision.
+- **Licence (Swiss Ephemeris)** : l'AGPL s'applique au service en ligne ; utiliser `sweph-wasm` sous AGPL impose de publier l'ensemble de Sidéra sous AGPL-3.0 (ou licence compatible) et de fournir le code source aux utilisateurs du service. Le dépôt est public mais **sans licence** à ce jour. Sinon, licence professionnelle (700 CHF). Ne pas mettre en production avant la décision.
 - **Licence (`sweph-wasm`)** : badge MIT trompeur dans le README, paquet maintenu par une seule personne ; épingler la version et vérifier le `LICENSE` à chaque mise à jour.
 - **Coût** : nul pour les bibliothèques (hors licence pro). Les API hébergées facturent à l'appel ; leurs quotas gratuits sont faibles (5 req/min chez Prokerala) et modifiables sans préavis.
 - **RGPD** : date, heure et lieu de naissance sont des données personnelles. Une API hébergée en Inde implique un transfert hors UE (localisation des serveurs : **non vérifiée**) à documenter, et un fournisseur à valider explicitement (`docs/claude/security.md`). Prokerala se réserve des droits de traitement et de stockage sur les données envoyées. Une bibliothèque embarquée supprime ce risque.

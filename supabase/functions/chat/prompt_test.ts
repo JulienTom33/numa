@@ -4,7 +4,7 @@ import { buildMessages, PROMPT_VERSION } from "./prompt.ts";
 import { chartFixture } from "./test_helpers.ts";
 
 Deno.test("the prompt is versioned", () => {
-  assertEquals(PROMPT_VERSION, "numa-chat-v2");
+  assertEquals(PROMPT_VERSION, "sidera-chat-v3");
 });
 
 Deno.test("the system prompt carries the editorial rules", () => {

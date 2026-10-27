@@ -10,8 +10,8 @@ function renderWelcome() {
 }
 
 async function openAbout() {
-  await userEvent.click(screen.getByRole("button", { name: "Numa" }));
-  return screen.getByRole("dialog", { name: "Qui est Numa ?" });
+  await userEvent.click(screen.getByRole("button", { name: "Sidéra" }));
+  return screen.getByRole("dialog", { name: "Qui est Sidéra ?" });
 }
 
 describe("Welcome", () => {
@@ -63,7 +63,7 @@ describe("Welcome", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Session anonyme non créée.");
   });
 
-  it("opens the « Qui est Numa ? » sheet from the wordmark", async () => {
+  it("opens the « Qui est Sidéra ? » sheet from the wordmark", async () => {
     renderWelcome();
 
     const dialog = await openAbout();
@@ -74,7 +74,7 @@ describe("Welcome", () => {
 
   it("closes the sheet with the « Fermer » button and restores focus", async () => {
     renderWelcome();
-    const wordmark = screen.getByRole("button", { name: "Numa" });
+    const wordmark = screen.getByRole("button", { name: "Sidéra" });
 
     await openAbout();
     await userEvent.click(screen.getByRole("button", { name: "Fermer" }));

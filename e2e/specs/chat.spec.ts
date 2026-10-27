@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { askQuestions, completeOnboarding } from "../support/discovery";
 
-test.describe("Chat Numa", () => {
+test.describe("Chat Sidéra", () => {
   test.beforeEach(async ({ page }) => {
     await completeOnboarding(page);
     await page.locator("#app__tabbar--main-consult").click();
