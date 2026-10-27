@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import { completeOnboarding } from "../support/discovery";
 
 test.describe("Cookies", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test("la bannière s'affiche au premier lancement, disparaît après un choix et ne revient pas", async ({ page }) => {
     await page.goto("/");
 

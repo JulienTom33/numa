@@ -20,6 +20,21 @@ export default defineConfig({
     : [["list"]],
   use: {
     baseURL: BASE_URL,
+    storageState: {
+      cookies: [
+        {
+          name: "sidera-cookie-consent",
+          value: "accepted",
+          domain: "127.0.0.1",
+          path: "/",
+          expires: -1,
+          httpOnly: false,
+          secure: false,
+          sameSite: "Lax",
+        },
+      ],
+      origins: [],
+    },
     locale: "fr-FR",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
