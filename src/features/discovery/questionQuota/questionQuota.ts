@@ -1,5 +1,6 @@
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import { supabase } from "../../../shared/supabaseClient/supabaseClient";
+import type { AnswerBasis } from "../../chat/answerBasis/answerBasis";
 
 const CHAT_FUNCTION = "chat";
 
@@ -27,6 +28,7 @@ export interface QuestionQuotaError {
 
 export interface AskQuestionResult {
   answer: string | null;
+  basis: AnswerBasis | null;
   quota: QuestionQuota | null;
   error: QuestionQuotaError | null;
 }
@@ -84,11 +86,12 @@ export async function fetchQuestionQuota(): Promise<{
 export async function askQuestion(question: string): Promise<AskQuestionResult> {
   const { data, error } = await supabase.functions.invoke<{
     answer: string;
+    basis?: AnswerBasis | null;
     quota: QuestionQuota | null;
   }>(CHAT_FUNCTION, { body: { question } });
 
   if (error || !data) {
-    return { answer: null, quota: null, error: await toQuotaError(error) };
+    return { answer: null, basis: null, quota: null, error: await toQuotaError(error) };
   }
-  return { answer: data.answer, quota: data.quota, error: null };
+  return { answer: data.answer, basis: data.basis ?? null, quota: data.quota, error: null };
 }

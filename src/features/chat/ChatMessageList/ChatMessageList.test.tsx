@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import ChatMessageList from "./ChatMessageList";
 
@@ -17,6 +18,25 @@ describe("ChatMessageList", () => {
     expect(screen.getByRole("log")).toHaveAttribute("aria-live", "polite");
     expect(document.getElementById("chat-message-list__message--m1")).toHaveTextContent("Bonjour");
     expect(document.getElementById("chat-message-list__message--m2")).toHaveTextContent("Salutations");
+  });
+
+  it("propose le fondement et la période seulement quand le fondement est connu", async () => {
+    render(
+      <ChatMessageList
+        sending={false}
+        messages={[
+          { id: "m1", author: "sidera", text: "Sans fondement" },
+          { id: "m2", author: "sidera", text: "Avec fondement", basis: null },
+        ]}
+      />,
+    );
+
+    expect(document.getElementById("chat-message-list__message--m1-why")).toBeNull();
+    const toggle = document.getElementById("chat-message-list__message--m2-why");
+    expect(toggle).toHaveTextContent("Pourquoi cette réponse ?");
+    expect(screen.getByText(/Période concernée/)).toBeInTheDocument();
+    await userEvent.click(toggle as HTMLElement);
+    expect(screen.getByText(/Aucun thème natal n'était disponible/)).toBeVisible();
   });
 
   it("affiche l'indicateur d'écriture pendant l'envoi", () => {

@@ -36,6 +36,7 @@ describe("useQuestionQuota", () => {
     });
     vi.mocked(askQuestion).mockResolvedValue({
       answer: "Réponse",
+      basis: null,
       quota: { limit: 2, used: 2, remaining: 0 },
       error: null,
     });
@@ -55,7 +56,7 @@ describe("useQuestionQuota", () => {
     vi.mocked(fetchQuestionQuota)
       .mockResolvedValueOnce({ quota: { limit: 2, used: 1, remaining: 1 }, error: null })
       .mockResolvedValueOnce({ quota: { limit: 2, used: 2, remaining: 0 }, error: null });
-    vi.mocked(askQuestion).mockResolvedValue({ answer: null, quota: null, error: EXCEEDED });
+    vi.mocked(askQuestion).mockResolvedValue({ answer: null, basis: null, quota: null, error: EXCEEDED });
     const { result } = renderHook(() => useQuestionQuota(), { wrapper: createQueryWrapper() });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
@@ -76,7 +77,7 @@ describe("useQuestionQuota", () => {
       error: null,
     });
     const providerError: QuestionQuotaError = { code: "provider_unavailable" };
-    vi.mocked(askQuestion).mockResolvedValue({ answer: null, quota: null, error: providerError });
+    vi.mocked(askQuestion).mockResolvedValue({ answer: null, basis: null, quota: null, error: providerError });
     const { result } = renderHook(() => useQuestionQuota(), { wrapper: createQueryWrapper() });
     await waitFor(() => expect(result.current.loading).toBe(false));
 
