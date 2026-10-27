@@ -45,8 +45,6 @@ test.describe("Parcours MVP complet", () => {
       await page.locator("#magic-link-request__button--send").click();
       await expect(page.locator("#migration__title--main")).toBeVisible();
 
-      await resolveMagicLinkHash(await waitForEmail(email));
-
       await page.locator("#migration__button--continue").click();
       await expect(page.locator("#app__shell--root")).toBeVisible();
       await expect(page.locator("#discovery-mode-badge__badge--main")).toHaveCount(0);
@@ -64,8 +62,7 @@ test.describe("Parcours MVP complet", () => {
       await returning.locator("#magic-link-request__button--send").click();
       await expect(returning.locator("#magic-link-confirmation__main--root")).toBeVisible();
 
-      // Le premier message est celui de l'inscription : attendre le second garantit un lien neuf.
-      const hash = await resolveMagicLinkHash(await waitForEmail(email, 2));
+      const hash = await resolveMagicLinkHash(await waitForEmail(email));
       await returning.goto(`/auth/callback${hash}`);
       await expect(returning.locator("#app__shell--root")).toBeVisible();
       await returning.locator("#app__tabbar--main-profile").click();
