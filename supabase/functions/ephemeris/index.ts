@@ -6,6 +6,7 @@ import { handleEphemeris } from "./ephemeris.ts";
 
 Deno.serve(
   createHandler({
+    functionName: "ephemeris",
     methods: ["GET"],
     allowedOrigins: parseAllowedOrigins(Deno.env.get("ALLOWED_ORIGINS")),
     verifyToken: verifySupabaseToken,

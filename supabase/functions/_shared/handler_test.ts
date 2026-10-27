@@ -9,6 +9,7 @@ const verifyToken: TokenVerifier = (token) =>
   Promise.resolve(token === "valid" ? { sub: "user-1", is_anonymous: true } : null);
 
 const handler = createHandler({
+  functionName: "test-fn",
   methods: ["POST"],
   allowedOrigins: [ORIGIN],
   verifyToken,
@@ -59,6 +60,7 @@ Deno.test("passes the authenticated caller to the handler and adds CORS headers"
 
 Deno.test("turns errors thrown by the handler into JSON responses", async () => {
   const failing = createHandler({
+    functionName: "test-fn",
     methods: ["POST"],
     allowedOrigins: [ORIGIN],
     verifyToken,

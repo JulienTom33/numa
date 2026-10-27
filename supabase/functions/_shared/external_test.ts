@@ -107,6 +107,14 @@ Deno.test("fetchExternal logs only service, kind and status", async () => {
         ),
       ExternalFailure,
     );
-    assertEquals(logged, [["external_failure", "svc", "http_error", 500]]);
+    assertEquals(logged.length, 1);
+    const entry = JSON.parse(String(logged[0][0]));
+    assertEquals(entry.event, "external_failure");
+    assertEquals(entry.provider_kind, "ai");
+    assertEquals(entry.service, "svc");
+    assertEquals(entry.kind, "http_error");
+    assertEquals(entry.status, 500);
+    assertEquals(typeof entry.latency_ms, "number");
+    assertEquals(JSON.stringify(entry).includes("lea@example.com"), false);
   });
 });

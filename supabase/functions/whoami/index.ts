@@ -5,6 +5,7 @@ import { verifySupabaseToken } from "../_shared/supabase.ts";
 
 Deno.serve(
   createHandler({
+    functionName: "whoami",
     methods: ["GET"],
     allowedOrigins: parseAllowedOrigins(Deno.env.get("ALLOWED_ORIGINS")),
     verifyToken: verifySupabaseToken,

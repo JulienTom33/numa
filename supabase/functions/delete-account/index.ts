@@ -12,6 +12,7 @@ const admin = createAdminClient();
 
 Deno.serve(
   createHandler({
+    functionName: "delete-account",
     methods: ["POST"],
     allowedOrigins: parseAllowedOrigins(Deno.env.get("ALLOWED_ORIGINS")),
     verifyToken: verifySupabaseToken,
