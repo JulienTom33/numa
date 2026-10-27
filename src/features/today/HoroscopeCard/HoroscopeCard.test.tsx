@@ -6,6 +6,8 @@ import type { LoadStatus } from "../../../shared/queryClient/loadStatus/loadStat
 import HoroscopeCard from "./HoroscopeCard";
 import { incompleteHoroscope, sampleHoroscope } from "./horoscopeFixtures";
 
+vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
+
 interface Options {
   status?: LoadStatus;
   data?: Horoscope | null;

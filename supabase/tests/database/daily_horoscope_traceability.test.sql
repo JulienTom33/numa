@@ -12,7 +12,7 @@ insert into public.birth_data (id, user_id, birth_date, birth_place, latitude, l
   ('a0000000-0000-0000-0000-00000000000a', 'aaaaaaaa-0000-0000-0000-00000000000a', '1990-01-01', 'Paris', 48.85, 2.35, 'Europe/Paris');
 
 insert into public.natal_charts (id, user_id, birth_data_id, chart_data, cache_key) values
-  ('c0000000-0000-0000-0000-00000000000a', 'aaaaaaaa-0000-0000-0000-00000000000a', 'a0000000-0000-0000-0000-00000000000a', '{}', repeat('j', 64));
+  ('c0000000-0000-0000-0000-00000000000a', 'aaaaaaaa-0000-0000-0000-00000000000a', 'a0000000-0000-0000-0000-00000000000a', '{}', repeat('a', 64));
 
 select has_column('public', 'daily_horoscopes', 'sections', 'daily_horoscopes.sections existe');
 select has_column('public', 'daily_horoscopes', 'factors', 'daily_horoscopes.factors existe');
