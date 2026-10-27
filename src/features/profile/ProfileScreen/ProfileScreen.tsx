@@ -5,6 +5,7 @@ import Avatar from "../../../shared/components/ui/Avatar/Avatar";
 import Badge from "../../../shared/components/ui/Badge/Badge";
 import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
+import ListRow from "../../../shared/components/ui/ListRow/ListRow";
 import type { ZodiacSign } from "../../../../shared/zodiac/zodiac.ts";
 import { maskEmail } from "../maskEmail/maskEmail";
 import type { ProfileData } from "../profileData/profileData";
@@ -16,6 +17,7 @@ interface Props {
   ascendant: ZodiacSign | null;
   saved: boolean;
   onEdit: () => void;
+  onOpenHistory: () => void;
 }
 
 interface RowProps {
@@ -33,7 +35,7 @@ function Row({ id, label, children }: RowProps) {
   );
 }
 
-function ProfileScreen({ profile, email, sun, ascendant, saved, onEdit }: Props) {
+function ProfileScreen({ profile, email, sun, ascendant, saved, onEdit, onOpenHistory }: Props) {
   const { t, i18n } = useTranslation("profile");
   const { t: tOnboarding } = useTranslation("onboarding");
   const { t: tAstrology } = useTranslation("astrology");
@@ -86,6 +88,9 @@ function ProfileScreen({ profile, email, sun, ascendant, saved, onEdit }: Props)
             <Row id="profile__row--tone" label={t("preferences.tone")}>{t(`tones.${profile.tone}`)}</Row>
           </dl>
         </section>
+      </div>
+      <div className="rounded-card border border-line bg-white">
+        <ListRow id="profile__row--history" label={t("history.open")} onClick={onOpenHistory} />
       </div>
       <Button id="profile__button--edit" variant="outline" fullWidth onClick={onEdit}>
         {t("edit.open")}

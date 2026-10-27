@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { Session } from "@supabase/supabase-js";
+import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppContext, type AppContextValue } from "../../../shared/navigation/appContext/appContext";
 import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
@@ -36,7 +37,12 @@ function renderFlow() {
   render(
     <Wrapper>
       <AppContext.Provider value={context}>
-        <ProfileFlow search={vi.fn().mockResolvedValue([])} />
+        <MemoryRouter>
+          <Routes>
+            <Route path="/" element={<ProfileFlow search={vi.fn().mockResolvedValue([])} />} />
+            <Route path="/historique" element={<p id="test__text--history">Historique</p>} />
+          </Routes>
+        </MemoryRouter>
       </AppContext.Provider>
     </Wrapper>,
   );
@@ -49,6 +55,12 @@ describe("ProfileFlow", () => {
     vi.mocked(saveProfile).mockClear();
     vi.mocked(fetchProfile).mockResolvedValue({ data: authenticatedProfile, error: null });
     vi.mocked(saveProfile).mockResolvedValue({ error: null });
+  });
+
+  it("ouvre l'historique depuis l'entrée Mes conversations", async () => {
+    renderFlow();
+    await userEvent.click(await screen.findByRole("button", { name: "Mes conversations" }));
+    expect(screen.getByText("Historique")).toBeInTheDocument();
   });
 
   it("charge puis affiche le profil", async () => {

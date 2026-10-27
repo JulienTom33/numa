@@ -34,6 +34,9 @@
     "balanced": "Équilibré",
     "direct": "Direct"
   },
+  "history": {
+    "open": "Mes conversations"
+  },
   "edit": {
     "open": "Modifier mon profil",
     "title": "Modifier mes informations",

@@ -6,6 +6,7 @@ import ProfileScreen from "./ProfileScreen";
 
 function renderScreen(overrides: Partial<Parameters<typeof ProfileScreen>[0]> = {}) {
   const onEdit = vi.fn();
+  const onOpenHistory = vi.fn();
   render(
     <ProfileScreen
       profile={authenticatedProfile}
@@ -14,10 +15,11 @@ function renderScreen(overrides: Partial<Parameters<typeof ProfileScreen>[0]> = 
       ascendant="taurus"
       saved={false}
       onEdit={onEdit}
+      onOpenHistory={onOpenHistory}
       {...overrides}
     />,
   );
-  return { onEdit };
+  return { onEdit, onOpenHistory };
 }
 
 describe("ProfileScreen", () => {
@@ -49,5 +51,11 @@ describe("ProfileScreen", () => {
     const { onEdit } = renderScreen();
     await userEvent.click(screen.getByRole("button", { name: "Modifier mon profil" }));
     expect(onEdit).toHaveBeenCalledTimes(1);
+  });
+
+  it("ouvre l'historique des conversations", async () => {
+    const { onOpenHistory } = renderScreen();
+    await userEvent.click(screen.getByRole("button", { name: "Mes conversations" }));
+    expect(onOpenHistory).toHaveBeenCalledTimes(1);
   });
 });

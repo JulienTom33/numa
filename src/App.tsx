@@ -1,4 +1,5 @@
 import { Navigate, type RouteObject } from "react-router";
+import HistoryFlow from "./features/history/HistoryFlow/HistoryFlow";
 import AppRoot from "./shared/navigation/AppRoot/AppRoot";
 import AuthCallbackRoute from "./shared/navigation/AuthCallbackRoute/AuthCallbackRoute";
 import AuthRoute from "./shared/navigation/AuthRoute/AuthRoute";
@@ -34,6 +35,7 @@ export const routes: RouteObject[] = [
                   { path: paths.consult, element: <TabScreen tab="consult" /> },
                   { path: paths.theme, element: <TabScreen tab="theme" /> },
                   { path: paths.profile, element: <TabScreen tab="profile" /> },
+                  { path: paths.history, element: <HistoryFlow /> },
                 ],
               },
             ],
