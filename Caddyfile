@@ -19,9 +19,12 @@
 			roll_keep 5
 		}
 		format filter {
-			request>remote_ip ip_mask 16 32
-			request>client_ip ip_mask 16 32
-			request>headers>X-Forwarded-For ip_mask 16 32
+			wrap json
+			fields {
+				request>remote_ip ip_mask 16 32
+				request>client_ip ip_mask 16 32
+				request>headers>X-Forwarded-For ip_mask 16 32
+			}
 		}
 	}
 }
