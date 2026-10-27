@@ -187,6 +187,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"weekly_horoscopes": {
+                  Row: {
+                    "ascendant_sign": string | null,"cache_key": string,"created_at": string,"engine_version": string,"factors": NonNullable<Json>,"model": string,"prompt_version": string,"provider": string,"sections": NonNullable<Json>,"sun_sign": string,"week_start": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ascendant_sign"?: string | null,"cache_key": string,"created_at"?: string,"engine_version": string,"factors": NonNullable<Json>,"model": string,"prompt_version": string,"provider": string,"sections": NonNullable<Json>,"sun_sign": string,"week_start": string
+                  }
+                  Update: {
+                    "ascendant_sign"?: string | null,"cache_key"?: string,"created_at"?: string,"engine_version"?: string,"factors"?: NonNullable<Json>,"model"?: string,"prompt_version"?: string,"provider"?: string,"sections"?: NonNullable<Json>,"sun_sign"?: string,"week_start"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {
