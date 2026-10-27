@@ -33,3 +33,28 @@
 - Tout appel sortant (fournisseurs IA, géocodage) passe par `fetchExternal` (`supabase/functions/_shared/external.ts`) : timeout obligatoire, erreurs 4xx/5xx/429 classées, retry borné aux erreurs transitoires (timeout, réseau, 5xx).
 - Les réponses d'erreur portent `error.correlationId`, également journalisé côté serveur ; le journal ne contient que service, nature de l'échec et statut (jamais URL, en-têtes, corps ni clé).
 - Une panne de la chaîne IA renvoie `503 ai_unavailable` (pas de réponse dégradée).
+
+## Tests d'isolation des données
+
+Objectif : aucun utilisateur n'accède aux données d'un autre (issue #35).
+
+Couverture SQL (pgTAP, `supabase/tests/database/`) :
+
+| Fichier | Couvre |
+|---|---|
+| `rls_policies.test.sql` | lecture isolée A/B sur les 7 tables historiques, quelques écritures croisées, rôle `anon` en lecture |
+| `cross_user_isolation.test.sql` | toutes les tables sensibles (profiles, birth_data, natal_charts, daily_horoscopes, conversations, messages, usage_counters, onboarding_drafts, question_reservations, rate_limits) : lecture par identifiant modifié, insert/update/delete au nom d'un autre utilisateur, transfert de ligne vers un autre `user_id`, jeton sans identité, rôle `anon` en écriture et en RPC, RLS activée sur toute table `public`, absence de policy `true`, vérification hors RLS que les données de B sont intactes |
+| `question_quota`, `chat_answer_traceability`, `daily_horoscope_traceability`, `natal_chart_cache`, `rate_limits`, `onboarding` | écritures réservées au serveur (`service_role`), fonctions `security definer` non exécutables par le client |
+
+Couverture Edge Functions (Deno) : `chat/userContext_test.ts` et `horoscope/userContext_test.ts` prouvent que les accès (quota, conversation, thème, horoscope, rate limit) n'utilisent que `caller.userId` issu du jeton, jamais un identifiant du corps ou de la requête ; `delete-account` est couverte par `deleteAccount_test.ts`.
+
+Lancer :
+
+```bash
+supabase start
+supabase db reset
+supabase test db
+cd supabase/functions && deno task test
+```
+
+Résultats : aucun accès croisé ne passe ; aucune faille RLS n'a été identifiée lors de cette revue du schéma. Les tests pgTAP sont exécutés par la CI ; mettre à jour cette section si un test révèle un écart.
