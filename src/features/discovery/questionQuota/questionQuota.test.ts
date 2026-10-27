@@ -52,10 +52,31 @@ describe("askQuestion", () => {
 
     expect(result).toEqual({
       answer: "Réponse",
+      basis: null,
       quota: { limit: 2, used: 2, remaining: 0 },
       error: null,
     });
     expect(supabase.functions.invoke).toHaveBeenCalledWith("chat", { body: { question: "Ma question" } });
+  });
+
+  it("exposes the astrological basis sent by the server", async () => {
+    const basis = {
+      confidence: "high",
+      houseSystem: "placidus",
+      bodies: [{ body: "sun", sign: "pisces", degreeInSign: 24.5, retrograde: false, house: 3 }],
+      ascendant: null,
+      midheaven: null,
+      aspects: [],
+      warnings: [],
+    };
+    vi.mocked(supabase.functions.invoke).mockResolvedValue({
+      data: { answer: "Réponse", basis, quota: QUOTA },
+      error: null,
+    } as never);
+
+    const result = await askQuestion("Ma question");
+
+    expect(result.basis).toEqual(basis);
   });
 
   it("exposes the quota-exceeded code sent by the server", async () => {
@@ -68,6 +89,7 @@ describe("askQuestion", () => {
 
     expect(result).toEqual({
       answer: null,
+      basis: null,
       quota: null,
       error: { code: "question_quota_exceeded" },
     });

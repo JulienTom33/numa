@@ -9,12 +9,17 @@ import { fetchProfile, saveProfile } from "../profileService/profileService";
 import ProfileFlow from "./ProfileFlow";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
+const chartMock = vi.hoisted(() => ({
+  status: "ready",
+  retry: vi.fn(),
+}));
+
 vi.mock("../../chart/useMyChart/useMyChart", () => ({
   useMyChart: () => ({
-    status: "ready",
+    status: chartMock.status,
     data: { summary: { sun: { sign: "pisces" }, ascendant: { sign: "taurus" } } },
-    errorCode: null,
-    retry: vi.fn(),
+    errorCode: chartMock.status === "error" ? "internal_error" : null,
+    retry: chartMock.retry,
   }),
 }));
 vi.mock("../profileService/profileService", async (importOriginal) => ({
@@ -39,6 +44,9 @@ function renderFlow() {
 
 describe("ProfileFlow", () => {
   beforeEach(() => {
+    chartMock.status = "ready";
+    chartMock.retry.mockClear();
+    vi.mocked(saveProfile).mockClear();
     vi.mocked(fetchProfile).mockResolvedValue({ data: authenticatedProfile, error: null });
     vi.mocked(saveProfile).mockResolvedValue({ error: null });
   });
@@ -71,6 +79,28 @@ describe("ProfileFlow", () => {
 
     await waitFor(() => expect(screen.getByRole("heading", { level: 1, name: "Léa" })).toBeInTheDocument());
     expect(screen.getByText("Vos modifications sont enregistrées.")).toBeInTheDocument();
+  });
+
+  it("demande confirmation avant d'enregistrer de nouvelles données de naissance", async () => {
+    renderFlow();
+    await userEvent.click(await screen.findByRole("button", { name: "Modifier mon profil" }));
+    await userEvent.selectOptions(screen.getByLabelText("Année"), "1985");
+    await userEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
+
+    expect(saveProfile).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole("button", { name: "Confirmer et recalculer" }));
+
+    await waitFor(() => expect(saveProfile).toHaveBeenCalledTimes(1));
+    expect(await screen.findByText("Vos modifications sont enregistrées.")).toBeInTheDocument();
+  });
+
+  it("propose de réessayer le recalcul du thème en cas d'échec", async () => {
+    chartMock.status = "error";
+    renderFlow();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("le recalcul de votre thème a échoué");
+    await userEvent.click(screen.getByRole("button", { name: "Réessayer" }));
+    expect(chartMock.retry).toHaveBeenCalledTimes(1);
   });
 
   it("reste dans le formulaire avec l'erreur si l'enregistrement échoue", async () => {
