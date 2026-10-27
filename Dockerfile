@@ -18,3 +18,9 @@ RUN npm run build
 FROM caddy:2-alpine
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /app/dist /srv
+
+RUN addgroup -S -g 10001 sidera \
+  && adduser -S -u 10001 -G sidera sidera \
+  && mkdir -p /data /config \
+  && chown -R sidera:sidera /data /config
+USER sidera
