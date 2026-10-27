@@ -13,6 +13,7 @@ interface Props {
   placeholder?: string;
   sendLabel?: string;
   disabled?: boolean;
+  describedBy?: string;
 }
 
 function ChatInput({
@@ -24,6 +25,7 @@ function ChatInput({
   placeholder,
   sendLabel,
   disabled = false,
+  describedBy,
 }: Props) {
   const { t } = useTranslation(["ui", "common"]);
   const message = value.trim();
@@ -49,6 +51,7 @@ function ChatInput({
         value={value}
         placeholder={placeholder ?? t("chat.inputPlaceholder")}
         disabled={disabled}
+        aria-describedby={describedBy}
         onChange={(event) => onChange(event.target.value)}
         className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-muted focus:outline-hidden disabled:cursor-not-allowed"
       />

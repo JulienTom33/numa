@@ -27,6 +27,7 @@
     "exhausted": "Vous avez utilisé vos questions gratuites."
   },
   "input": {
+    "privacyHint": "Évitez d'y saisir e-mail, téléphone ou date de naissance précise.",
     "disabledPlaceholder": "Créez un compte pour continuer"
   },
   "signupPrompt": {

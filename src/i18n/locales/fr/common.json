@@ -19,6 +19,10 @@
       "question_quota_exceeded": "Vous avez utilisé vos questions gratuites. Créez un compte pour continuer.",
       "provider_unavailable": "La réponse n'a pas pu être générée. Votre question n'a pas été décomptée.",
       "invalid_question": "Votre question est vide ou trop longue.",
+      "personal_data_detected": "Votre question semble contenir une donnée personnelle. Évitez d'y saisir e-mail, téléphone ou date de naissance, puis réessayez.",
+      "ai_unavailable": "Sidéra ne peut pas répondre pour le moment. Votre question n'a pas été décomptée, réessayez dans un instant.",
+      "rate_limit_exceeded": "Vous posez vos questions un peu vite. Patientez quelques instants avant de réessayer.",
+      "ai_daily_limit_exceeded": "Sidéra a atteint sa limite de réponses pour aujourd'hui. Revenez demain, votre question n'a pas été décomptée.",
       "unauthenticated": "Votre session a expiré. Rechargez la page.",
       "network_error": "Le service est momentanément indisponible.",
       "unknown_error": "Une erreur inattendue est survenue."

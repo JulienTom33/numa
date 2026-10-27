@@ -67,6 +67,17 @@ describe("ChatInput", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it("links the input to its description", () => {
+    render(
+      <>
+        <p id="hint">Indication</p>
+        <ChatInput id="chat" value="" onChange={vi.fn()} onSubmit={vi.fn()} describedBy="hint" />
+      </>,
+    );
+
+    expect(screen.getByRole("textbox")).toHaveAccessibleDescription("Indication");
+  });
+
   it("disables input and button when disabled", () => {
     render(<Harness onSubmit={vi.fn()} disabled />);
 

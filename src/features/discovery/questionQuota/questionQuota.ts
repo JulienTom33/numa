@@ -13,6 +13,10 @@ export type QuestionQuotaErrorCode =
   | "question_quota_exceeded"
   | "provider_unavailable"
   | "invalid_question"
+  | "personal_data_detected"
+  | "ai_unavailable"
+  | "rate_limit_exceeded"
+  | "ai_daily_limit_exceeded"
   | "unauthenticated"
   | "network_error"
   | "unknown_error";
@@ -32,8 +36,11 @@ const UNREADABLE_ERROR: QuestionQuotaError = { code: "network_error" };
 const SERVER_CODES: Partial<Record<string, QuestionQuotaErrorCode>> = {
   question_quota_exceeded: "question_quota_exceeded",
   provider_unavailable: "provider_unavailable",
-  ai_unavailable: "provider_unavailable",
+  ai_unavailable: "ai_unavailable",
   invalid_question: "invalid_question",
+  personal_data_detected: "personal_data_detected",
+  rate_limit_exceeded: "rate_limit_exceeded",
+  ai_daily_limit_exceeded: "ai_daily_limit_exceeded",
   unauthenticated: "unauthenticated",
   invalid_token: "unauthenticated",
 };

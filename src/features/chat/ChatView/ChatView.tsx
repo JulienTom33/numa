@@ -70,8 +70,12 @@ function ChatView({
         onChange={onDraftChange}
         onSubmit={onSend}
         disabled={sending || exhausted}
+        describedBy="chat-view__text--privacy-hint"
         placeholder={exhausted ? t("input.disabledPlaceholder") : undefined}
       />
+      <p id="chat-view__text--privacy-hint" className="px-4 text-xs text-ink-secondary">
+        {t("input.privacyHint")}
+      </p>
     </section>
   );
 }

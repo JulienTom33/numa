@@ -25,6 +25,17 @@ describe("ChatView", () => {
     expect(screen.getByText("2 questions gratuites restantes")).toBeInTheDocument();
   });
 
+  it("affiche l'indication de confidentialité sous la saisie", () => {
+    render(<ChatView {...base} />);
+    expect(screen.getByText("Évitez d'y saisir e-mail, téléphone ou date de naissance précise.")).toHaveAttribute(
+      "id",
+      "chat-view__text--privacy-hint",
+    );
+    expect(screen.getByRole("textbox")).toHaveAccessibleDescription(
+      "Évitez d'y saisir e-mail, téléphone ou date de naissance précise.",
+    );
+  });
+
   it("envoie une suggestion", async () => {
     const onSend = vi.fn();
     render(<ChatView {...base} onSend={onSend} />);
