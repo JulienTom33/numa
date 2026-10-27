@@ -5,7 +5,7 @@ import type { AnswerBasis, BasisBody, BasisPoint } from "../answerBasis/answerBa
 
 const titleClass = "font-display text-sm font-semibold text-violet-ink";
 
-const GLOSSARY_TERMS = ["retrograde", "house", "ascendant", "midheaven", "transits"] as const;
+const GLOSSARY_TERMS = ["retrograde", "house", "ascendant", "midheaven", "houseSystem", "transits"] as const;
 
 interface Props {
   messageId: string;
@@ -34,7 +34,7 @@ function ChatAnswerBasis({ messageId, basis }: Props) {
 
   const houseSystem = HOUSE_SYSTEMS.find((system) => system === basis.houseSystem);
 
-  const point =(key: "ascendant" | "midheaven", value: BasisPoint) =>
+  const point = (key: "ascendant" | "midheaven", value: BasisPoint) =>
     t(`chat:basis.${key}`, {
       sign: t(`astrology:signs.${value.sign}`),
       degree: number(value.degreeInSign),

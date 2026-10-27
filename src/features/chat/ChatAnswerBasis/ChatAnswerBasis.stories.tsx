@@ -51,12 +51,16 @@ export const UnknownBirthTime: Story = {
 
 export const NoAspects: Story = { args: { basis: { ...basis, aspects: [] } } };
 
+export const PolarFallback: Story = {
+  args: { basis: { ...basis, houseSystem: "porphyry", warnings: ["polar_fallback"] } },
+};
+
 export const WithWarnings: Story = {
   args: {
     basis: {
       ...basis,
       confidence: "medium",
-      warnings: ["approximate_time", "polar_fallback", "moon_sign_uncertain"],
+      warnings: ["approximate_time", "moon_sign_uncertain"],
     },
   },
 };

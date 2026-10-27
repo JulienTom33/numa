@@ -35,6 +35,9 @@ describe("ChatAnswerBasis", () => {
     expect(document.getElementById("chat-answer-basis__section--m2-glossary--retrograde")).toHaveTextContent(
       "l'astre semble reculer dans le ciel, vu de la Terre",
     );
+    expect(document.getElementById("chat-answer-basis__section--m2-glossary--houseSystem")).toHaveTextContent(
+      "Système de maisons",
+    );
     expect(screen.getByText(/Les deux astres peuvent entrer en tension/)).toBeInTheDocument();
     expect(screen.queryByRole("heading")).not.toBeInTheDocument();
     expect(screen.getByText("Fiabilité du calcul : moyenne.")).toBeInTheDocument();

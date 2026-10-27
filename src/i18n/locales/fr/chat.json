@@ -87,7 +87,8 @@
       "retrograde": { "label": "Rétrograde", "definition": "l'astre semble reculer dans le ciel, vu de la Terre." },
       "house": { "label": "Maison", "definition": "les maisons découpent le ciel en 12 secteurs liés aux domaines de vie." },
       "ascendant": { "label": "Ascendant", "definition": "le signe qui se levait à l'horizon à votre naissance." },
-      "midheaven": { "label": "Milieu du ciel", "definition": "le point le plus haut du ciel à ce moment." },
+      "midheaven": { "label": "Milieu du ciel", "definition": "le point le plus haut du ciel au moment de votre naissance." },
+      "houseSystem": { "label": "Système de maisons", "definition": "méthode de calcul qui découpe le ciel en 12 maisons ; il en existe plusieurs, qui donnent des résultats proches." },
       "transits": { "label": "Transits", "definition": "positions actuelles des astres comparées à votre thème." }
     },
     "confidence": "Fiabilité du calcul : {{level}}.",
@@ -98,13 +99,13 @@
     },
     "warningsTitle": "Points d'incertitude",
     "warnings": {
-      "unknown_time": "L'heure de naissance est inconnue : l'ascendant et les maisons ne sont pas calculés, et la position de la Lune est estimée à midi.",
-      "approximate_time": "L'heure de naissance est approximative : l'ascendant et les maisons peuvent être décalés.",
-      "ambiguous_local_time": "L'heure locale de naissance est ambiguë (changement d'heure) : l'ascendant peut être incertain.",
-      "nonexistent_local_time": "L'heure locale de naissance n'a pas existé (changement d'heure) : l'ascendant peut être incertain.",
+      "unknown_time": "L'heure de naissance est inconnue : l'Ascendant et les maisons ne sont pas calculés, et la position de la Lune est estimée à midi.",
+      "approximate_time": "L'heure de naissance est approximative : l'Ascendant et les maisons peuvent être décalés.",
+      "ambiguous_local_time": "L'heure locale de naissance est ambiguë (changement d'heure) : l'Ascendant peut être incertain.",
+      "nonexistent_local_time": "L'heure locale de naissance n'a pas existé (changement d'heure) : l'Ascendant peut être incertain.",
       "local_mean_time": "L'heure légale de l'époque n'était pas connue : l'heure solaire locale a été utilisée.",
       "polar_fallback": "Le système de maisons habituel (Placidus) n'a pas pu être calculé pour ce thème : un système de repli (Porphyre) a été utilisé.",
-      "moon_sign_uncertain": "Le signe de la Lune est incertain : elle change de signe autour de votre heure de naissance."
+      "moon_sign_uncertain": "La Lune change de signe au cours de la période d'incertitude de votre heure de naissance : son signe reste à confirmer."
     }
   },
   "error": {
