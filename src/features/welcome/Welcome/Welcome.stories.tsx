@@ -12,7 +12,7 @@ const meta = {
       story: { inline: false, height: "720px" },
       description: {
         component:
-          "Écran d'accueil : création de compte, connexion ou découverte sans compte. Le mot-symbole « Numa » ouvre la fiche « Qui est Numa ? » (fermeture par le bouton, Échap ou un clic sur le voile).",
+          "Écran d'accueil : création de compte, connexion ou découverte sans compte. Le mot-symbole « Sidéra » ouvre la fiche « Qui est Sidéra ? » (fermeture par le bouton, Échap ou un clic sur le voile).",
       },
     },
   },
@@ -30,7 +30,7 @@ export const DiscoverError: Story = {
 export const AboutSheetOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole("button", { name: "Numa" }));
-    await expect(canvas.getByRole("dialog", { name: "Qui est Numa ?" })).toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: "Sidéra" }));
+    await expect(canvas.getByRole("dialog", { name: "Qui est Sidéra ?" })).toBeInTheDocument();
   },
 };

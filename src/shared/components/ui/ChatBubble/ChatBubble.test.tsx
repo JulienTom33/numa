@@ -16,27 +16,27 @@ describe("ChatBubble", () => {
     );
   });
 
-  it("styles user and Numa messages differently", () => {
+  it("styles user and Sidéra messages differently", () => {
     render(
       <>
         <ChatBubble id="test__bubble--1" author="user">
           Question
         </ChatBubble>
-        <ChatBubble id="test__bubble--2" author="numa">
+        <ChatBubble id="test__bubble--2" author="sidera">
           Réponse
         </ChatBubble>
       </>,
     );
 
     expect(screen.getByRole("article", { name: "Vous" })).toHaveClass("bg-ink");
-    expect(screen.getByRole("article", { name: "Numa" })).toHaveClass("bg-white");
+    expect(screen.getByRole("article", { name: "Sidéra" })).toHaveClass("bg-white");
   });
 
   it("shows the period and an expandable explanation", async () => {
     render(
       <ChatBubble
         id="test__bubble--2"
-        author="numa"
+        author="sidera"
         period="du 14 au 20 octobre"
         why="Vénus en trigone à votre Lune"
       >
@@ -51,14 +51,14 @@ describe("ChatBubble", () => {
 
   it("shows a busy typing indicator while pending", () => {
     render(
-      <ChatBubble id="test__bubble--3" author="numa" pending period="demain" why="raison">
+      <ChatBubble id="test__bubble--3" author="sidera" pending period="demain" why="raison">
         Ignoré
       </ChatBubble>,
     );
-    const bubble = screen.getByRole("article", { name: "Numa" });
+    const bubble = screen.getByRole("article", { name: "Sidéra" });
 
     expect(bubble).toHaveAttribute("aria-busy", "true");
-    expect(bubble).toHaveTextContent("Numa écrit…");
+    expect(bubble).toHaveTextContent("Sidéra écrit…");
     expect(screen.queryByText("Ignoré")).not.toBeInTheDocument();
     expect(screen.queryByText("demain")).not.toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();

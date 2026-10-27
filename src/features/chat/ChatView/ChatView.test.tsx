@@ -19,7 +19,7 @@ const base = {
 describe("ChatView", () => {
   it("état vide : invitation, suggestions, profil et quota", () => {
     render(<ChatView {...base} />);
-    expect(screen.getByText("Posez votre question à Numa")).toBeInTheDocument();
+    expect(screen.getByText("Posez votre question à Sidéra")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /\?$/ })).toHaveLength(5);
     expect(screen.getByText(/Profil analysé : Camille/)).toBeInTheDocument();
     expect(screen.getByText("2 questions gratuites restantes")).toBeInTheDocument();
@@ -35,8 +35,8 @@ describe("ChatView", () => {
   it("envoi : saisie désactivée et indicateur affiché", () => {
     render(<ChatView {...base} sending messages={[{ id: "m1", author: "user", text: "Q" }]} />);
     expect(screen.getByLabelText("Votre question")).toBeDisabled();
-    expect(screen.getByText("Numa écrit…")).toBeInTheDocument();
-    expect(screen.queryByText("Posez votre question à Numa")).not.toBeInTheDocument();
+    expect(screen.getByText("Sidéra écrit…")).toBeInTheDocument();
+    expect(screen.queryByText("Posez votre question à Sidéra")).not.toBeInTheDocument();
   });
 
   it("succès : affiche la réponse", () => {
@@ -45,7 +45,7 @@ describe("ChatView", () => {
         {...base}
         messages={[
           { id: "m1", author: "user", text: "Q" },
-          { id: "m2", author: "numa", text: "Réponse" },
+          { id: "m2", author: "sidera", text: "Réponse" },
         ]}
       />,
     );

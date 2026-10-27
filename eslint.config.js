@@ -66,13 +66,13 @@ export default tseslint.config(
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
-      numa: { rules: { "no-comments": noComments } },
+      sidera: { rules: { "no-comments": noComments } },
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "no-console": "error",
-      "numa/no-comments": "error",
+      "sidera/no-comments": "error",
     },
   },
   {
@@ -97,7 +97,7 @@ export default tseslint.config(
   {
     files: ["**/*.{test,spec}.{ts,tsx}", "src/test/**"],
     rules: {
-      "numa/no-comments": "off",
+      "sidera/no-comments": "off",
     },
   },
   {

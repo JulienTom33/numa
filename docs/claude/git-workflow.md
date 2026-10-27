@@ -39,7 +39,7 @@ Si la branche existe déjà : `git switch issue-<id>-<slug>` puis `git pull`.
 | Domaine | `area:frontend`, `area:backend`, `area:auth`, `area:supabase`, `area:astrology`, `area:ai`, `area:design`, `area:qa`, `area:security`, `area:product`, `area:research` | Périmètre technique |
 | Maquette | `design` | Ticket `[Design]` : implémentation d'un écran de la maquette |
 
-Le statut d'avancement (Backlog, en cours, en review…) est suivi dans le GitHub Project « Numa », pas par labels.
+Le statut d'avancement (Backlog, en cours, en review…) est suivi dans le GitHub Project « Sidéra », pas par labels.
 
 ## Statuts de PR
 

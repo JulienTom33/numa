@@ -62,7 +62,7 @@ beforeEach(() => {
 describe("ChatScreen", () => {
   it("envoie une question au clavier et affiche la réponse", async () => {
     vi.mocked(askQuestion).mockResolvedValue({
-      answer: "Réponse de Numa",
+      answer: "Réponse de Sidéra",
       quota: { limit: 2, used: 1, remaining: 1 },
       error: null,
     });
@@ -70,7 +70,7 @@ describe("ChatScreen", () => {
 
     await userEvent.type(screen.getByLabelText("Votre question"), "Bonjour{Enter}");
 
-    expect(await screen.findByText("Réponse de Numa")).toBeInTheDocument();
+    expect(await screen.findByText("Réponse de Sidéra")).toBeInTheDocument();
     expect(askQuestion).toHaveBeenCalledWith("Bonjour");
     expect(await screen.findByText("1 question gratuite restante")).toBeInTheDocument();
   });

@@ -1,6 +1,6 @@
-# Numa
+# Sidéra
 
-Numa est une application web d’astrologie personnalisée, conçue pour fournir des lectures compréhensibles, transparentes et non catégoriques.
+Sidéra est une application web d’astrologie personnalisée, conçue pour fournir des lectures compréhensibles, transparentes et non catégoriques.
 
 ## Statut
 

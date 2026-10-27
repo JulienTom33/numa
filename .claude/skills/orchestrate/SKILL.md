@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Orchestre plusieurs tickets Numa en parallèle (5 workers max) en évitant les conflits de fichiers. Usage /orchestrate <ids de tickets>.
+description: Orchestre plusieurs tickets Sidéra en parallèle (5 workers max) en évitant les conflits de fichiers. Usage /orchestrate <ids de tickets>.
 model: opus
 effort: medium
 disable-model-invocation: true

@@ -1,12 +1,12 @@
-# CLAUDE.md — Numa
+# CLAUDE.md — Sidéra
 
 Règles essentielles pour Claude Code sur ce dépôt. Documentation détaillée dans `docs/claude/`.
 
 ## Projet
 
-Numa : application web d'astrologie personnalisée (lectures compréhensibles, transparentes, non catégoriques).
+Sidéra : application web d'astrologie personnalisée (lectures compréhensibles, transparentes, non catégoriques).
 
-- Tickets : issues GitHub de `JulienTom33/numa`, suivies dans le GitHub Project « Numa » (n° 3).
+- Tickets : issues GitHub de `JulienTom33/numa`, suivies dans le GitHub Project « Sidéra » (n° 3).
 - Maquette : Claude Design, projet « App de voyance et astrologie », fichier `Astraia.dc.html`. Chaque écran a un ticket `[Design]` (label `design`) relié à ses tickets fonctionnels.
 
 ## Stack imposée
@@ -18,7 +18,7 @@ React, TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS), GitHub Acti
 - Workflow Git : une branche `issue-<id>-<slug>` par ticket, créée depuis `master`, PR vers `master`. Voir `docs/claude/git-workflow.md`.
 - Toute modification passe par une pull request. **Aucun merge automatique, jamais.** Voir `docs/claude/pull-requests.md`.
 - Tout nouveau fichier de logique ou composant significatif est accompagné de son test **dans la même PR**. Voir `docs/claude/development.md`.
-- **Aucun commentaire dans le code, JSDoc compris** ; commentaires libres uniquement dans les fichiers de test. Règle ESLint `numa/no-comments` (encore tolérante aux JSDoc de fonction exportée jusqu'à #134). Voir `docs/claude/development.md`.
+- **Aucun commentaire dans le code, JSDoc compris** ; commentaires libres uniquement dans les fichiers de test. Règle ESLint `sidera/no-comments` (encore tolérante aux JSDoc de fonction exportée jusqu'à #134). Voir `docs/claude/development.md`.
 - Toute fonctionnalité utilisateur ajoute ou étend un parcours E2E Playwright (`e2e/`) dans la même PR. Voir `docs/claude/development.md` (Tests end-to-end).
 - Aucun texte affiché en dur : tout passe par `t()` (react-i18next), clés dans `src/i18n/locales/fr/<namespace>.json`. Voir `docs/claude/development.md` (Internationalisation).
 - Aucun secret, clé privée ou donnée personnelle commité. Voir `docs/claude/security.md`.

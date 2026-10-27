@@ -5,12 +5,12 @@
   },
   "chat": {
     "author": {
-      "numa": "Numa",
+      "sidera": "Sidéra",
       "user": "Vous"
     },
     "inputLabel": "Votre question",
-    "inputPlaceholder": "Posez votre question à Numa…",
-    "pending": "Numa écrit…",
+    "inputPlaceholder": "Posez votre question à Sidéra…",
+    "pending": "Sidéra écrit…",
     "period": "Période concernée :",
     "why": "Pourquoi cette réponse ?"
   },

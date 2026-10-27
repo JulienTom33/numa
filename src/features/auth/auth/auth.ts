@@ -34,7 +34,7 @@ export interface AuthRequestOptions {
   redirectTo?: string;
 }
 
-export const PENDING_CONVERSION_STORAGE_KEY = "numa:pending-conversion";
+export const PENDING_CONVERSION_STORAGE_KEY = "sidera:pending-conversion";
 
 const CODE_BY_UPGRADE_ERROR: Record<UpgradeErrorCode, AuthFlowErrorCode> = {
   no_session: "session_expired",

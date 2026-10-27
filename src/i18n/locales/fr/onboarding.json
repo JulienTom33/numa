@@ -139,11 +139,11 @@
       "yes": "Oui",
       "no": "Non",
       "signLabel": "Votre ascendant",
-      "advice": "Pas de souci : nous recommandons de laisser Numa le calculer à partir de votre heure et de votre lieu de naissance.",
-      "backToComputed": "Revenir au calcul de Numa"
+      "advice": "Pas de souci : nous recommandons de laisser Sidéra le calculer à partir de votre heure et de votre lieu de naissance.",
+      "backToComputed": "Revenir au calcul de Sidéra"
     },
     "mismatch": {
-      "warning": "Numa a calculé {{computed}}, alors que vous indiquez {{declared}}. Une seule version sera conservée.",
+      "warning": "Sidéra a calculé {{computed}}, alors que vous indiquez {{declared}}. Une seule version sera conservée.",
       "question": "Quelle version souhaitez-vous conserver ?",
       "keep": "Garder mon ascendant",
       "useComputed": "Utiliser le calcul"

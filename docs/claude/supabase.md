@@ -12,7 +12,7 @@
 - Lien magique : `signInWithOtp({ email, options: { emailRedirectTo, shouldCreateUser: true } })` — même action en inscription et en connexion (le compte est créé s'il n'existe pas).
 - OAuth Google / Apple : `signInWithOAuth({ provider, options: { redirectTo } })`.
 - **Session anonyme** : l'inscription (lien email ou OAuth) passe par la conversion #15 (`updateUser({ email })` / `linkIdentity`, même user id, aucune donnée copiée). La connexion à un compte existant remplace la session anonyme : un avertissement est affiché, les données anonymes ne sont pas fusionnées (`decision-log.md`, #15).
-- Événement « converti » : avant la conversion, l'user id anonyme est mémorisé (`localStorage`, clé `numa:pending-conversion`) ; `useAuth().converted` vaut `true` dès que ce même user id devient non anonyme (y compris après rechargement ou dans l'onglet ouvert par le lien), jusqu'à `acknowledgeConversion()`. L'écran Migration (#86) s'appuie dessus.
+- Événement « converti » : avant la conversion, l'user id anonyme est mémorisé (`localStorage`, clé `sidera:pending-conversion`) ; `useAuth().converted` vaut `true` dès que ce même user id devient non anonyme (y compris après rechargement ou dans l'onglet ouvert par le lien), jusqu'à `acknowledgeConversion()`. L'écran Migration (#86) s'appuie dessus.
 - Restauration : session persistée par `supabase-js` (`localStorage`), relue par `getSession()` au chargement puis suivie par `onAuthStateChange`.
 - Erreurs de retour (`#error=…&error_code=…` ou query) : lues au chargement, affichées sur l'écran de connexion, puis retirées de l'URL.
 - Déconnexion : `useAuth().signOut()`.

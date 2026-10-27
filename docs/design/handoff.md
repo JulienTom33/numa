@@ -25,7 +25,7 @@ Chaque écran a un ticket `[Design]` (rendu conforme à la maquette) et un ou pl
 | # | Écran | Ticket `[Design]` | Tickets fonctionnels | Composants principaux |
 |---|---|---|---|---|
 | 1 | Cadre d'app et barre d'onglets | #73 | — | `TabBar`, `TopBar`, `BottomSheet` (`aboveTabBar`) |
-| 2 | Accueil et fiche « Qui est Numa ? » | #74 | #16 (landing, conçue) | `Logo`, `Button`, `TextLink`, `BottomSheet`, `DiscoverButton` |
+| 2 | Accueil et fiche « Qui est Sidéra ? » | #74 | #16 (landing, conçue) | `Logo`, `Button`, `TextLink`, `BottomSheet`, `DiscoverButton` |
 | 3 | Inscription et connexion (Google, Apple, lien email) | #75 | #14, #15 | `TopBar`, `Button` (`ink`, `outline`, `soft`), `TextLink` |
 | 4 | Connexion par lien magique (saisie, confirmation) | #76 | #14 | `TextField`, `Button`, `Callout` |
 | 5 | Onboarding 1–2 : prénom, date de naissance | #77 | #18 | `TopBar`, `DiscoveryModeBadge`, `StepHeader`, `TextField`, `Select`, `Callout` (`success`), `Button` |
@@ -36,12 +36,12 @@ Chaque écran a un ticket `[Design]` (rendu conforme à la maquette) et un ou pl
 | 10 | Résultat : profil astrologique et méthode | #82 | #21 | `PlanetTrio`, `Card`, `InfoTooltip`, `TextLink`, `Button` |
 | 11 | Aujourd'hui (tableau de bord) | #83 | #23 | `TopBar`, `DiscoveryModeBadge`, `Avatar`, `Card` (`violet`, `coral`, `sky`, `gold`), `TextLink`, `TabBar` |
 | 12 | Horoscope du jour | #84 | #24, #28 | `TopBar`, `SegmentedControl`, `Card`, `Disclosure`, `Callout` |
-| 13 | Consulter : chat avec Numa | #85 | #25, #26, #28, #31 | `TopBar`, `Avatar`, `Badge`, `EmptyState`, `Chip`, `ChatBubble`, `ChatInput`, `BottomSheet` (historique), `ListRow`, `IconButton` |
+| 13 | Consulter : chat avec Sidéra | #85 | #25, #26, #28, #31 | `TopBar`, `Avatar`, `Badge`, `EmptyState`, `Chip`, `ChatBubble`, `ChatInput`, `BottomSheet` (historique), `ListRow`, `IconButton` |
 | 14 | Mode découverte : limites, conversion, migration | #86 | #15, #27, #29 | `Callout` (`warning`), `BottomSheet`, `Button`, `ChatInput` (`disabled`) |
 | 15 | Mon thème | #87 | #20, #21 | `PlanetTrio`, `Card`, `Disclosure`, `TabBar` |
 | 16 | Profil et suppression des données | #88 | #30, #33 | `Avatar` (`showEditBadge`), `Badge` (`violet` / `sage`), `ListRow` (`danger`), `BottomSheet`, `Button` (`danger`), `TabBar` |
 | 17 | Modifier mes informations et préférences | #89 | #30, #32 | `TextField`, `Select`, `Autocomplete`, `Callout` (`warning`), `Switch`, `Button` |
-| 18 | Confiance : comment Numa construit ses lectures | #90 | #28, #45 | `TopBar`, `Card`, `StepChecklist` ou liste numérotée |
+| 18 | Confiance : comment Sidéra construit ses lectures | #90 | #28, #45 | `TopBar`, `Card`, `StepChecklist` ou liste numérotée |
 
 Tickets transverses : #72 (tokens et fondations), #93 (composants de base), #94 (composants composés) — tous livrés. #36 couvre le test responsive et accessibilité de l'ensemble.
 
@@ -79,7 +79,7 @@ Inventaire de `src/shared/components/ui/` (un dossier par composant : `.tsx`, `.
 |---|---|---|
 | `Autocomplete` | `minChars`, `noResultsText`, `loadingText` | saisie, chargement, suggestions, aucun résultat, erreur |
 | `BottomSheet` | `title`, `footer`, `closeLabel`, `aboveTabBar` | ouvert / fermé ; fermeture bouton, Échap, clic sur le voile ; focus piégé |
-| `ChatBubble` | `author` : `user`, `numa` ; `period` ; `why` (dépliant « Pourquoi cette réponse ? ») | en attente (`pending`) |
+| `ChatBubble` | `author` : `user`, `sidera` ; `period` ; `why` (dépliant « Pourquoi cette réponse ? ») | en attente (`pending`) |
 | `ChatInput` | `placeholder`, `sendLabel` | vide, saisi, désactivé ; Entrée pour envoyer |
 | `EmptyState` | `icon`, `description`, `action` | — |
 | `ListRow` | `tone` : `default`, `danger` ; `value` ; `icon` | survol, focus |
@@ -137,7 +137,7 @@ Règles :
 
 | Écran | États |
 |---|---|
-| Accueil (#74) | par défaut ; fiche « Qui est Numa ? » ouverte ; démarrage du mode découverte en cours ; erreur de démarrage |
+| Accueil (#74) | par défaut ; fiche « Qui est Sidéra ? » ouverte ; démarrage du mode découverte en cours ; erreur de démarrage |
 | Inscription / connexion (#75) | par défaut ; authentification en cours ; erreur fournisseur ; retour vers l'accueil ou « Aujourd'hui » si mode découverte |
 | Lien magique (#76) | saisie (bouton désactivé tant que l'email est invalide) ; erreur de format ; envoi en cours ; confirmation ; renvoi effectué ; renvoi limité |
 | Onboarding 1–2 (#77) | vide (« Continuer » désactivé) ; rempli ; date impossible refusée ; date enregistrée (confirmation verte) |
@@ -198,7 +198,7 @@ Règles à respecter dans les écrans :
 
 Assets présents dans le code (aucun fichier image exporté à ce jour) :
 
-- Logo : dessiné en SVG dans `Logo` (cercle violet, points corail et ciel, mot-symbole « Numa »).
+- Logo : dessiné en SVG dans `Logo` (cercle violet, points corail et ciel, mot-symbole « Sidéra »).
 - Icônes : SVG inline dans `src/shared/components/ui/Icon/icons.tsx` (liste dans le tableau des composants).
 - Polices : Manrope et Inter auto-hébergées via `@fontsource-variable` (aucun appel à Google Fonts).
 

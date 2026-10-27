@@ -53,7 +53,7 @@ describe("TodayFlow", () => {
     renderFlow();
 
     expect(screen.getByRole("status")).toBeInTheDocument();
-    await userEvent.click(await screen.findByRole("button", { name: "Consulter Numa" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Consulter Sidéra" }));
 
     expect(document.getElementById("test__text--consult")).toBeInTheDocument();
   });

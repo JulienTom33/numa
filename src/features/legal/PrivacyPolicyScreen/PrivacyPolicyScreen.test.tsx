@@ -27,7 +27,7 @@ describe("PrivacyPolicyScreen", () => {
     ]) {
       expect(screen.getByRole("heading", { level: 2, name })).toBeInTheDocument();
     }
-    expect(screen.getByText(/Numa n'envoie aucune communication marketing/)).toBeInTheDocument();
+    expect(screen.getByText(/Sidéra n'envoie aucune communication marketing/)).toBeInTheDocument();
   });
 
   it("warns about the free question and names the external providers", () => {

@@ -66,7 +66,7 @@ describe("TodayScreen", () => {
     const { onOpenProfile, onAskQuestion } = renderScreen();
 
     await userEvent.click(screen.getByRole("button", { name: "Ouvrir mon profil" }));
-    await userEvent.click(screen.getByRole("button", { name: "Consulter Numa" }));
+    await userEvent.click(screen.getByRole("button", { name: "Consulter Sidéra" }));
 
     expect(onOpenProfile).toHaveBeenCalledTimes(1);
     expect(onAskQuestion).toHaveBeenCalledTimes(1);

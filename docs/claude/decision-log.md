@@ -1,6 +1,6 @@
 # Journal de décisions
 
-Décisions d'architecture et règles évolutives du projet Numa. Ajouter une entrée à chaque décision structurante, la plus récente en premier.
+Décisions d'architecture et règles évolutives du projet Sidéra. Ajouter une entrée à chaque décision structurante, la plus récente en premier.
 
 ## Format d'entrée
 
@@ -93,7 +93,7 @@ Statut : **décidée** le 2026-10-16 par le mainteneur.
 Contexte : #20 (thème natal), #22 (cache) et #80 (ascendant) exigent un fournisseur de calcul. Comparatif détaillé, sources et mesures : `docs/research/api-astrologiques.md`.
 Décision :
 - **Astronomy Engine** (`astronomy-engine`, MIT, JS pur) exécuté localement dans une Edge Function.
-  - Gratuit, sans quota, sans contrainte de licence pour Numa, aucune donnée de naissance envoyée à un tiers.
+  - Gratuit, sans quota, sans contrainte de licence pour Sidéra, aucune donnée de naissance envoyée à un tiers.
   - Écart mesuré avec JPL Horizons ≤ 3″ (Soleil, Lune) sur 5 profils de référence.
   - Ascendant et MC calculés par formule depuis le temps sidéral et l'obliquité ; identiques à Swiss Ephemeris à 0,1″ près.
 - Maisons :
@@ -106,7 +106,7 @@ Décision :
   - avant l'heure légale, décalage = longitude / 15. La base tz donne le LMT de la ville de référence, d'où 2,7° d'erreur d'ascendant mesurée sur un profil de 1879.
 - La version du moteur est enregistrée avec chaque thème et entre dans la clé de cache (#22).
 Alternatives écartées :
-- Swiss Ephemeris via `sweph-wasm` : plus précis (≤ 0,3″), 25 systèmes de maisons, mais AGPL-3.0 imposée à tout Numa, ou licence professionnelle à 700 CHF.
+- Swiss Ephemeris via `sweph-wasm` : plus précis (≤ 0,3″), 25 systèmes de maisons, mais AGPL-3.0 imposée à tout Sidéra, ou licence professionnelle à 700 CHF.
 - AstrologyAPI, FreeAstrologyAPI, Prokerala — clé et facturation, données de naissance envoyées à un tiers soumis au droit indien, fuseau en décalage numérique (FreeAstrologyAPI), cache limité à 24 h sans archivage (Prokerala), stockage non traité (autres) ; non testées faute de clé.
 
 ## 2026-10-15 — Internationalisation : react-i18next (issue #118)
