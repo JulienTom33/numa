@@ -15,17 +15,32 @@ export function json(body: unknown, init: ResponseInit = {}): Response {
   return new Response(JSON.stringify(body), { ...init, headers });
 }
 
-export function errorResponse(error: unknown, headers?: HeadersInit): Response {
+export function errorResponse(
+  error: unknown,
+  headers?: HeadersInit,
+  correlationId: string = crypto.randomUUID(),
+): Response {
   if (error instanceof HttpError) {
+    if (error.status >= 500) console.error("http_error", error.code, correlationId);
     return json(
-      { error: { code: error.code, message: error.message } },
+      { error: { code: error.code, message: error.message, correlationId } },
       { status: error.status, headers },
     );
   }
 
-  console.error("unexpected_error", error instanceof Error ? error.name : typeof error);
+  console.error(
+    "unexpected_error",
+    error instanceof Error ? error.name : typeof error,
+    correlationId,
+  );
   return json(
-    { error: { code: "internal_error", message: "Une erreur inattendue est survenue." } },
+    {
+      error: {
+        code: "internal_error",
+        message: "Une erreur inattendue est survenue.",
+        correlationId,
+      },
+    },
     { status: 500, headers },
   );
 }

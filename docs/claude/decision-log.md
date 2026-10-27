@@ -230,3 +230,9 @@ Alternatives écartées : verdict binaire sans score (pas de mesure de progressi
 Contexte : quand Mistral puis Groq échouent, la fonction `chat` répond `503 ai_unavailable` (issue #26). Une réponse dégradée (texte générique ou lecture pré-calculée) a été envisagée.
 Décision : garder le `503 ai_unavailable`, traduit côté client par un message clair invitant à réessayer ; la réservation de question est libérée (`release_question`), donc aucun quota n'est consommé sur une panne.
 Alternatives écartées : réponse dégradée générée sans IA (risque de lecture générique présentée comme personnalisée, contraire à la transparence de Sidéra) ; réponse mise en cache d'une question précédente (même risque, plus la fuite de données entre utilisateurs).
+
+## 2026-10-27 — Appels sortants centralisés
+
+Contexte : timeouts, erreurs 4xx/5xx, quotas et logs sans données sensibles devaient être traités de la même façon pour tous les fournisseurs externes (issue #34).
+Décision : tout appel sortant des Edge Functions passe par `fetchExternal` (`supabase/functions/_shared/external.ts`) : timeout, classification des erreurs (4xx, 5xx, 429), retry borné aux erreurs transitoires, journalisation sans donnée personnelle, secret, URL, en-tête ni corps. Un `correlationId` est journalisé et renvoyé au client dans `error.correlationId`. La panne de la chaîne IA reste un `503 ai_unavailable`.
+Alternatives écartées : gestion d'erreurs propre à chaque fonction (comportements et logs divergents) ; réponse dégradée en cas de panne IA (voir l'entrée du 2026-10-27 sur le 503).
