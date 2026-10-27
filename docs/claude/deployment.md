@@ -1,5 +1,7 @@
 # Déploiement (OVH)
 
+Procédures d'exploitation (sauvegarde, restauration, retour arrière, rotation des secrets, urgences) : `docs/runbook/deploiement-restauration.md`.
+
 ## Infrastructure
 
 - VPS OVH Ubuntu 22.04 LTS (Strasbourg), Docker + Docker Compose plugin installés.
