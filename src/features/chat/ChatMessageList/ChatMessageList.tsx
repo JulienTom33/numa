@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ChatBubble from "../../../shared/components/ui/ChatBubble/ChatBubble";
+import ChatAnswerBasis from "../ChatAnswerBasis/ChatAnswerBasis";
 import type { ChatMessage } from "../useChat/useChat";
 
 interface Props {
@@ -25,7 +26,13 @@ function ChatMessageList({ messages, sending }: Props) {
       className="flex flex-col gap-3"
     >
       {messages.map((message) => (
-        <ChatBubble key={message.id} id={`chat-message-list__message--${message.id}`} author={message.author}>
+        <ChatBubble
+          key={message.id}
+          id={`chat-message-list__message--${message.id}`}
+          author={message.author}
+          period={message.basis === undefined ? undefined : t("basis.period")}
+          why={message.basis === undefined ? undefined : <ChatAnswerBasis messageId={message.id} basis={message.basis} />}
+        >
           {message.text}
         </ChatBubble>
       ))}

@@ -1,12 +1,14 @@
 import { useCallback, useRef, useState } from "react";
 import type { ChatAuthor } from "../../../shared/components/ui/ChatBubble/ChatBubble";
 import type { QuestionQuota, QuestionQuotaErrorCode } from "../../discovery/questionQuota/questionQuota";
+import type { AnswerBasis } from "../answerBasis/answerBasis";
 import { useQuestionQuota } from "../../discovery/useQuestionQuota/useQuestionQuota";
 
 export interface ChatMessage {
   id: string;
   author: ChatAuthor;
   text: string;
+  basis?: AnswerBasis | null;
 }
 
 export interface UseChatResult {

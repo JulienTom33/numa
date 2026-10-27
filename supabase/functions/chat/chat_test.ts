@@ -69,6 +69,7 @@ Deno.test("POST answers twice then returns 429 on the third question", async () 
   const first = await handler(ask({ question: "Q1 " }));
   assertEquals(await first.json(), {
     answer: "réponse à : Q1",
+    basis: null,
     conversationId: "conversation-1",
     messageId: "message-1",
     quota: { limit: 2, used: 1, remaining: 1 },
@@ -99,6 +100,18 @@ Deno.test("POST records the factors, prompt version, provider and model with the
   assertEquals(recorded.answer.promptVersion, "sidera-chat-v3");
   assertEquals(recorded.factors?.bodies[0].sign, "cancer");
   assertEquals(JSON.stringify(recorded.factors).includes("Paris"), false);
+});
+
+Deno.test("POST returns the factors used as the basis of the answer, without personal data", async () => {
+  const response = await chat(echoProvider(), createMemoryStore(), chartFixture())(
+    ask({ question: "Que dit mon Soleil ?" }),
+  );
+
+  const { basis } = await response.json();
+  assertEquals(basis.bodies[0].sign, "cancer");
+  assertEquals(Array.isArray(basis.aspects), true);
+  assertEquals(Array.isArray(basis.warnings), true);
+  assertEquals(JSON.stringify(basis).includes("Paris"), false);
 });
 
 Deno.test("POST continues an existing conversation", async () => {
