@@ -26,6 +26,11 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 - **Google** : client OAuth (Google Cloud) dont l'URI de redirection autorisée est `https://<ref>.supabase.co/auth/v1/callback` ; client ID et secret saisis dans le provider Google.
 - **Apple** : Services ID, Key ID, Team ID et clé privée (Apple Developer) ; Return URL = la même callback Supabase. Le secret Apple expire (6 mois) : à renouveler.
 - **Email** : la confirmation (`Confirm email`) détermine si la conversion anonyme est immédiate ou attend le clic ; les gabarits « Magic Link » et « Change Email Address » doivent garder `{{ .ConfirmationURL }}`. SMTP personnalisé recommandé en production (limite d'envoi du SMTP Supabase).
+- **Réglages Auth de production (issue #185)** : `config.toml` n'est pas poussé en production, le dashboard fait foi et se vérifie à chaque mise en production.
+  - `Site URL` et `Redirect URLs` : uniquement le domaine HTTPS de production, aucun `localhost` / `127.0.0.1` (les URLs locales restent dans `config.toml` seul).
+  - Authentication → Sign In / Providers → Email : longueur minimale du mot de passe 8 (aligné sur `minimum_password_length = 8`) et **Prevent use of leaked passwords** activé (HaveIBeenPwned ; réglage dashboard uniquement, plan Pro requis, absent de `config.toml`).
+  - `Confirm email` activé en production (`enable_confirmations = false` seulement en local pour les tests E2E) : la conversion anonyme attend alors le clic sur le lien.
+  - SMTP dédié obligatoire avant l'ouverture publique (le SMTP Supabase est limité à quelques emails par heure et réservé aux membres de l'équipe) ; en bêta fermée, le SMTP Supabase reste toléré.
 - Local (`supabase/config.toml`) : `site_url` / `additional_redirect_urls` à aligner sur le port du serveur Vite si l'on teste les liens en local ; providers `[auth.external.google|apple]` désactivés par défaut.
 
 ## PostgreSQL
