@@ -216,6 +216,9 @@ isOneToOne: false
 "consume_rate_limit":
 { Args: { "p_key": string,"p_limit": number,"p_window_seconds": number }; Returns: boolean
                            },
+"purge_rate_limits":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
 "question_count":
 { Args: { "p_user_id": string }; Returns: number
                            },
