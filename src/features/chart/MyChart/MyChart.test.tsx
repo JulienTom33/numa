@@ -31,7 +31,8 @@ describe("MyChart", () => {
     expect(trio.getByText("Cancer")).toBeInTheDocument();
     expect(trio.getByText("Scorpion")).toBeInTheDocument();
     expect(document.getElementById("my-chart__title--ascendant")).toHaveTextContent("Ascendant Scorpion");
-    expect(document.getElementById("my-chart__text--ascendant")).toHaveTextContent("pourrait");
+    expect(document.getElementById("my-chart__text--ascendant")).toHaveTextContent("Ascendant Scorpion, vous pourriez");
+    expect(document.getElementById("my-chart__reading--ascendant__text--why")).toHaveTextContent("celui du Scorpion");
     expect(document.getElementById("my-chart__value--ascendant-degree")).toHaveTextContent("22° Scorpion");
     expect(document.getElementById("my-chart__value--ascendant-house")).toHaveTextContent("Maison 1");
   });
@@ -76,23 +77,12 @@ describe("MyChart", () => {
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
-  it("affiche le thème détaillé une fois connecté", () => {
+  it("affiche le thème détaillé complet, sans appel à la connexion", () => {
     renderScreen();
 
     expect(document.getElementById("my-chart__card--details")).toBeInTheDocument();
     expect(document.getElementById("my-chart__card--discovery")).not.toBeInTheDocument();
-  });
-
-  it("en découverte, remplace le détail par l'appel à la connexion", async () => {
-    const user = userEvent.setup();
-    const onSignUp = vi.fn();
-    render(
-      <MyChart status="ready" data={completeChart} errorCode={null} onRetry={vi.fn()} isAnonymous onSignUp={onSignUp} />,
-    );
-
-    expect(document.getElementById("my-chart__card--details")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Se connecter pour en savoir plus" }));
-    expect(onSignUp).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("button", { name: "Se connecter pour en savoir plus" })).not.toBeInTheDocument();
   });
 
   it("ouvre la modale « Comprendre mon thème »", async () => {

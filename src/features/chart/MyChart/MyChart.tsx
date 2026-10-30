@@ -11,6 +11,7 @@ import type { MyChartData } from "../skyChart/skyChart";
 import ChartDetails from "../ChartDetails/ChartDetails";
 import ChartUnderstandSheet from "../ChartUnderstandSheet/ChartUnderstandSheet";
 import ChartMethodCard from "../ChartMethodCard/ChartMethodCard";
+import PlacementReading from "../PlacementReading/PlacementReading";
 import SkyChartCard from "../SkyChartCard/SkyChartCard";
 import TransitsCard from "../TransitsCard/TransitsCard";
 
@@ -20,13 +21,11 @@ interface Props {
   errorCode: NatalChartErrorCode | null;
   onRetry: () => void;
   skyDefaultOpen?: boolean;
-  isAnonymous?: boolean;
-  onSignUp?: () => void;
 }
 
 const ASCENDANT_HOUSE = 1;
 
-function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false, isAnonymous = false, onSignUp }: Props) {
+function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false }: Props) {
   const { t } = useTranslation(["chart", "astrology", "chartDetail"]);
   const [understandOpen, setUnderstandOpen] = useState(false);
 
@@ -94,11 +93,19 @@ function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false, isA
             ? t("chart:myChart.ascendant.title", { sign: signLabel(ascendant.sign) })
             : t("chart:myChart.ascendant.titleMissing")}
         </h2>
-        <p id="my-chart__text--ascendant" className="mt-2 text-sm text-ink-secondary">
-          {ascendant
-            ? t("chart:myChart.ascendant.explanation", { sign: signLabel(ascendant.sign) })
-            : t("chart:summary.explanations.ascendantMissing")}
-        </p>
+        <div id="my-chart__text--ascendant" className="mt-2 text-sm text-ink-secondary">
+          {ascendant ? (
+            <PlacementReading
+              id="my-chart__reading--ascendant"
+              kind="ascendant"
+              sign={ascendant.sign}
+              degree={ascendant.degreeInSign}
+              confidence={summary.confidence}
+            />
+          ) : (
+            t("chart:summary.explanations.ascendantMissing")
+          )}
+        </div>
         {ascendant && (
           <dl id="my-chart__list--ascendant" className="mt-3 flex flex-col gap-2 text-sm">
             <div className="flex items-center justify-between gap-3">
@@ -120,21 +127,7 @@ function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false, isA
         )}
       </Card>
 
-      {isAnonymous ? (
-        <Card id="my-chart__card--discovery" tone="violet" as="section">
-          <h2 id="my-chart__title--discovery" className="font-display text-base font-bold text-ink">
-            {t("chartDetail:discovery.title")}
-          </h2>
-          <p id="my-chart__text--discovery" className="mt-2 text-sm text-ink-secondary">
-            {t("chartDetail:discovery.body")}
-          </p>
-          <Button id="my-chart__button--signup" type="button" className="mt-3" fullWidth onClick={onSignUp}>
-            {t("chartDetail:discovery.signup")}
-          </Button>
-        </Card>
-      ) : (
-        <ChartDetails idPrefix="my-chart" summary={summary} natal={natal} />
-      )}
+      <ChartDetails idPrefix="my-chart" summary={summary} natal={natal} />
 
       <SkyChartCard natal={natal} defaultOpen={skyDefaultOpen} />
 

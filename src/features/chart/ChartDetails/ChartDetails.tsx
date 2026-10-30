@@ -3,6 +3,8 @@ import Card from "../../../shared/components/ui/Card/Card";
 import { ZODIAC_SIGNS } from "../../../../shared/zodiac/zodiac.ts";
 import type { NatalChartSummary } from "../natalChartSummary/natalChartSummary";
 import type { NatalSky } from "../skyChart/skyChart";
+import PlacementReading from "../PlacementReading/PlacementReading";
+import { useOptionalText, type OptionalNamespace } from "../optionalText/optionalText";
 
 interface Props {
   idPrefix: string;
@@ -12,6 +14,17 @@ interface Props {
 
 const DEGREES_PER_SIGN = 30;
 
+const OPTIONAL_SIGN_NAMESPACE: Record<string, OptionalNamespace> = {
+  mercury: "chartSignsPersonal",
+  venus: "chartSignsPersonal",
+  mars: "chartSignsPersonal",
+  jupiter: "chartSignsOuter",
+  saturn: "chartSignsOuter",
+  uranus: "chartSignsOuter",
+  neptune: "chartSignsOuter",
+  pluto: "chartSignsOuter",
+};
+
 function signOf(longitude: number) {
   const index = Math.floor(longitude / DEGREES_PER_SIGN) % ZODIAC_SIGNS.length;
   return { sign: ZODIAC_SIGNS[index], degree: Math.floor(longitude - index * DEGREES_PER_SIGN) };
@@ -19,6 +32,12 @@ function signOf(longitude: number) {
 
 function ChartDetails({ idPrefix, summary, natal }: Props) {
   const { t } = useTranslation(["chartDetail", "astrology"]);
+  const optionalText = useOptionalText();
+  const optionalSignText = (body: string, sign: string) => {
+    const namespace = OPTIONAL_SIGN_NAMESPACE[body];
+    return namespace ? optionalText(namespace, `${body}.${sign}`) : null;
+  };
+  const moonUncertain = summary.warnings.includes("moon_sign_uncertain");
   const signLabel = (sign: (typeof ZODIAC_SIGNS)[number]) => t(`astrology:signs.${sign}`);
   const angles = [
     { key: "ascendant", longitude: natal.ascendantLongitude },
@@ -50,7 +69,27 @@ function ChartDetails({ idPrefix, summary, natal }: Props) {
               {body.house === null ? t("details.planets.houseUnknown") : t("details.planets.house", { house: body.house })}
               {body.retrograde && ` · ${t("details.planets.retrograde")}`}
             </span>
-            <span className="text-ink-secondary">{t(`details.planets.roles.${body.body}`)}</span>
+            {body.body === "sun" || body.body === "moon" ? (
+              <span className="text-ink-secondary">
+                <PlacementReading
+                  id={`${idPrefix}__reading--${body.body}`}
+                  kind={body.body}
+                  sign={body.sign}
+                  degree={body.degreeInSign}
+                  confidence={summary.confidence}
+                  moonUncertain={moonUncertain}
+                />
+              </span>
+            ) : (
+              <span id={`${idPrefix}__text--planet-${body.body}`} className="text-ink-secondary">
+                {optionalSignText(body.body, body.sign) ?? t(`details.planets.roles.${body.body}`)}
+              </span>
+            )}
+            {body.house !== null && optionalText("chartHouses", String(body.house)) !== null && (
+              <span id={`${idPrefix}__text--house-${body.body}`} className="text-ink-secondary">
+                {optionalText("chartHouses", String(body.house))}
+              </span>
+            )}
             {body.retrograde && (
               <span id={`${idPrefix}__text--retrograde-${body.body}`} className="text-ink-muted">
                 {t("details.planets.retrogradeHelp")}
