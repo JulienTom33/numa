@@ -122,11 +122,6 @@ function PlaceStep({ id, search, value, onChange }: Props) {
     setQuery(label);
     setPending(null);
     onChange({
-      id: `${pending.id}-${arrondissement.number}`,
-      name: pending.name,
-      region: pending.region,
-      country: pending.country,
-      countryCode: pending.countryCode,
       label,
       latitude: arrondissement.latitude,
       longitude: arrondissement.longitude,
