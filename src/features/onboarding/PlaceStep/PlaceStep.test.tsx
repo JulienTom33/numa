@@ -34,6 +34,22 @@ const bologna: PlaceSuggestion = {
   timezone: "Europe/Rome",
 };
 
+const paris: PlaceSuggestion = {
+  id: "paris-fr",
+  name: "Paris",
+  region: "Île-de-France",
+  country: "France",
+  countryCode: "FR",
+  label: "Paris, Île-de-France, France",
+  latitude: 48.85,
+  longitude: 2.35,
+  timezone: "Europe/Paris",
+  arrondissements: [
+    { number: 1, latitude: 48.862, longitude: 2.3359 },
+    { number: 15, latitude: 48.8417, longitude: 2.2937 },
+  ],
+};
+
 interface HarnessProps {
   search: PlaceSearch;
   initial?: SelectedPlace | null;
@@ -252,5 +268,44 @@ describe("PlaceStep", () => {
 
     expect(screen.queryByRole("button", { name: "Réessayer" })).not.toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Recherche…");
+  });
+
+  it("asks for the arrondissement before validating a city that has some", async () => {
+    const onChange = vi.fn();
+    const search = vi.fn<PlaceSearch>().mockResolvedValue([paris]);
+    const { user, input } = setup({ search, onChange });
+
+    await user.type(input, "Paris");
+    await flushDebounce();
+    await user.click(screen.getByRole("option", { name: /Paris/ }));
+
+    expect(onChange).not.toHaveBeenCalled();
+    await user.selectOptions(screen.getByLabelText("Arrondissement"), "15e");
+
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label: "Paris 15e, Île-de-France, France",
+        latitude: 48.8417,
+        longitude: 2.2937,
+        timezone: "Europe/Paris",
+      }),
+    );
+    expect(input).toHaveValue("Paris 15e, Île-de-France, France");
+    expect(screen.queryByLabelText("Arrondissement")).not.toBeInTheDocument();
+  });
+
+  it("writes the first arrondissement with an ordinal", async () => {
+    const onChange = vi.fn();
+    const search = vi.fn<PlaceSearch>().mockResolvedValue([paris]);
+    const { user, input } = setup({ search, onChange });
+
+    await user.type(input, "Paris");
+    await flushDebounce();
+    await user.click(screen.getByRole("option", { name: /Paris/ }));
+    await user.selectOptions(screen.getByLabelText("Arrondissement"), "1er");
+
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ label: "Paris 1er, Île-de-France, France" }),
+    );
   });
 });

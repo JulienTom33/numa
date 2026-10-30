@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   EMPTY_ONBOARDING_DATA,
   hasPreciseBirthData,
+  latestBirthYear,
   normalizeBirthTime,
   parseIsoDate,
   timeWarningCode,
@@ -47,8 +48,21 @@ describe("validateBirthDate", () => {
     expect(validateBirthDate("2000-02-29", TODAY)).toBeNull();
   });
 
-  it("accepts today", () => {
-    expect(validateBirthDate("2026-10-15", TODAY)).toBeNull();
+  it("rejects today and any date making the user younger than 15", () => {
+    expect(validateBirthDate("2026-10-15", TODAY)).toBe("tooYoung");
+    expect(validateBirthDate("2011-10-16", TODAY)).toBe("tooYoung");
+    expect(validateBirthDate("2012-01-01", TODAY)).toBe("tooYoung");
+  });
+
+  it("accepts someone turning 15 today or earlier", () => {
+    expect(validateBirthDate("2011-10-15", TODAY)).toBeNull();
+    expect(validateBirthDate("2011-10-14", TODAY)).toBeNull();
+  });
+
+  it("handles a 29 February today", () => {
+    const leapDay = new Date(2024, 1, 29);
+    expect(validateBirthDate("2009-02-28", leapDay)).toBeNull();
+    expect(validateBirthDate("2009-03-01", leapDay)).toBe("tooYoung");
   });
 
   it("requires a value", () => {
@@ -190,6 +204,12 @@ describe("timeWarningCode", () => {
     expect(timeWarningCode(null)).toBeNull();
     expect(timeWarningCode("approximate")).toBe("approximate");
     expect(timeWarningCode("unknown")).toBe("unknown");
+  });
+});
+
+describe("latestBirthYear", () => {
+  it("is the current year minus 15", () => {
+    expect(latestBirthYear(TODAY)).toBe(2011);
   });
 });
 

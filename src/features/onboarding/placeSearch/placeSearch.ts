@@ -15,6 +15,13 @@ export interface PlaceSuggestion {
   latitude: number;
   longitude: number;
   timezone: string;
+  arrondissements?: PlaceArrondissement[];
+}
+
+export interface PlaceArrondissement {
+  number: number;
+  latitude: number;
+  longitude: number;
 }
 
 export type PlaceSearchErrorCode =

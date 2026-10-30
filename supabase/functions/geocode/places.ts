@@ -1,5 +1,6 @@
 import { ExternalFailure, fetchExternal } from "../_shared/external.ts";
 import { HttpError } from "../_shared/http.ts";
+import { type Arrondissement, arrondissementsFor } from "./arrondissements.ts";
 
 export const MIN_QUERY_LENGTH = 2;
 export const MAX_QUERY_LENGTH = 100;
@@ -25,6 +26,7 @@ export interface Place {
   latitude: number;
   longitude: number;
   timezone: string;
+  arrondissements?: Arrondissement[];
 }
 
 export type FetchFn = (input: string, init?: RequestInit) => Promise<Response>;
@@ -91,8 +93,10 @@ export function toPlace(raw: unknown): Place | null {
 
   const admin1 = nonEmptyString(entry.admin1);
   const region = admin1 && admin1 !== name ? admin1 : null;
+  const placeId = String(id);
+  const arrondissements = arrondissementsFor(placeId);
   return {
-    id: String(id),
+    id: placeId,
     name,
     region,
     country,
@@ -101,6 +105,7 @@ export function toPlace(raw: unknown): Place | null {
     latitude,
     longitude,
     timezone,
+    ...(arrondissements ? { arrondissements } : {}),
   };
 }
 

@@ -4,7 +4,7 @@ import Callout from "../../../shared/components/ui/Callout/Callout";
 import Select from "../../../shared/components/ui/Select/Select";
 import type { SelectOption } from "../../../shared/components/ui/Select/Select";
 import { formatDate } from "../../../i18n/format/format";
-import { MIN_BIRTH_YEAR, validateBirthDateParts } from "../birthData/birthData";
+import { latestBirthYear, MIN_BIRTH_YEAR, validateBirthDateParts } from "../birthData/birthData";
 import type { BirthDateParts } from "../birthData/birthData";
 import OnboardingStepLayout from "../OnboardingStepLayout/OnboardingStepLayout";
 
@@ -41,9 +41,10 @@ function monthOptions(language: string): SelectOption[] {
   });
 }
 
-function yearOptions(currentYear: number): SelectOption[] {
-  return Array.from({ length: currentYear - MIN_BIRTH_YEAR + 1 }, (_, index) => {
-    const year = String(currentYear - index);
+function yearOptions(today: Date): SelectOption[] {
+  const lastYear = latestBirthYear(today);
+  return Array.from({ length: lastYear - MIN_BIRTH_YEAR + 1 }, (_, index) => {
+    const year = String(lastYear - index);
     return { value: year, label: year };
   });
 }
@@ -55,7 +56,7 @@ function toSelectValue(part: number | null): string {
 function DateStep({ value, onChange, onContinue, onBack, discoveryMode, error, saving, today = new Date() }: Props) {
   const { t, i18n } = useTranslation("onboarding");
   const months = useMemo(() => monthOptions(i18n.language), [i18n.language]);
-  const { isoDate } = validateBirthDateParts(value, today);
+  const { isoDate, error: dateError } = validateBirthDateParts(value, today);
   const isComplete = value.day !== null && value.month !== null && value.year !== null;
   const isInvalid = isComplete && isoDate === null;
 
@@ -95,7 +96,7 @@ function DateStep({ value, onChange, onContinue, onBack, discoveryMode, error, s
             id="date-step__select--year"
             label={t("date.year")}
             placeholder={t("date.year")}
-            options={yearOptions(today.getFullYear())}
+            options={yearOptions(today)}
             value={toSelectValue(value.year)}
             onChange={(event) => onChange({ ...value, year: Number(event.target.value) })}
           />
@@ -114,7 +115,7 @@ function DateStep({ value, onChange, onContinue, onBack, discoveryMode, error, s
       </div>
       {isInvalid && (
         <Callout id="date-step__callout--invalid" tone="error">
-          {t("date.invalid")}
+          {dateError === "tooYoung" ? t("validation.birthDate.tooYoung") : t("date.invalid")}
         </Callout>
       )}
     </OnboardingStepLayout>
