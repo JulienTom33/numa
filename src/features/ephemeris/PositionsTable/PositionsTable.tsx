@@ -27,7 +27,7 @@ function PositionsTable({ day }: Props) {
         aria-label={t("ephemeris:positions.scrollLabel")}
         className="mt-3 overflow-x-auto rounded-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
       >
-        <table id="ephemeris__table--positions" className="w-full min-w-[30rem] border-collapse text-left text-sm">
+        <table id="ephemeris__table--positions" className="w-full border-collapse text-left text-sm">
           <caption className="pb-2 text-left text-xs text-ink-muted">
             {t("ephemeris:positions.caption", { date })}
           </caption>
@@ -37,7 +37,9 @@ function PositionsTable({ day }: Props) {
               <th scope="col" className="py-2 pr-3 font-semibold">{t("ephemeris:positions.columns.sign")}</th>
               <th scope="col" className="py-2 pr-3 font-semibold">{t("ephemeris:positions.columns.position")}</th>
               <th scope="col" className="py-2 pr-3 font-semibold">{t("ephemeris:positions.columns.motion")}</th>
-              <th scope="col" className="py-2 font-semibold">{t("ephemeris:positions.columns.speed")}</th>
+              <th scope="col" className="hidden py-2 font-semibold sm:table-cell">
+                {t("ephemeris:positions.columns.speed")}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -59,7 +61,7 @@ function PositionsTable({ day }: Props) {
                   <td className="py-2 pr-3 text-ink-secondary">
                     {position.retrograde ? t("ephemeris:positions.retrograde") : t("ephemeris:positions.direct")}
                   </td>
-                  <td className="py-2 text-ink-secondary">
+                  <td className="hidden py-2 text-ink-secondary sm:table-cell">
                     {t("ephemeris:positions.speed", {
                       speed: formatNumber(position.speed, i18n.language, { maximumFractionDigits: 2 }),
                     })}
