@@ -36,7 +36,10 @@ Deno.test("the question stays in the user message, after the factors", () => {
 
   assertEquals(system.content.includes("Ma question"), false);
   assertStringIncludes(user.content, JSON.stringify(factors));
-  assertEquals(user.content.indexOf("Ma question") > user.content.indexOf(JSON.stringify(factors)), true);
+  assertEquals(
+    user.content.indexOf("Ma question") > user.content.indexOf(JSON.stringify(factors)),
+    true,
+  );
   assertStringIncludes(user.content, "Consigne pour cette réponse");
   assertEquals(user.content.includes("1975"), false);
 });

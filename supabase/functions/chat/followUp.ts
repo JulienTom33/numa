@@ -38,7 +38,8 @@ const INSTRUCTIONS: Record<FollowUp, string> = {
     `${MUST_END_WITH_QUESTION}, qui demande sur quel domaine la personne souhaite avancer (par exemple le travail, les relations, l'énergie ou la personnalité).`,
   close:
     "Consigne pour cette réponse : la personne conclut ou remercie ; réponds en deux ou trois phrases chaleureuses, sans question et sans nouvelle analyse.",
-  none: "Consigne pour cette réponse : ne pose aucune question ; termine par une phrase affirmative.",
+  none:
+    "Consigne pour cette réponse : ne pose aucune question ; termine par une phrase affirmative.",
 };
 
 export function followUpInstruction(question: string, history: Turn[]): string {

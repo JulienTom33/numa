@@ -48,9 +48,15 @@ Deno.test("ordinary questions alternate between answers with and without a follo
 
 Deno.test("the instruction text matches the decision", () => {
   assertStringIncludes(followUpInstruction("Parle-moi de ma vie", []), "sur quel domaine");
-  assertStringIncludes(followUpInstruction("J'hésite à quitter mon poste en ce moment", []), "UNE courte question");
+  assertStringIncludes(
+    followUpInstruction("J'hésite à quitter mon poste en ce moment", []),
+    "UNE courte question",
+  );
   assertStringIncludes(followUpInstruction("Merci", []), "sans question");
-  assertStringIncludes(followUpInstruction("Quel est mon signe solaire ?", []), "ne pose aucune question");
+  assertStringIncludes(
+    followUpInstruction("Quel est mon signe solaire ?", []),
+    "ne pose aucune question",
+  );
   assertStringIncludes(
     followUpInstruction("J'hésite à quitter mon poste en ce moment", []),
     "jamais une demande d'information personnelle",
