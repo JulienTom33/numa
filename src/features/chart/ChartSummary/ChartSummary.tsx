@@ -9,6 +9,7 @@ import type { NatalChartSummaryStatus } from "../useNatalChartSummary/useNatalCh
 import type { NatalChartErrorCode } from "../natalChart/natalChart";
 import ChartUnderstandSheet from "../ChartUnderstandSheet/ChartUnderstandSheet";
 import ChartMethodCard from "../ChartMethodCard/ChartMethodCard";
+import PlacementReading from "../PlacementReading/PlacementReading";
 import type { NatalChartSummary, SummaryPlacement } from "../natalChartSummary/natalChartSummary";
 
 interface Props {
@@ -87,22 +88,48 @@ function ChartSummary({ status, summary, errorCode, onRetry, onDiscover }: Props
         </h2>
         <ul id="chart-summary__list--explanations" className="mt-3 flex flex-col gap-3 text-sm text-ink-secondary">
           {sun && (
-            <li id="chart-summary__item--sun">{t("summary.explanations.sun", { sign: signLabel(sun.sign) })}</li>
+            <li id="chart-summary__item--sun">
+              <PlacementReading
+                id="chart-summary__reading--sun"
+                kind="sun"
+                sign={sun.sign}
+                degree={sun.degreeInSign}
+                confidence={summary.confidence}
+              />
+            </li>
           )}
           {moon && (
-            <li id="chart-summary__item--moon">
-              {moonUncertain && moonSignChange
-                ? t("summary.explanations.moonUncertain", {
+            <li id="chart-summary__item--moon" className="flex flex-col gap-2">
+              {moonUncertain && moonSignChange && (
+                <p id="chart-summary__text--moon-uncertain">
+                  {t("summary.explanations.moonUncertain", {
                     from: signLabel(moonSignChange.from),
                     to: signLabel(moonSignChange.to),
-                  })
-                : t("summary.explanations.moon", { sign: signLabel(moon.sign) })}
+                  })}
+                </p>
+              )}
+              <PlacementReading
+                id="chart-summary__reading--moon"
+                kind="moon"
+                sign={moon.sign}
+                degree={moon.degreeInSign}
+                confidence={summary.confidence}
+                moonUncertain={moonUncertain}
+              />
             </li>
           )}
           <li id="chart-summary__item--ascendant">
-            {ascendant
-              ? t("summary.explanations.ascendant", { sign: signLabel(ascendant.sign) })
-              : t("summary.explanations.ascendantMissing")}
+            {ascendant ? (
+              <PlacementReading
+                id="chart-summary__reading--ascendant"
+                kind="ascendant"
+                sign={ascendant.sign}
+                degree={ascendant.degreeInSign}
+                confidence={summary.confidence}
+              />
+            ) : (
+              t("summary.explanations.ascendantMissing")
+            )}
           </li>
         </ul>
       </Card>

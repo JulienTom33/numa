@@ -41,12 +41,19 @@ describe("ChartSummary", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Votre profil astrologique$/);
   });
 
-  it("formule des explications au conditionnel", () => {
+  it("formule des explications propres au signe, au conditionnel, avec la ligne pourquoi", () => {
     renderScreen();
 
-    expect(document.getElementById("chart-summary__item--sun")).toHaveTextContent("décrirait plutôt");
-    expect(document.getElementById("chart-summary__item--moon")).toHaveTextContent("évoquerait plutôt");
-    expect(document.getElementById("chart-summary__item--ascendant")).toHaveTextContent("pourrait refléter");
+    expect(document.getElementById("chart-summary__item--sun")).toHaveTextContent("Le Soleil en Taureau pourrait");
+    expect(document.getElementById("chart-summary__item--sun")).toHaveTextContent(
+      "le Soleil était à 14° dans la zone du Taureau (environ du 20 avril au 20 mai)",
+    );
+    expect(document.getElementById("chart-summary__item--moon")).toHaveTextContent("La Lune en Cancer");
+    expect(document.getElementById("chart-summary__item--moon")).toHaveTextContent("la Lune était à 3°");
+    expect(document.getElementById("chart-summary__item--ascendant")).toHaveTextContent("Ascendant Scorpion");
+    expect(document.getElementById("chart-summary__item--ascendant")).toHaveTextContent(
+      "le signe qui se levait à l'horizon était celui du Scorpion",
+    );
     expect(document.getElementById("chart-summary__callout--notes")).toBeNull();
   });
 
@@ -54,6 +61,7 @@ describe("ChartSummary", () => {
     renderScreen({ summary: unknownTimeSummary });
 
     expect(screen.getByText("Non calculé")).toBeInTheDocument();
+    expect(document.getElementById("chart-summary__reading--moon__text--why")).toHaveTextContent("son signe reste à confirmer");
     expect(document.getElementById("chart-summary__item--ascendant")).toHaveTextContent("n'a pas été calculé");
     expect(document.getElementById("chart-summary__item--moon")).toHaveTextContent("Gémeaux ou en Cancer");
     expect(screen.getByText("À confirmer")).toBeInTheDocument();
@@ -66,6 +74,7 @@ describe("ChartSummary", () => {
   it("signale l'heure approximative et le repli de maisons", () => {
     renderScreen({ summary: approximateTimeSummary });
 
+    expect(document.getElementById("chart-summary__reading--ascendant__text--approximate")).toBeInTheDocument();
     expect(document.getElementById("chart-summary__item--note-approximate_time")).toBeInTheDocument();
     expect(document.getElementById("chart-summary__item--note-polar_fallback")).toBeInTheDocument();
     expect(document.getElementById("chart-summary__value--houses")).toHaveTextContent("Porphyre");

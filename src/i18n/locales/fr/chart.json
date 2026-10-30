@@ -11,10 +11,7 @@
     "moonToConfirm": "À confirmer",
     "explanations": {
       "title": "Ce que cela pourrait vouloir dire",
-      "sun": "Votre Soleil en {{sign}} décrirait plutôt votre identité de fond, ce qui vous anime et vous fait avancer. C'est une tendance parmi d'autres, pas un portrait figé.",
-      "moon": "Votre Lune en {{sign}} évoquerait plutôt votre monde intérieur : la façon dont vous ressentez les choses et ce qui vous rassure, sans que cela s'applique en toute situation.",
       "moonUncertain": "Votre Lune est proche d'un changement de signe : elle pourrait être en {{from}} ou en {{to}}. Avec une heure de naissance plus précise, nous pourrions trancher.",
-      "ascendant": "Votre Ascendant en {{sign}} pourrait refléter la première impression que vous donnez et votre manière d'aborder de nouvelles situations, parmi d'autres facettes de vous.",
       "ascendantMissing": "Votre Ascendant n'a pas été calculé : il dépend de l'heure exacte de naissance, que nous n'avons pas. Si vous la retrouvez (acte de naissance, carnet de santé), vous pourrez la renseigner plus tard."
     },
     "notes": {
@@ -90,7 +87,6 @@
     "ascendant": {
       "title": "Ascendant {{sign}}",
       "titleMissing": "Ascendant",
-      "explanation": "Votre Ascendant en {{sign}} pourrait colorer la manière dont vous abordez les nouvelles situations et l'image que vous renvoyez au premier abord. C'est une piste parmi d'autres, pas un verdict.",
       "degreeLabel": "Position",
       "degreeValue": "{{degree}}° {{sign}}",
       "houseLabel": "Maison",

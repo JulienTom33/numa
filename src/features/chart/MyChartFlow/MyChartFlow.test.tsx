@@ -64,12 +64,12 @@ describe("MyChartFlow", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it("en mode découverte, propose de se connecter pour le détail", async () => {
+  it("en mode découverte, affiche le thème détaillé complet", async () => {
     fetchMock.mockResolvedValue({ data: completeChart, error: null });
 
     renderFlow(true);
-    await userEvent.click(await screen.findByRole("button", { name: "Se connecter pour en savoir plus" }));
 
-    expect(await screen.findByText("Inscription")).toBeInTheDocument();
+    expect(await screen.findByText("Votre thème en détail")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Se connecter pour en savoir plus" })).not.toBeInTheDocument();
   });
 });
