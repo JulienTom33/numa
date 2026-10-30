@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
@@ -7,6 +7,7 @@ import PlanetTrio, { type Placement } from "../../../shared/components/ui/Planet
 import TextLink from "../../../shared/components/ui/TextLink/TextLink";
 import type { NatalChartSummaryStatus } from "../useNatalChartSummary/useNatalChartSummary";
 import type { NatalChartErrorCode } from "../natalChart/natalChart";
+import ChartUnderstandSheet from "../ChartUnderstandSheet/ChartUnderstandSheet";
 import ChartMethodCard from "../ChartMethodCard/ChartMethodCard";
 import type { NatalChartSummary, SummaryPlacement } from "../natalChartSummary/natalChartSummary";
 
@@ -20,7 +21,7 @@ interface Props {
 
 function ChartSummary({ status, summary, errorCode, onRetry, onDiscover }: Props) {
   const { t } = useTranslation(["chart", "astrology"]);
-  const methodTitleRef = useRef<HTMLHeadingElement>(null);
+  const [understandOpen, setUnderstandOpen] = useState(false);
 
   if (status === "loading" || !summary) {
     return (
@@ -118,14 +119,12 @@ function ChartSummary({ status, summary, errorCode, onRetry, onDiscover }: Props
         </Callout>
       )}
 
-      <ChartMethodCard idPrefix="chart-summary" summary={summary} titleRef={methodTitleRef} />
+      <ChartMethodCard idPrefix="chart-summary" summary={summary} />
 
       <div className="flex flex-col items-center gap-4">
         <TextLink
           id="chart-summary__link--understand"
-          onClick={() => {
-            methodTitleRef.current?.focus();
-          }}
+          onClick={() => setUnderstandOpen(true)}
         >
           {t("summary.understandLink")}
         </TextLink>
@@ -133,6 +132,7 @@ function ChartSummary({ status, summary, errorCode, onRetry, onDiscover }: Props
           {t("summary.discover")}
         </Button>
       </div>
+      <ChartUnderstandSheet idPrefix="chart-summary" open={understandOpen} onClose={() => setUnderstandOpen(false)} />
     </section>
   );
 }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
@@ -7,6 +8,8 @@ import type { MyChartStatus } from "../useMyChart/useMyChart";
 import type { NatalChartErrorCode } from "../natalChart/natalChart";
 import type { SummaryPlacement } from "../natalChartSummary/natalChartSummary";
 import type { MyChartData } from "../skyChart/skyChart";
+import ChartDetails from "../ChartDetails/ChartDetails";
+import ChartUnderstandSheet from "../ChartUnderstandSheet/ChartUnderstandSheet";
 import ChartMethodCard from "../ChartMethodCard/ChartMethodCard";
 import SkyChartCard from "../SkyChartCard/SkyChartCard";
 import TransitsCard from "../TransitsCard/TransitsCard";
@@ -17,12 +20,15 @@ interface Props {
   errorCode: NatalChartErrorCode | null;
   onRetry: () => void;
   skyDefaultOpen?: boolean;
+  isAnonymous?: boolean;
+  onSignUp?: () => void;
 }
 
 const ASCENDANT_HOUSE = 1;
 
-function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false }: Props) {
-  const { t } = useTranslation(["chart", "astrology"]);
+function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false, isAnonymous = false, onSignUp }: Props) {
+  const { t } = useTranslation(["chart", "astrology", "chartDetail"]);
+  const [understandOpen, setUnderstandOpen] = useState(false);
 
   const title = (
     <h1 id="my-chart__title--main" className="font-display text-2xl font-bold text-ink">
@@ -114,6 +120,22 @@ function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false }: P
         )}
       </Card>
 
+      {isAnonymous ? (
+        <Card id="my-chart__card--discovery" tone="violet" as="section">
+          <h2 id="my-chart__title--discovery" className="font-display text-base font-bold text-ink">
+            {t("chartDetail:discovery.title")}
+          </h2>
+          <p id="my-chart__text--discovery" className="mt-2 text-sm text-ink-secondary">
+            {t("chartDetail:discovery.body")}
+          </p>
+          <Button id="my-chart__button--signup" type="button" className="mt-3" fullWidth onClick={onSignUp}>
+            {t("chartDetail:discovery.signup")}
+          </Button>
+        </Card>
+      ) : (
+        <ChartDetails idPrefix="my-chart" summary={summary} natal={natal} />
+      )}
+
       <SkyChartCard natal={natal} defaultOpen={skyDefaultOpen} />
 
       <TransitsCard
@@ -124,6 +146,11 @@ function MyChart({ status, data, errorCode, onRetry, skyDefaultOpen = false }: P
       />
 
       <ChartMethodCard idPrefix="my-chart" summary={summary} />
+
+      <Button id="my-chart__button--understand" type="button" variant="outline" fullWidth onClick={() => setUnderstandOpen(true)}>
+        {t("chartDetail:understand.button")}
+      </Button>
+      <ChartUnderstandSheet idPrefix="my-chart" open={understandOpen} onClose={() => setUnderstandOpen(false)} />
     </section>
   );
 }
