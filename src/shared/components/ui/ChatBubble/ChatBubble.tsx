@@ -16,7 +16,7 @@ interface Props {
 }
 
 const bubbleClasses: Record<ChatAuthor, string> = {
-  user: "ml-auto rounded-br-md bg-ink text-white",
+  user: "ml-auto rounded-br-md bg-ink text-on-accent",
   sidera: "mr-auto rounded-bl-md border border-line bg-white text-ink",
 };
 

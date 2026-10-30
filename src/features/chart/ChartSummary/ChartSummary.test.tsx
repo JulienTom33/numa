@@ -97,13 +97,16 @@ describe("ChartSummary", () => {
     expect(screen.queryByText(/12 secteurs/)).not.toBeInTheDocument();
   });
 
-  it("amène le focus sur la carte Méthode avec « Comprendre mon thème »", async () => {
+  it("ouvre la modale d'explication avec « Comprendre mon thème »", async () => {
     const user = userEvent.setup();
     renderScreen();
 
     await user.click(screen.getByRole("button", { name: "Comprendre mon thème" }));
 
-    expect(document.getElementById("chart-summary__title--method")).toHaveFocus();
+    const dialog = screen.getByRole("dialog", { name: "Comprendre mon thème" });
+    expect(dialog).toHaveTextContent("Précision et limites");
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("ouvre l'espace avec « Découvrir mon espace »", async () => {
