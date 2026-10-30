@@ -41,8 +41,8 @@ test.describe("Découvrir sans compte, onboarding et résumé du thème", () => 
   });
 
   test("une ville à arrondissements demande de choisir l'arrondissement", async ({ page }) => {
-    await mockGeocode(page, [PARIS]);
     await startDiscovery(page);
+    await mockGeocode(page, [PARIS]);
     await page.locator("#name-step__input--name").fill("Camille");
     await page.locator("#name-step__form--main-continue").click();
     await page.locator("#date-step__select--day").selectOption("15");
