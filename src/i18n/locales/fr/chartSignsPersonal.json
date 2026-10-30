@@ -1,0 +1,44 @@
+{
+  "mercury": {
+    "aries": "Votre esprit pourrait aller vite et droit au but. Vous avez tendance à dire les choses franchement, parfois avant d'avoir tout pesé. Une piste de lecture : l'élan des idées prime sur les détails.",
+    "taurus": "Votre façon de penser tend à être posée et concrète. Vous pourriez avoir besoin de temps pour vous faire un avis, mais celui-ci reste souvent solide. Les mots simples et les faits vous parlent.",
+    "gemini": "Votre esprit pourrait être vif, curieux et passer facilement d'un sujet à l'autre. Vous aimez sans doute échanger, questionner et comprendre un peu de tout. C'est une piste de lecture sur votre goût pour la conversation.",
+    "cancer": "Votre pensée pourrait être guidée par l'intuition et la mémoire. Vous tendez à communiquer avec sensibilité, en vous appuyant sur ce que vous ressentez. Les échanges personnels peuvent vous faire parler plus naturellement.",
+    "leo": "Vous pourriez vous exprimer avec chaleur, assurance et un certain sens de la mise en scène. Votre façon de penser tend à chercher l'ampleur et la conviction. Raconter une idée avec enthousiasme peut vous être naturel.",
+    "virgo": "Votre esprit pourrait être analytique, précis et attentif aux détails. Vous avez tendance à trier, vérifier et reformuler pour être clair. C'est une manière possible de penser, parmi d'autres pistes de lecture.",
+    "libra": "Vous pourriez chercher l'équilibre dans vos échanges et peser le pour et le contre avant de vous prononcer. Votre communication tend à être diplomate et courtoise. Le dialogue vous aide sans doute à clarifier vos idées.",
+    "scorpio": "Votre pensée pourrait aller en profondeur, au-delà des apparences. Vous avez tendance à observer beaucoup et à parler avec mesure, mais avec intensité. Les sujets qui touchent au fond des choses peuvent vous attirer.",
+    "sagittarius": "Votre esprit pourrait se tourner vers les grandes idées, les voyages et les perspectives larges. Vous tendez à parler avec franchise et optimisme. Le sens général peut compter davantage pour vous que le détail.",
+    "capricorn": "Votre façon de penser pourrait être structurée, sérieuse et orientée vers le concret. Vous tendez à réfléchir avant de parler et à privilégier ce qui est utile. Votre humour, s'il est présent, peut être sec et discret.",
+    "aquarius": "Votre esprit pourrait être original, indépendant et tourné vers les idées nouvelles. Vous aimez sans doute sortir des sentiers battus et comprendre les systèmes. Votre façon de communiquer peut surprendre, ce qui reste une piste parmi d'autres.",
+    "pisces": "Votre pensée pourrait être intuitive, imaginative et nourrie par les images plutôt que par la logique pure. Vous tendez à percevoir l'ambiance avant les mots. Exprimer précisément une idée peut parfois demander un peu de temps."
+  },
+  "venus": {
+    "aries": "Votre façon d'aimer pourrait être directe et spontanée. Vous avez tendance à aller vers ce qui vous attire avec enthousiasme et à apprécier la franchise. L'élan des débuts peut compter beaucoup pour vous.",
+    "taurus": "Vous pourriez aimer avec constance, simplicité et un goût marqué pour le confort. Les plaisirs des sens, la fidélité et la stabilité tendent à vous rassurer. Vos valeurs pourraient se construire dans la durée.",
+    "gemini": "Vous pourriez être attiré par la légèreté, l'humour et la conversation. Dans vos liens, le dialogue et la curiosité tendent à compter autant que les émotions. Une piste de lecture : avoir besoin de variété pour rester charmé.",
+    "cancer": "Votre manière d'aimer pourrait être tendre, protectrice et attachée à la sécurité affective. Vous tendez à donner de l'importance au foyer et aux souvenirs partagés. Se sentir en confiance peut être essentiel pour vous ouvrir.",
+    "leo": "Vous pourriez aimer avec générosité, chaleur et un certain goût du geste marquant. Vous avez tendance à apprécier les marques d'attention et la loyauté. Vos goûts peuvent aller vers ce qui est beau et rayonnant.",
+    "virgo": "Votre façon d'aimer pourrait passer par les petites attentions et le service rendu. Vous tendez à être discret, soigneux et exigeant avec ce qui compte pour vous. Les gestes du quotidien peuvent avoir plus de poids que les grands discours.",
+    "libra": "Vous pourriez rechercher l'harmonie, l'élégance et la réciprocité dans vos relations. Les goûts esthétiques et le sens de la courtoisie tendent à compter. Une piste de lecture : se sentir bien quand les liens sont équilibrés.",
+    "scorpio": "Votre manière d'aimer pourrait être intense, entière et tournée vers la profondeur. Vous avez tendance à vous engager pleinement quand la confiance est là. Les liens superficiels peuvent vous intéresser moins que les liens sincères.",
+    "sagittarius": "Vous pourriez aimer la liberté, l'aventure et les relations qui font grandir. Vous tendez à valoriser l'honnêteté et le partage de découvertes. Votre goût pourrait aller vers l'ailleurs et ce qui élargit l'horizon.",
+    "capricorn": "Votre façon d'aimer pourrait être réservée, loyale et inscrite dans le temps. Vous tendez à vous engager avec sérieux et à valoriser la fiabilité. L'affection peut s'exprimer chez vous par des actes plus que par des mots.",
+    "aquarius": "Vous pourriez aimer à votre manière, avec une grande valeur accordée à l'amitié et à l'indépendance. Vos goûts tendent à sortir de l'ordinaire. Dans un lien, avoir de l'espace pour rester vous-même peut être important.",
+    "pisces": "Votre façon d'aimer pourrait être douce, romantique et très empathique. Vous avez tendance à ressentir profondément l'autre et à rêver la relation. Il peut être utile, comme piste de lecture, de garder aussi vos propres limites en vue."
+  },
+  "mars": {
+    "aries": "Votre énergie pourrait être directe, rapide et pleine d'élan. Vous tendez à agir d'abord et à vous affirmer sans détour. Le défi et le mouvement peuvent vous stimuler.",
+    "taurus": "Votre énergie pourrait être persévérante, calme et régulière. Vous avez tendance à avancer à votre rythme, sans vous presser, mais avec ténacité. Une fois en route, vous pourriez avoir du mal à changer de cap.",
+    "gemini": "Vous pourriez agir avec agilité, en menant plusieurs choses de front. Votre énergie tend à passer par la parole, l'idée et l'adaptation. S'affirmer peut se faire chez vous par l'argumentation et la répartie.",
+    "cancer": "Votre énergie pourrait être liée à vos émotions et à ce que vous souhaitez protéger. Vous tendez à agir de façon indirecte, avec prudence, puis à défendre fermement les vôtres. Votre motivation peut varier selon votre climat intérieur.",
+    "leo": "Vous pourriez agir avec fierté, courage et une envie de vous démarquer. Votre énergie tend à s'enflammer pour ce qui a du sens et du panache. S'affirmer avec confiance peut vous être naturel, tout en cherchant la reconnaissance.",
+    "virgo": "Votre énergie pourrait se déployer avec méthode, minutie et sens du service. Vous avez tendance à agir de manière organisée et efficace plutôt que spectaculaire. Une piste de lecture : l'exigence envers vous-même peut être forte.",
+    "libra": "Vous pourriez vous affirmer avec tact, en cherchant l'accord plutôt que le conflit. Votre énergie tend à se mobiliser pour ce qui est juste et équilibré. Décider et passer à l'action peut parfois prendre un peu de temps.",
+    "scorpio": "Votre énergie pourrait être profonde, concentrée et déterminée. Vous tendez à agir avec stratégie et à ne pas lâcher ce qui compte vraiment. Votre intensité peut se montrer peu, tout en étant très présente.",
+    "sagittarius": "Vous pourriez agir avec enthousiasme, goût du large et besoin de mouvement. Votre énergie tend à s'élancer vers un idéal ou un objectif lointain. S'affirmer peut se faire de manière franche et optimiste.",
+    "capricorn": "Votre énergie pourrait être disciplinée, stratégique et tournée vers un but précis. Vous avez tendance à avancer pas à pas, avec endurance. Vous pourriez préférer l'efficacité au bruit, en gardant le contrôle de votre effort.",
+    "aquarius": "Vous pourriez agir de manière indépendante, parfois inattendue, au service d'idées ou de causes. Votre énergie tend à se mobiliser pour faire autrement. S'affirmer peut passer chez vous par l'originalité plus que par l'affrontement.",
+    "pisces": "Votre énergie pourrait être fluide, intuitive et parfois difficile à canaliser. Vous tendez à agir au gré de l'inspiration ou par compassion. Poser un cadre clair peut vous aider, comme piste de lecture, à mieux passer à l'action."
+  }
+}
