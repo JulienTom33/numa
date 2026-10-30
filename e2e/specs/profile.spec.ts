@@ -9,7 +9,8 @@ test.describe("Profil", () => {
 
   test("affiche le prénom, le statut découverte et les données de naissance", async ({ page }) => {
     await expect(page.locator("#profile__title--main")).toHaveText("Camille");
-    await expect(page.locator("#profile__badge--status")).toHaveText("Mode découverte");
+    await expect(page.locator("#profile__badge--status")).toHaveCount(0);
+    await expect(page.locator("#discovery-mode-badge__badge--main")).toHaveCount(1);
     await expect(page.locator("#profile__row--birth-place")).toContainText("Bordeaux");
     await expect(page.locator("#profile__row--tone")).toContainText("Équilibré");
   });

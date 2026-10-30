@@ -60,9 +60,11 @@ function ProfileScreen({ profile, email, sun, ascendant, chart = null, saved, on
         <p id="profile__text--placements" className="text-sm text-ink-secondary">
           {placement("sun", sun)} · {placement("ascendant", ascendant)}
         </p>
-        <Badge id="profile__badge--status" tone={profile.status === "anonymous" ? "violet" : "sage"}>
-          {t(`status.${profile.status}`)}
-        </Badge>
+        {profile.status !== "anonymous" && (
+          <Badge id="profile__badge--status" tone="sage">
+            {t(`status.${profile.status}`)}
+          </Badge>
+        )}
       </header>
       {saved && (
         <Callout id="profile__callout--saved" tone="success">
