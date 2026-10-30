@@ -113,6 +113,7 @@ Noms des tokens disponibles (les valeurs sont dans le bloc `@theme` de `src/inde
 | Famille | Tokens | Exemple de classe |
 |---|---|---|
 | Neutres | `page`, `surface`, `white`, `line` | `bg-page`, `border-line` |
+| Texte sur fond d'accent | `on-accent` | `text-on-accent` |
 | Encre | `ink`, `ink-secondary`, `ink-muted` | `text-ink-secondary` |
 | Corail (action) | `coral`, `coral-hover`, `coral-disabled`, `coral-soft`, `coral-ink` | `bg-coral` |
 | Violet (identité, sélection) | `violet`, `violet-ink`, `violet-soft`, `violet-wash` | `text-violet-ink` |

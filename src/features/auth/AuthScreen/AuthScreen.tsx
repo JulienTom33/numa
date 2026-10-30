@@ -98,7 +98,7 @@ function AuthScreen({
               >
                 <span
                   aria-hidden="true"
-                  className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sage text-white"
+                  className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sage text-on-accent"
                 >
                   <Icon name="check" size={12} />
                 </span>

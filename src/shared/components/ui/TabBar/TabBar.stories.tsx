@@ -20,7 +20,7 @@ const meta = {
   render: function Render(args) {
     const [, updateArgs] = useArgs();
     return (
-      <div className="mx-auto flex h-[300px] max-w-app flex-col justify-end bg-page">
+      <div className="mx-auto flex h-[300px] max-w-shell flex-col justify-end bg-page">
         <TabBar {...args} onSelect={(activeKey) => updateArgs({ activeKey })} />
       </div>
     );
