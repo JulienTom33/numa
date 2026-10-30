@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import type { Caller } from "../_shared/auth.ts";
 import { HttpError } from "../_shared/http.ts";
+import { logEvent } from "../_shared/logger.ts";
 
 export const ANONYMOUS_QUESTION_LIMIT = 2;
 
@@ -58,7 +59,9 @@ export async function answerWithQuota<T>(
   } catch (error) {
     await store.release(reservationId);
     if (error instanceof HttpError) throw error;
-    console.error("provider_error", error instanceof Error ? error.name : typeof error);
+    logEvent("error", "provider_error", {
+      error_type: error instanceof Error ? error.name : typeof error,
+    });
     throw new HttpError(
       502,
       "provider_unavailable",

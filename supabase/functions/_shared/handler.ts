@@ -16,7 +16,11 @@ interface Options {
   handle: (context: HandlerContext) => Response | Promise<Response>;
 }
 
-const QUOTA_CODES = new Set(["rate_limit_exceeded", "ai_daily_limit_exceeded", "quota_exceeded"]);
+const QUOTA_CODES = new Set([
+  "rate_limit_exceeded",
+  "ai_daily_limit_exceeded",
+  "question_quota_exceeded",
+]);
 
 function logOutcome(
   functionName: string,

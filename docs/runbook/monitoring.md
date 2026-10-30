@@ -10,7 +10,10 @@ Une ligne JSON par événement (`supabase/functions/_shared/logger.ts`). Champs 
 |---|---|---|---|
 | `request_completed` | info, ou error si statut >= 500 | `function`, `method`, `request_id`, `status`, `code`, `latency_ms` | une ligne par requête (hors préflight CORS) |
 | `auth_failure` | warn | idem | statut 401 : jeton absent (`unauthenticated`) ou invalide (`invalid_token`) |
-| `quota_rejected` | warn | idem | `rate_limit_exceeded`, `ai_daily_limit_exceeded` ou `quota_exceeded` (429) |
+| `quota_rejected` | warn | idem | `rate_limit_exceeded`, `ai_daily_limit_exceeded` ou `question_quota_exceeded` (429) |
+| `ai_provider_failure` | error | `provider_kind`, `service`, `kind` | échec d'un fournisseur IA de la chaîne (chat, horoscopes), avant bascule |
+| `provider_error` | error | `error_type` | exception inattendue pendant la génération d'une réponse du chat (502) |
+| `rate_limits_purge_failed` | error | `function` | purge des compteurs de rate limit échouée après suppression d'un compte |
 | `external_failure` | error | `provider_kind`, `service`, `kind`, `status`, `attempt`, `latency_ms` | échec d'un appel sortant, un événement par tentative |
 | `http_error` | error | `code`, `correlation_id` | erreur attendue de statut >= 500 (ex. `ai_unavailable`) |
 | `unexpected_error` | error | `error_type`, `correlation_id` | exception non prévue (réponse 500 `internal_error`) |
