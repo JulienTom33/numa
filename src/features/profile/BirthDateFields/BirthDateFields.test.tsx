@@ -22,6 +22,13 @@ describe("BirthDateFields", () => {
     expect(onChange).toHaveBeenCalledWith({ day: 12, month: 3, year: 1985 });
   });
 
+  it("ne propose aucune année rendant l'utilisateur plus jeune que 15 ans", () => {
+    render(<BirthDateFields id="date" value={{ day: null, month: null, year: null }} onChange={vi.fn()} today={TODAY} />);
+    const years = Array.from(screen.getByLabelText("Année").querySelectorAll("option")).map((option) => option.value);
+    expect(years).toContain("2011");
+    expect(years).not.toContain("2012");
+  });
+
   it("affiche l'erreur", () => {
     render(
       <BirthDateFields id="date" value={{ day: null, month: null, year: null }} onChange={vi.fn()} error="Date invalide" today={TODAY} />,
