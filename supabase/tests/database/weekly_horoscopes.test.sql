@@ -5,7 +5,10 @@ begin;
 select plan(7);
 
 select has_table('public', 'weekly_horoscopes', 'weekly_horoscopes existe');
-select row_security_is_enabled('public', 'weekly_horoscopes', 'la RLS est activée');
+select ok(
+  (select relrowsecurity from pg_class where oid = 'public.weekly_horoscopes'::regclass),
+  'la RLS est activée'
+);
 select ok(
   not has_table_privilege('authenticated', 'public.weekly_horoscopes', 'select'),
   'authenticated ne lit pas le cache directement'
