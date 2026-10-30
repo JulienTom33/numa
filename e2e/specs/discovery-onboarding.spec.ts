@@ -12,6 +12,10 @@ test.describe("Découvrir sans compte, onboarding et résumé du thème", () => 
     await expect(page.locator("#chart-summary__item--sun")).toBeVisible();
     await expect(page.locator("#chart-summary__item--moon")).toBeVisible();
     await expect(page.locator("#chart-summary__item--ascendant")).toBeVisible();
+    await expect(page.locator("#chart-summary__reading--sun__text--reading")).toBeVisible();
+    await expect(page.locator("#chart-summary__reading--sun__text--why")).toContainText("le Soleil était à");
+    await expect(page.locator("#chart-summary__reading--moon__text--why")).toContainText("la Lune était à");
+    await expect(page.locator("#chart-summary__reading--ascendant__text--why")).toContainText("se levait à l'horizon");
 
     await page.locator("#chart-summary__button--discover").click();
     await expect(page.locator("#app__shell--root")).toBeVisible();

@@ -1,0 +1,79 @@
+{
+  "zones": {
+    "aries": "du Bélier",
+    "taurus": "du Taureau",
+    "gemini": "des Gémeaux",
+    "cancer": "du Cancer",
+    "leo": "du Lion",
+    "virgo": "de la Vierge",
+    "libra": "de la Balance",
+    "scorpio": "du Scorpion",
+    "sagittarius": "du Sagittaire",
+    "capricorn": "du Capricorne",
+    "aquarius": "du Verseau",
+    "pisces": "des Poissons"
+  },
+  "periods": {
+    "aries": "du 21 mars au 19 avril",
+    "taurus": "du 20 avril au 20 mai",
+    "gemini": "du 21 mai au 20 juin",
+    "cancer": "du 21 juin au 22 juillet",
+    "leo": "du 23 juillet au 22 août",
+    "virgo": "du 23 août au 22 septembre",
+    "libra": "du 23 septembre au 22 octobre",
+    "scorpio": "du 23 octobre au 22 novembre",
+    "sagittarius": "du 23 novembre au 21 décembre",
+    "capricorn": "du 22 décembre au 19 janvier",
+    "aquarius": "du 20 janvier au 18 février",
+    "pisces": "du 19 février au 20 mars"
+  },
+  "why": {
+    "sun": "Le jour de votre naissance, le Soleil était à {{degree}}° dans la zone {{zone}} (environ {{period}}). Les dates des signes varient d'un jour selon les années.",
+    "moon": "Le jour de votre naissance, la Lune était à {{degree}}° dans la zone {{zone}}.",
+    "moonUncertain": "Sans heure de naissance précise, la position de la Lune est estimée : son signe reste à confirmer.",
+    "ascendant": "À l'heure et au lieu de votre naissance, le signe qui se levait à l'horizon était celui {{zone}}.",
+    "ascendantApproximate": "Votre heure de naissance étant approximative, ce signe reste à confirmer : l'horizon change de signe environ toutes les deux heures."
+  },
+  "sun": {
+    "aries": "Le Soleil en Bélier pourrait faire de votre identité une force d'élan : vous tendez à vouloir démarrer, essayer et aller droit au but. L'énergie du premier pas, le courage et la franchise sont des couleurs associées à ce signe. Il peut aussi inviter à apprendre la patience quand les choses prennent du temps.",
+    "taurus": "Le Soleil en Taureau pourrait donner à votre identité une base calme et concrète : vous tendez à chercher la stabilité, le confort et ce qui dure. La persévérance, le goût des plaisirs simples et la fidélité sont associés à ce signe. Il peut aussi inviter à rester souple quand les habitudes sont bousculées.",
+    "gemini": "Le Soleil en Gémeaux pourrait colorer votre identité de curiosité : vous tendez à aimer apprendre, échanger et passer d'une idée à l'autre. La vivacité d'esprit, l'humour et l'adaptabilité sont associés à ce signe. Il peut aussi inviter à approfondir plutôt qu'à papillonner.",
+    "cancer": "Le Soleil en Cancer pourrait placer au cœur de votre identité le besoin de protéger et de se sentir en sécurité : vous tendez à être attentif(ve) aux autres et attaché(e) à votre foyer. La sensibilité, la mémoire du cœur et l'esprit nourricier sont associés à ce signe. Il peut aussi inviter à ne pas se replier trop vite sur soi.",
+    "leo": "Le Soleil en Lion pourrait donner à votre identité un certain rayonnement : vous tendez à aimer créer, vous exprimer et être reconnu(e) pour ce que vous apportez. La générosité, la chaleur et une fierté légitime sont associées à ce signe. Il peut aussi inviter à laisser de la place aux autres sur la scène.",
+    "virgo": "Le Soleil en Vierge pourrait donner à votre identité le goût du détail et du travail bien fait : vous tendez à observer, analyser et chercher à être utile. Le sens pratique, la discrétion et l'exigence sont associés à ce signe. Il peut aussi inviter à vous accorder plus d'indulgence envers vous-même.",
+    "libra": "Le Soleil en Balance pourrait faire de la relation un axe de votre identité : vous tendez à chercher l'équilibre, l'harmonie et le dialogue. Le sens de l'équité, le tact et le goût du beau sont associés à ce signe. Il peut aussi inviter à oser trancher sans attendre l'accord de tous.",
+    "scorpio": "Le Soleil en Scorpion pourrait donner à votre identité de l'intensité et de la profondeur : vous tendez à vouloir comprendre ce qui se cache sous la surface et à vivre les choses à fond. La loyauté, la force de caractère et la capacité à se transformer sont associées à ce signe. Il peut aussi inviter à apprivoiser la méfiance pour laisser entrer la confiance.",
+    "sagittarius": "Le Soleil en Sagittaire pourrait nourrir votre identité d'un besoin d'horizon : vous tendez à chercher du sens, de la liberté et de nouvelles expériences. L'optimisme, la franchise et l'esprit d'aventure sont associés à ce signe. Il peut aussi inviter à tenir compte des détails pratiques avant de partir.",
+    "capricorn": "Le Soleil en Capricorne pourrait donner à votre identité une colonne vertébrale solide : vous tendez à construire pas à pas, avec sérieux et persévérance. Le sens des responsabilités, l'ambition réfléchie et la patience sont associés à ce signe. Il peut aussi inviter à vous autoriser des moments de légèreté.",
+    "aquarius": "Le Soleil en Verseau pourrait colorer votre identité d'indépendance et d'originalité : vous tendez à penser par vous-même et à vous intéresser à l'avenir et au collectif. L'ouverture d'esprit, l'inventivité et l'amitié sont associées à ce signe. Il peut aussi inviter à partager davantage ce que vous ressentez.",
+    "pisces": "Le Soleil en Poissons pourrait donner à votre identité une grande sensibilité : vous tendez à percevoir l'atmosphère autour de vous et à vous laisser porter par l'imaginaire. L'empathie, la compassion et la créativité sont associées à ce signe. Il peut aussi inviter à poser des limites pour ne pas vous perdre dans les émotions des autres."
+  },
+  "moon": {
+    "aries": "La Lune en Bélier pourrait faire de vos émotions des élans rapides : vous tendez à réagir vite et à avoir besoin d'agir pour vous sentir bien. Les sentiments sont plutôt directs, vifs et vite passés. Prendre un temps avant de répondre pourrait aider à apaiser les premiers mouvements.",
+    "taurus": "La Lune en Taureau pourrait vous rendre plus serein(e) dans un cadre stable : vous tendez à vous ressourcer par le confort, les routines et les plaisirs des sens. Les émotions sont plutôt lentes à s'éveiller mais durables. Un bon repas, la nature ou un lieu familier pourraient vous apaiser.",
+    "gemini": "La Lune en Gémeaux pourrait faire passer vos émotions par les mots : vous tendez à vous rassurer en parlant, en écrivant ou en comprenant ce qui se passe. Les humeurs peuvent être changeantes et légères. Avoir de la variété et des échanges pourrait vous faire du bien.",
+    "cancer": "La Lune en Cancer, signe qu'elle habite naturellement, pourrait rendre votre monde intérieur très présent : vous tendez à ressentir profondément et à avoir besoin de vous sentir en sécurité. Les souvenirs et les proches comptent beaucoup. Un refuge où vous sentir chez vous pourrait vous aider à vous ressourcer.",
+    "leo": "La Lune en Lion pourrait faire de la chaleur et de la reconnaissance un besoin émotionnel : vous tendez à vous sentir bien quand on vous apprécie et que vous pouvez donner généreusement. Les émotions sont plutôt expressives et fières. Créer, jouer ou partager un moment festif pourrait vous recharger.",
+    "virgo": "La Lune en Vierge pourrait vous inviter à gérer vos émotions avec méthode : vous tendez à vous apaiser en étant utile, en rangeant ou en analysant ce que vous ressentez. La sensibilité est plutôt discrète et soucieuse du détail. Se faire confiance sans tout contrôler pourrait détendre vos inquiétudes.",
+    "libra": "La Lune en Balance pourrait lier votre bien-être à l'harmonie autour de vous : vous tendez à être mal à l'aise dans les conflits et à chercher la douceur dans vos relations. Les émotions sont plutôt tournées vers l'autre. Un cadre agréable et des liens apaisés pourraient vous ressourcer.",
+    "scorpio": "La Lune en Scorpion pourrait donner à vos émotions une grande intensité : vous tendez à ressentir fort, à rester discret(e) sur ce qui vous touche et à avoir besoin de liens sincères. La confiance se gagne lentement mais va loin. Trouver un espace pour exprimer ce qui est enfoui pourrait vous soulager.",
+    "sagittarius": "La Lune en Sagittaire pourrait faire de la liberté un besoin émotionnel : vous tendez à vous sentir mieux avec de l'espace, du mouvement et un but qui a du sens. Les émotions sont plutôt optimistes et franches. Voyager, apprendre ou prendre l'air pourrait vous redonner de l'énergie.",
+    "capricorn": "La Lune en Capricorne pourrait vous rendre pudique avec vos émotions : vous tendez à garder le contrôle, à rester sérieux(se) et à vous rassurer par l'action concrète. Votre sensibilité peut se montrer lentement. Vous autoriser à demander du soutien pourrait alléger le poids que vous portez.",
+    "aquarius": "La Lune en Verseau pourrait vous donner un recul particulier face aux émotions : vous tendez à les observer avant de les vivre et à avoir besoin d'indépendance. Les liens d'amitié et les idées vous nourrissent. Partager vos sentiments, même simplement, pourrait vous rapprocher des autres.",
+    "pisces": "La Lune en Poissons pourrait vous rendre très réceptif(ve) à l'ambiance qui vous entoure : vous tendez à ressentir ce que vivent les autres et à vous évader par le rêve ou la création. Vos émotions peuvent être fluides et profondes. Des moments de calme et de solitude pourraient vous aider à vous ressourcer."
+  },
+  "ascendant": {
+    "aries": "Avec l'Ascendant Bélier, vous pourriez donner une première impression d'énergie et de franchise : on vous perçoit peut-être comme quelqu'un de direct, qui avance sans trop attendre. Face à une situation nouvelle, vous tendez à agir d'abord et à réfléchir ensuite. Cette spontanéité peut être un atout comme un point de vigilance.",
+    "taurus": "Avec l'Ascendant Taureau, vous pourriez donner une première impression de calme et de solidité : on vous perçoit peut-être comme quelqu'un de fiable, qui prend son temps. Face à une situation nouvelle, vous tendez à observer avant de vous engager. Cette prudence peut parfois ressembler à de la réserve.",
+    "gemini": "Avec l'Ascendant Gémeaux, vous pourriez donner une première impression de vivacité et de curiosité : on vous perçoit peut-être comme quelqu'un de sociable et de bavard. Face à une situation nouvelle, vous tendez à poser des questions et à vous adapter vite. Cette légèreté apparente cache souvent beaucoup d'attention.",
+    "cancer": "Avec l'Ascendant Cancer, vous pourriez donner une première impression de douceur et de sensibilité : on vous perçoit peut-être comme quelqu'un d'accueillant et de protecteur. Face à une situation nouvelle, vous tendez à vous méfier un peu avant de vous ouvrir. Une fois en confiance, votre chaleur se remarque.",
+    "leo": "Avec l'Ascendant Lion, vous pourriez donner une première impression de présence et de chaleur : on vous perçoit peut-être comme quelqu'un de confiant, qui attire naturellement l'attention. Face à une situation nouvelle, vous tendez à vous montrer sous votre meilleur jour. Cette assurance peut inspirer les autres.",
+    "virgo": "Avec l'Ascendant Vierge, vous pourriez donner une première impression de discrétion et de sérieux : on vous perçoit peut-être comme quelqu'un d'attentif et de réservé. Face à une situation nouvelle, vous tendez à observer les détails avant de vous exprimer. Votre bienveillance se découvre souvent avec le temps.",
+    "libra": "Avec l'Ascendant Balance, vous pourriez donner une première impression de courtoisie et d'élégance : on vous perçoit peut-être comme quelqu'un d'agréable, qui cherche à mettre les autres à l'aise. Face à une situation nouvelle, vous tendez à chercher le dialogue et le compromis. Cette douceur peut parfois cacher vos propres préférences.",
+    "scorpio": "Avec l'Ascendant Scorpion, vous pourriez donner une première impression d'intensité et de mystère : on vous perçoit peut-être comme quelqu'un de réservé, au regard qui observe beaucoup. Face à une situation nouvelle, vous tendez à rester prudent(e) avant de dévoiler ce que vous pensez. Cette retenue peut surprendre, puis révéler une vraie profondeur.",
+    "sagittarius": "Avec l'Ascendant Sagittaire, vous pourriez donner une première impression d'enthousiasme et d'ouverture : on vous perçoit peut-être comme quelqu'un de chaleureux, plein d'idées et de bonne humeur. Face à une situation nouvelle, vous tendez à y voir une occasion d'apprendre. Votre franchise peut être appréciée, et parfois jugée un peu directe.",
+    "capricorn": "Avec l'Ascendant Capricorne, vous pourriez donner une première impression de sérieux et de maîtrise : on vous perçoit peut-être comme quelqu'un de posé et de responsable. Face à une situation nouvelle, vous tendez à avancer avec méthode et prudence. Votre côté plus chaleureux se révèle souvent quand le lien s'installe.",
+    "aquarius": "Avec l'Ascendant Verseau, vous pourriez donner une première impression d'originalité et d'indépendance : on vous perçoit peut-être comme quelqu'un d'ouvert, un peu à part, qui sort des sentiers battus. Face à une situation nouvelle, vous tendez à prendre du recul avant de vous impliquer. Cette distance peut intriguer autant que séduire.",
+    "pisces": "Avec l'Ascendant Poissons, vous pourriez donner une première impression de douceur et de rêverie : on vous perçoit peut-être comme quelqu'un d'empathique et de réceptif. Face à une situation nouvelle, vous tendez à ressentir l'ambiance avant de réfléchir. Cette sensibilité vous rend proche des autres, mais peut demander de vous protéger."
+  }
+}
