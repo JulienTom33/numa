@@ -44,6 +44,10 @@
     "serviceUnavailable": "Le service de recherche de villes est momentanément indisponible. Réessayez dans un instant.",
     "rateLimited": "Trop de recherches en peu de temps. Patientez quelques secondes puis réessayez.",
     "retry": "Réessayer",
+    "arrondissementLabel": "Arrondissement",
+    "arrondissementPlaceholder": "Choisir un arrondissement",
+    "arrondissementOrdinal_ordinal_one": "{{count}}er",
+    "arrondissementOrdinal_ordinal_other": "{{count}}e",
     "timezone": "Fuseau horaire détecté : {{timezone}}"
   },
   "time": {
@@ -107,6 +111,7 @@
       "invalidFormat": "Cette date n'est pas valide.",
       "nonexistent": "Cette date n'existe pas. Vérifiez le jour et le mois.",
       "tooEarly": "L'année de naissance doit être postérieure à {{year}}.",
+      "tooYoung": "Sidéra est réservé aux personnes de 15 ans ou plus.",
       "future": "La date de naissance ne peut pas être dans le futur."
     },
     "birthTime": {

@@ -7,6 +7,8 @@ import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
 import ListRow from "../../../shared/components/ui/ListRow/ListRow";
 import type { ZodiacSign } from "../../../../shared/zodiac/zodiac.ts";
+import ChartDetails from "../../chart/ChartDetails/ChartDetails";
+import type { MyChartData } from "../../chart/skyChart/skyChart";
 import { maskEmail } from "../maskEmail/maskEmail";
 import type { ProfileData } from "../profileData/profileData";
 
@@ -15,6 +17,7 @@ interface Props {
   email: string | null;
   sun: ZodiacSign | null;
   ascendant: ZodiacSign | null;
+  chart?: MyChartData | null;
   saved: boolean;
   onEdit: () => void;
   onOpenHistory: () => void;
@@ -35,7 +38,7 @@ function Row({ id, label, children }: RowProps) {
   );
 }
 
-function ProfileScreen({ profile, email, sun, ascendant, saved, onEdit, onOpenHistory }: Props) {
+function ProfileScreen({ profile, email, sun, ascendant, chart = null, saved, onEdit, onOpenHistory }: Props) {
   const { t, i18n } = useTranslation("profile");
   const { t: tOnboarding } = useTranslation("onboarding");
   const { t: tAstrology } = useTranslation("astrology");
@@ -89,6 +92,7 @@ function ProfileScreen({ profile, email, sun, ascendant, saved, onEdit, onOpenHi
           </dl>
         </section>
       </div>
+      {chart && <ChartDetails idPrefix="profile" summary={chart.summary} natal={chart.natal} />}
       <div className="rounded-card border border-line bg-white">
         <ListRow id="profile__row--history" label={t("history.open")} onClick={onOpenHistory} />
       </div>

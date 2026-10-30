@@ -35,6 +35,12 @@ function HoroscopeCard({ status, data, errorCode, onRetry, onOpenProfile }: Prop
         </p>
       )}
 
+      {status === "loading" && (
+        <p id="horoscope__text--loading-hint" className="mt-1 text-xs text-ink-muted">
+          {t("today:horoscope.loadingHint")}
+        </p>
+      )}
+
       {status === "error" && (
         <Callout id="horoscope__callout--error" tone="error" className="mt-3">
           <p id="horoscope__text--error">{t(`today:horoscope.errors.${code}`)}</p>
@@ -71,6 +77,10 @@ function HoroscopeCard({ status, data, errorCode, onRetry, onOpenProfile }: Prop
               </li>
             ))}
           </ul>
+
+          <p id="horoscope__text--source" className="mt-4 text-xs text-ink-muted">
+            {t("today:horoscope.source")}
+          </p>
 
           <Disclosure
             id="horoscope__button--why"

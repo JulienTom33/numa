@@ -10,12 +10,22 @@
   "energy": {
     "title": "Votre énergie du jour",
     "headline": "Le repère du jour : {{aspect}}.",
+    "orb": "L'écart est de {{orb}}° : plus il est petit, plus l'effet est marqué.",
+    "how": "Chaque jour, nos calculs astronomiques placent les planètes dans le ciel et les comparent à votre thème natal. L'aspect le plus précis donne le ton de la journée : c'est une tendance, pas une certitude.",
     "calm": "Le ciel est calme aujourd'hui : aucun lien serré avec votre Soleil, votre Lune ou votre Ascendant.",
     "unavailable": "Les positions actuelles n'ont pas pu être chargées, la synthèse du jour est indisponible pour le moment."
   },
   "influences": {
-    "title": "Trois influences",
+    "title": "Les influences du jour",
+    "basis": "Elles reposent sur les transits du jour, c'est-à-dire les positions réelles des planètes calculées par notre moteur astronomique, comparées à votre thème. Elles changent chaque jour.",
     "relations": "Relations",
+    "love": "Amour",
+    "bodies": {
+      "relations": "Lune et Neptune : sensibilité et liens du quotidien",
+      "love": "Vénus : sentiments et relations amoureuses",
+      "work": "Saturne, Mercure et Jupiter : travail, échanges, opportunités",
+      "energy": "Mars, Soleil, Uranus et Pluton : élan et vitalité"
+    },
     "work": "Travail",
     "energy": "Énergie",
     "levels": {
@@ -25,7 +35,8 @@
     }
   },
   "sources": {
-    "title": "Données utilisées",
+    "title": "D'où viennent ces lectures",
+    "purpose": "Cette section vous montre sur quelles données reposent l'énergie, les influences et l'horoscope ci-dessus, pour que vous puissiez en juger la fiabilité.",
     "text": "Positions des planètes du {{date}} comparées à votre Soleil, votre Lune et votre Ascendant. Ce sont des repères du moment, pas des prévisions.",
     "moonSkipped": "Votre Lune natale n'est pas utilisée : son signe reste à confirmer.",
     "ascendantSkipped": "Sans heure de naissance, votre Ascendant n'est pas utilisé.",
@@ -34,6 +45,8 @@
   "horoscope": {
     "title": "Votre horoscope du jour",
     "loading": "Rédaction de votre horoscope…",
+    "loadingHint": "Cela peut prendre quelques secondes : le ciel est calculé, puis le texte est rédigé.",
+    "source": "Positions calculées localement par notre moteur astronomique, texte rédigé par une IA. Il décrit des tendances, pas des certitudes.",
     "sections": {
       "general": "Général",
       "relations": "Relations",

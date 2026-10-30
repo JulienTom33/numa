@@ -6,7 +6,7 @@ export const TIME_MARGINS: readonly TimeMargin[] = ["under_30_min", "between_30_
 
 export type FirstNameErrorCode = "required" | "tooLong" | "invalidCharacters";
 
-export type BirthDateErrorCode = "incomplete" | "required" | "invalidFormat" | "nonexistent" | "tooEarly" | "future";
+export type BirthDateErrorCode = "incomplete" | "required" | "invalidFormat" | "nonexistent" | "tooEarly" | "tooYoung" | "future";
 
 export type BirthTimeErrorCode = "precisionRequired" | "timeRequired" | "invalidFormat" | "marginRequired";
 
@@ -49,6 +49,7 @@ export const EMPTY_ONBOARDING_DATA: OnboardingData = {
 
 export const FIRST_NAME_MAX_LENGTH = 50;
 export const MIN_BIRTH_YEAR = 1900;
+export const MIN_AGE = 15;
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -80,6 +81,14 @@ function pad(value: number, length: number): string {
 /** Date locale de l'utilisateur au format ISO : c'est elle qui définit « aujourd'hui » pour lui. */
 export function toLocalIsoDate(date: Date): string {
   return `${pad(date.getFullYear(), 4)}-${pad(date.getMonth() + 1, 2)}-${pad(date.getDate(), 2)}`;
+}
+
+export function latestBirthYear(today: Date = new Date()): number {
+  return today.getFullYear() - MIN_AGE;
+}
+
+function latestBirthIsoDate(today: Date): string {
+  return `${pad(latestBirthYear(today), 4)}${toLocalIsoDate(today).slice(-6)}`;
 }
 
 function isRealDate(year: number, month: number, day: number): boolean {
@@ -124,6 +133,9 @@ export function validateBirthDate(value: string | null, today: Date = new Date()
   }
   if (value > toLocalIsoDate(today)) {
     return "future";
+  }
+  if (value > latestBirthIsoDate(today)) {
+    return "tooYoung";
   }
   return null;
 }

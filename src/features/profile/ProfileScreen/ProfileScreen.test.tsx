@@ -2,7 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { anonymousProfile, authenticatedProfile } from "../profileData/profileFixtures";
+import { completeChart } from "../../chart/MyChart/myChartFixtures";
 import ProfileScreen from "./ProfileScreen";
+
+vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
 
 function renderScreen(overrides: Partial<Parameters<typeof ProfileScreen>[0]> = {}) {
   const onEdit = vi.fn();
@@ -57,5 +60,15 @@ describe("ProfileScreen", () => {
     const { onOpenHistory } = renderScreen();
     await userEvent.click(screen.getByRole("button", { name: "Mes conversations" }));
     expect(onOpenHistory).toHaveBeenCalledTimes(1);
+  });
+
+  it("affiche le thème détaillé quand il est fourni, et pas sinon", () => {
+    renderScreen({ chart: completeChart });
+    expect(document.getElementById("profile__card--details")).toBeInTheDocument();
+  });
+
+  it("n'affiche pas le détail sans thème", () => {
+    renderScreen();
+    expect(document.getElementById("profile__card--details")).not.toBeInTheDocument();
   });
 });

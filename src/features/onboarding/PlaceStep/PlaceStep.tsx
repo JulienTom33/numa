@@ -5,6 +5,7 @@ import Autocomplete, {
 } from "../../../shared/components/ui/Autocomplete/Autocomplete";
 import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
+import Select from "../../../shared/components/ui/Select/Select";
 import type { BirthPlace } from "../birthData/birthData";
 import type { PlaceSearchErrorCode, PlaceSuggestion } from "../placeSearch/placeSearch";
 import {
@@ -55,12 +56,13 @@ function PlaceStep({ id, search, value, onChange }: Props) {
   const [query, setQuery] = useState(value?.label ?? "");
   const [results, setResults] = useState<PlaceSuggestion[]>([]);
   const [status, setStatus] = useState<SearchStatus>("loading");
+  const [pending, setPending] = useState<PlaceSuggestion | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [failureKey, setFailureKey] = useState<FailureMessageKey>("place.searchFailed");
 
   const inputId = `${id}-city`;
   const term = query.trim();
-  const searching = value === null && term.length >= MIN_QUERY_LENGTH;
+  const searching = value === null && pending === null && term.length >= MIN_QUERY_LENGTH;
 
   useEffect(() => {
     if (!searching) return;
@@ -88,6 +90,7 @@ function PlaceStep({ id, search, value, onChange }: Props) {
 
   const handleInputChange = (next: string) => {
     setQuery(next);
+    setPending(null);
     setStatus("loading");
     if (value) onChange(null);
   };
@@ -95,8 +98,35 @@ function PlaceStep({ id, search, value, onChange }: Props) {
   const handleSelect = (suggestion: AutocompleteSuggestion) => {
     const place = results.find((result) => result.id === suggestion.id);
     if (!place) return;
+    if (place.arrondissements?.length) {
+      setQuery(place.name);
+      setPending(place);
+      return;
+    }
     setQuery(place.label);
     onChange(place);
+  };
+
+  const handleArrondissementChange = (rawNumber: string) => {
+    const arrondissement = pending?.arrondissements?.find(
+      (item) => String(item.number) === rawNumber,
+    );
+    if (!pending || !arrondissement) return;
+    const ordinal = t("place.arrondissementOrdinal", {
+      count: arrondissement.number,
+      ordinal: true,
+    });
+    const label = [`${pending.name} ${ordinal}`, pending.region, pending.country]
+      .filter(Boolean)
+      .join(", ");
+    setQuery(label);
+    setPending(null);
+    onChange({
+      label,
+      latitude: arrondissement.latitude,
+      longitude: arrondissement.longitude,
+      timezone: pending.timezone,
+    });
   };
 
   const handleRetry = () => {
@@ -130,6 +160,19 @@ function PlaceStep({ id, search, value, onChange }: Props) {
         noResultsText={t("place.noResults")}
         error={failed ? t(failureKey) : undefined}
       />
+      {pending?.arrondissements && (
+        <Select
+          id={`${id}-arrondissement`}
+          label={t("place.arrondissementLabel")}
+          placeholder={t("place.arrondissementPlaceholder")}
+          options={pending.arrondissements.map((item) => ({
+            value: String(item.number),
+            label: t("place.arrondissementOrdinal", { count: item.number, ordinal: true }),
+          }))}
+          value=""
+          onChange={(event) => handleArrondissementChange(event.target.value)}
+        />
+      )}
       {failed && (
         <Button
           id={`${id}-retry`}

@@ -1,5 +1,6 @@
 import { assertEquals, assertRejects, assertThrows } from "jsr:@std/assert@1";
 import { HttpError } from "../_shared/http.ts";
+import { arrondissementsFor } from "./arrondissements.ts";
 import {
   DEFAULT_LIMIT,
   type FetchFn,
@@ -83,7 +84,13 @@ Deno.test("toPlace builds a French label with city, region and country", () => {
     latitude: 48.85341,
     longitude: 2.3488,
     timezone: "Europe/Paris",
+    arrondissements: arrondissementsFor("2988507") ?? [],
   });
+});
+
+Deno.test("toPlace attaches arrondissements only to cities that have them", () => {
+  assertEquals(toPlace(PARIS_TEXAS)?.arrondissements, undefined);
+  assertEquals(toPlace({ ...PARIS, id: 2996944, name: "Lyon" })?.arrondissements?.length, 9);
 });
 
 Deno.test("toPlace omits a region that repeats the city name", () => {

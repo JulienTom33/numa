@@ -36,7 +36,7 @@ function TabBar<K extends string>({
       aria-label={label ?? t("tabBar.label")}
       className="border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]"
     >
-      <ul className="mx-auto flex h-16 max-w-app items-center justify-around px-2">
+      <ul className="mx-auto flex h-16 max-w-shell items-center justify-around px-2">
         {items.map((item) => {
           const active = item.key === activeKey;
           return (

@@ -50,7 +50,10 @@ describe("TodayScreen", () => {
     expect(document.getElementById("today__title--greeting")).toHaveTextContent("Bonjour Camille");
     expect(document.getElementById("today__text--date")).toHaveTextContent("24 octobre 2026");
     expect(document.getElementById("today__text--energy")).toHaveTextContent("Mars en conjonction avec votre ascendant");
-    expect(document.getElementById("today__text--influence-relations")).toHaveTextContent("Forte");
+    expect(document.getElementById("today__text--influence-love")).toHaveTextContent("Forte");
+    expect(document.getElementById("today__text--energy-meaning")).toHaveTextContent("très proches");
+    expect(document.getElementById("today__text--influences-basis")).toHaveTextContent("changent chaque jour");
+    expect(document.getElementById("today__text--sources-purpose")).toBeInTheDocument();
     expect(document.getElementById("today__text--influence-work")).toHaveTextContent("Modérée");
     expect(document.getElementById("today__text--sources")).toHaveTextContent("16 octobre 2026");
     expect(document.getElementById("horoscope__text--general")).toHaveTextContent("La journée peut inviter");

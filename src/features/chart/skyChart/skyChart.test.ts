@@ -77,6 +77,21 @@ describe("parsers", () => {
     expect(unknown.cusps).toBeNull();
   });
 
+  it("extrait le Milieu du Ciel et les aspects natals valides", () => {
+    const sky = parseNatalSky({
+      ...rawChart,
+      angles: { ascendant: { longitude: 232.9 }, midheaven: { longitude: 152.4 } },
+      aspects: [
+        { bodyA: "sun", bodyB: "moon", type: "square", orb: 1.8 },
+        { bodyA: "sun", bodyB: "chiron", type: "trine", orb: 2 },
+      ],
+    });
+    expect(sky.midheavenLongitude).toBe(152.4);
+    expect(sky.aspects).toEqual([{ bodyA: "sun", bodyB: "moon", type: "square", orb: 1.8 }]);
+    expect(parseNatalSky(undefined).aspects).toEqual([]);
+    expect(parseNatalSky(undefined).midheavenLongitude).toBeNull();
+  });
+
   it("ignore les aspects à un point inconnu et refuse un ciel vide", () => {
     expect(parseCurrentSky(rawSky)?.aspects).toHaveLength(1);
     expect(parseCurrentSky({ generatedAt: "x", bodies: [] })).toBeNull();

@@ -14,6 +14,16 @@ describe("AppShell", () => {
     expect(screen.getByRole("main")).toHaveAttribute("id", "test__shell--main-content");
   });
 
+  it("uses the wide shell container on desktop", () => {
+    render(
+      <AppShell id="test__shell--main" screenKey="today">
+        <p>Contenu</p>
+      </AppShell>,
+    );
+
+    expect(screen.getByRole("main").parentElement).toHaveClass("max-w-shell");
+  });
+
   it("renders the tab bar when provided", () => {
     render(
       <AppShell id="test__shell--main" screenKey="today" tabBar={<nav aria-label="Onglets" />}>

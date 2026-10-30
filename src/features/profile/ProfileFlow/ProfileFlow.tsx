@@ -36,7 +36,7 @@ function LoadedProfile({ profile, email, search }: LoadedProps) {
   const navigate = useNavigate();
   const { data: chart, status: chartStatus, retry: retryChart } = useMyChart();
   const { save, saving, errorCode, reset } = useSaveProfile(profile);
-  const { auth } = useAppContext();
+  const { auth, isAnonymous } = useAppContext();
   const deletion = useDeleteAccount(auth.signOut);
 
   const handleSave = (update: ProfileUpdate) => {
@@ -82,6 +82,7 @@ function LoadedProfile({ profile, email, search }: LoadedProps) {
         email={email}
         sun={chart?.summary.sun?.sign ?? null}
         ascendant={chart?.summary.ascendant?.sign ?? null}
+        chart={isAnonymous ? null : chart}
         saved={saved}
         onOpenHistory={() => navigate(paths.history)}
         onEdit={() => {

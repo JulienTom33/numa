@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Select, { type SelectOption } from "../../../shared/components/ui/Select/Select";
 import { formatDate } from "../../../i18n/format/format";
-import { MIN_BIRTH_YEAR, type BirthDateParts } from "../../onboarding/birthData/birthData";
+import { latestBirthYear, MIN_BIRTH_YEAR, type BirthDateParts } from "../../onboarding/birthData/birthData";
 
 interface Props {
   id: string;
@@ -24,9 +24,9 @@ function monthOptions(language: string): SelectOption[] {
   });
 }
 
-function yearOptions(currentYear: number): SelectOption[] {
-  return Array.from({ length: currentYear - MIN_BIRTH_YEAR + 1 }, (_, index) => {
-    const year = String(currentYear - index);
+function yearOptions(newestYear: number): SelectOption[] {
+  return Array.from({ length: newestYear - MIN_BIRTH_YEAR + 1 }, (_, index) => {
+    const year = String(newestYear - index);
     return { value: year, label: year };
   });
 }
@@ -38,8 +38,8 @@ function toSelectValue(part: number | null): string {
 function BirthDateFields({ id, value, onChange, error, today = new Date() }: Props) {
   const { t, i18n } = useTranslation("profile");
   const months = useMemo(() => monthOptions(i18n.language), [i18n.language]);
-  const currentYear = today.getFullYear();
-  const years = useMemo(() => yearOptions(currentYear), [currentYear]);
+  const newestYear = latestBirthYear(today);
+  const years = useMemo(() => yearOptions(newestYear), [newestYear]);
 
   return (
     <fieldset id={id} className="flex flex-col gap-2">

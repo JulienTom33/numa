@@ -29,12 +29,20 @@ const CUSPS = Array.from({ length: 12 }, (_, index) => (232.9 + index * 30) % 36
 export const completeNatal: NatalSky = {
   bodies: toBodies(NATAL_LONGITUDES, true),
   ascendantLongitude: 232.9,
+  midheavenLongitude: 152.4,
+  aspects: [
+    { bodyA: "sun", bodyB: "moon", type: "square", orb: 1.8 },
+    { bodyA: "venus", bodyB: "mars", type: "trine", orb: 3.1 },
+    { bodyA: "mercury", bodyB: "jupiter", type: "opposition", orb: 0.6 },
+  ],
   cusps: CUSPS,
 };
 
 export const unknownTimeNatal: NatalSky = {
   bodies: toBodies(NATAL_LONGITUDES, false),
   ascendantLongitude: null,
+  midheavenLongitude: null,
+  aspects: [{ bodyA: "sun", bodyB: "moon", type: "square", orb: 1.8 }],
   cusps: null,
 };
 

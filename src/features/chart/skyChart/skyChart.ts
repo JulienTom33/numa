@@ -32,9 +32,18 @@ export interface SkyBodyPosition {
   house: number | null;
 }
 
+export interface NatalAspect {
+  bodyA: SkyBodyId;
+  bodyB: SkyBodyId;
+  type: AspectType;
+  orb: number;
+}
+
 export interface NatalSky {
   bodies: SkyBodyPosition[];
   ascendantLongitude: number | null;
+  midheavenLongitude: number | null;
+  aspects: NatalAspect[];
   cusps: number[] | null;
 }
 
@@ -65,8 +74,9 @@ export interface MyChartResult {
 type RawSummary = NonNullable<Parameters<typeof parseNatalChart>[0]>;
 
 type RawNatalChart = RawSummary & {
-  angles?: { ascendant?: { longitude?: unknown } } | null;
+  angles?: { ascendant?: { longitude?: unknown }; midheaven?: { longitude?: unknown } } | null;
   houses?: { cusps?: unknown } | null;
+  aspects?: unknown;
 };
 
 interface RawNatalResponse {
@@ -121,11 +131,31 @@ export function parseCusps(raw: unknown): number[] | null {
   return longitudes.every((longitude): longitude is number => longitude !== null) ? longitudes : null;
 }
 
+export function parseNatalAspects(raw: unknown): NatalAspect[] {
+  if (!Array.isArray(raw)) return [];
+  const aspects: NatalAspect[] = [];
+  for (const item of raw as unknown[]) {
+    if (
+      isRecord(item) &&
+      isOneOf(SKY_BODIES, item.bodyA) &&
+      isOneOf(SKY_BODIES, item.bodyB) &&
+      isOneOf(ASPECT_TYPES, item.type) &&
+      typeof item.orb === "number"
+    ) {
+      aspects.push({ bodyA: item.bodyA, bodyB: item.bodyB, type: item.type, orb: item.orb });
+    }
+  }
+  return aspects;
+}
+
 export function parseNatalSky(raw: RawNatalChart | undefined): NatalSky {
   const ascendantLongitude = raw?.angles?.ascendant?.longitude;
+  const midheavenLongitude = raw?.angles?.midheaven?.longitude;
   return {
     bodies: parseBodies(raw?.bodies),
     ascendantLongitude: typeof ascendantLongitude === "number" ? ascendantLongitude : null,
+    midheavenLongitude: typeof midheavenLongitude === "number" ? midheavenLongitude : null,
+    aspects: parseNatalAspects(raw?.aspects),
     cusps: parseCusps(raw?.houses?.cusps),
   };
 }
