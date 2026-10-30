@@ -30,7 +30,6 @@ function ChatMessageList({ messages, sending }: Props) {
           key={message.id}
           id={`chat-message-list__message--${message.id}`}
           author={message.author}
-          period={message.basis === undefined ? undefined : t("basis.period")}
           why={message.basis === undefined ? undefined : <ChatAnswerBasis messageId={message.id} basis={message.basis} />}
         >
           {message.text}

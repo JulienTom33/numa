@@ -26,9 +26,12 @@ function ChatAnswerBasis({ messageId, basis }: Props) {
 
   if (basis === null) {
     return (
-      <p id={`${id}-no-chart`} className="text-sm">
-        {t("chat:basis.noChart")}
-      </p>
+      <div id={id} className="flex flex-col gap-3">
+        <p id={`${id}-no-chart`}>{t("chat:basis.noChart")}</p>
+        <p id={`${id}-period`}>
+          <strong>{t("chat:basis.periodLabel")}</strong> {t("chat:basis.period")}
+        </p>
+      </div>
     );
   }
 
@@ -43,6 +46,9 @@ function ChatAnswerBasis({ messageId, basis }: Props) {
   return (
     <div id={id} className="flex flex-col gap-3">
       <p id={`${id}-intro`}>{t("chat:basis.intro")}</p>
+      <p id={`${id}-period`}>
+        <strong>{t("chat:basis.periodLabel")}</strong> {t("chat:basis.period")}
+      </p>
 
       <section id={`${id}-placements`} aria-labelledby={`${id}-placements-title`}>
         <p id={`${id}-placements-title`} className={titleClass}>

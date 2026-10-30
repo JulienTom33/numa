@@ -4,7 +4,7 @@ import { HttpError } from "../_shared/http.ts";
 import { createSupabaseChartSource, createSupabaseConversationStore } from "./store.ts";
 import { chartFixture } from "./test_helpers.ts";
 
-const answer = { text: "R", provider: "gemini", model: "m", promptVersion: "sidera-chat-v3" };
+const answer = { text: "R", provider: "gemini", model: "m", promptVersion: "sidera-chat-v4" };
 
 function rpcClient(result: { data: unknown; error: { code: string } | null }, calls: unknown[]) {
   return {
@@ -37,7 +37,7 @@ Deno.test("record_answer receives the traceability fields", async () => {
     p_question: "Q",
     p_answer: "R",
     p_factors: {},
-    p_prompt_version: "sidera-chat-v3",
+    p_prompt_version: "sidera-chat-v4",
     p_provider: "gemini",
     p_model: "m",
   }]]);
@@ -119,5 +119,41 @@ Deno.test("the chart source returns the latest stored chart or null", async () =
     () => createSupabaseChartSource(chartClient({ data: null, error: {} })).latest("u"),
     Error,
     "chart_read_failed",
+  );
+});
+
+function historyClient(rows: unknown, filters: unknown[][]) {
+  const query = {
+    select: () => query,
+    eq: (...args: unknown[]) => {
+      filters.push(args);
+      return query;
+    },
+    in: () => query,
+    order: () => query,
+    limit: () => Promise.resolve({ data: rows, error: null }),
+  };
+  return { from: () => query } as unknown as SupabaseClient;
+}
+
+Deno.test("history is scoped to the user and returned oldest first", async () => {
+  const filters: unknown[][] = [];
+  const rows = [
+    { role: "assistant", content: "R1" },
+    { role: "user", content: "Q1" },
+    { role: "system", content: "ignoré" },
+  ];
+  const history = await createSupabaseConversationStore(historyClient(rows, filters))
+    .history("u-1", "c-1");
+
+  assertEquals(history, [{ role: "user", content: "Q1" }, { role: "assistant", content: "R1" }]);
+  assertEquals(filters, [["conversation_id", "c-1"], ["conversations.user_id", "u-1"]]);
+});
+
+Deno.test("a history read failure stays opaque", async () => {
+  await assertRejects(
+    () => createSupabaseConversationStore(historyClient(null, [])).history("u", "c"),
+    Error,
+    "history_read_failed",
   );
 });

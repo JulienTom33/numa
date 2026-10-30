@@ -50,8 +50,8 @@ export function createChainProvider(options: ChainOptions): QuestionProvider {
   };
 
   return {
-    async answer({ question, factors }): Promise<GeneratedAnswer> {
-      const messages = buildMessages(question, factors);
+    async answer({ question, factors, history }): Promise<GeneratedAnswer> {
+      const messages = buildMessages(question, factors, history);
 
       for (const settings of options.providers) {
         const apiKey = options.getApiKey(settings.apiKeyEnv);

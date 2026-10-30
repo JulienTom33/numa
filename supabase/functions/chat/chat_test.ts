@@ -99,7 +99,7 @@ Deno.test("POST records the factors, prompt version, provider and model with the
   assertEquals(recorded.userId, "anon-1");
   assertEquals(recorded.answer.provider, "test");
   assertEquals(recorded.answer.model, "test-model");
-  assertEquals(recorded.answer.promptVersion, "sidera-chat-v3");
+  assertEquals(recorded.answer.promptVersion, "sidera-chat-v4");
   assertEquals(recorded.factors?.bodies[0].sign, "cancer");
   assertEquals(JSON.stringify(recorded.factors).includes("Paris"), false);
 });
@@ -274,4 +274,38 @@ Deno.test("POST does not consume the global AI cap when the anonymous quota is e
   }
 
   assertEquals(rateLimits.calls.filter((key) => key === "ai:global").length, 4);
+});
+
+Deno.test("POST passes the conversation history to the provider", async () => {
+  const id = "11111111-1111-4111-8111-111111111111";
+  const past = [
+    { role: "user" as const, content: "Q0" },
+    { role: "assistant" as const, content: "R0" },
+  ];
+  const provider = echoProvider();
+  const conversations = memoryConversations(true, { [`anon-1:${id}`]: past });
+  await chat(provider, createMemoryStore(), null, conversations)(
+    ask({ question: "Q1", conversationId: id }),
+  );
+
+  assertEquals(provider.histories, [past]);
+});
+
+Deno.test("POST never exposes another user's history", async () => {
+  const id = "11111111-1111-4111-8111-111111111111";
+  const past = [{ role: "user" as const, content: "secret" }];
+  const provider = echoProvider();
+  const conversations = memoryConversations(true, { [`member-1:${id}`]: past });
+  await chat(provider, createMemoryStore(), null, conversations)(
+    ask({ question: "Q1", conversationId: id }),
+  );
+
+  assertEquals(provider.histories, [[]]);
+});
+
+Deno.test("POST without conversation sends an empty history", async () => {
+  const provider = echoProvider();
+  await chat(provider)(ask({ question: "Q1" }));
+
+  assertEquals(provider.histories, [[]]);
 });

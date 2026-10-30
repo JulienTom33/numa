@@ -3,6 +3,7 @@ import type { NatalChart } from "../../../shared/contracts/natalChart/natalChart
 import { HttpError } from "../_shared/http.ts";
 import type { ChatFactors } from "./factors.ts";
 import { isRecord } from "./guards.ts";
+import { HISTORY_MESSAGE_LIMIT, type HistoryMessage } from "./prompt.ts";
 import type { GeneratedAnswer } from "./provider.ts";
 
 export interface ChartSource {
@@ -23,10 +24,16 @@ export interface ConversationStore {
     factors: ChatFactors | null;
   }): Promise<RecordedAnswer>;
   owns(userId: string, conversationId: string): Promise<boolean>;
+  history(userId: string, conversationId: string): Promise<HistoryMessage[]>;
 }
 
 interface ChartRow {
   chart_data: NatalChart;
+}
+
+interface HistoryRow {
+  role: "user" | "assistant";
+  content: string;
 }
 
 interface RecordRow {
@@ -35,6 +42,11 @@ interface RecordRow {
 }
 
 const CONVERSATION_NOT_FOUND = "P0002";
+
+function isHistoryRow(value: unknown): value is HistoryRow {
+  return isRecord(value) && (value.role === "user" || value.role === "assistant") &&
+    typeof value.content === "string";
+}
 
 function isRecordRow(value: unknown): value is RecordRow {
   return isRecord(value) && typeof value.conversation_id === "string" &&
@@ -86,6 +98,21 @@ export function createSupabaseConversationStore(client: SupabaseClient): Convers
         .maybeSingle();
       if (error) throw new Error("conversation_read_failed");
       return data !== null;
+    },
+    async history(userId, conversationId) {
+      const { data, error } = await client
+        .from("messages")
+        .select("role, content, conversations!inner(user_id)")
+        .eq("conversation_id", conversationId)
+        .eq("conversations.user_id", userId)
+        .in("role", ["user", "assistant"])
+        .order("created_at", { ascending: false })
+        .order("role", { ascending: true })
+        .limit(HISTORY_MESSAGE_LIMIT);
+      if (error || !Array.isArray(data)) throw new Error("history_read_failed");
+      return data.filter(isHistoryRow)
+        .map(({ role, content }) => ({ role, content }))
+        .reverse();
     },
   };
 }
