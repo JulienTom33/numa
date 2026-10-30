@@ -16,6 +16,7 @@ export function createGeocodeHandler(
   { allowedOrigins, verifyToken, fetch, rateLimits, timeoutMs }: Options,
 ): (req: Request) => Promise<Response> {
   return createHandler({
+    functionName: "geocode",
     methods: ["POST"],
     allowedOrigins,
     verifyToken,

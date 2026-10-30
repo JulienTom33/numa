@@ -34,7 +34,11 @@ Deno.test("errorResponse generates a correlation id and logs 5xx with it", async
   }
 
   assertEquals(body.error.correlationId.length > 0, true);
-  assertEquals(logged, [["http_error", "ai_unavailable", body.error.correlationId]]);
+  const entry = JSON.parse(String(logged[0][0]));
+  assertEquals(logged.length, 1);
+  assertEquals(entry.event, "http_error");
+  assertEquals(entry.code, "ai_unavailable");
+  assertEquals(entry.correlation_id, body.error.correlationId);
 });
 
 async function captureConsoleError(run: () => Promise<void> | void): Promise<unknown[][]> {
@@ -67,7 +71,10 @@ Deno.test("errorResponse hides unexpected errors behind a generic 500", async ()
     });
   });
 
-  assertEquals(logged, [["unexpected_error", "Error", "corr-2"]]);
+  const entry = JSON.parse(String(logged[0][0]));
+  assertEquals(entry.error_type, "Error");
+  assertEquals(entry.correlation_id, "corr-2");
+  assertEquals(JSON.stringify(entry).includes("lea@example.com"), false);
 });
 
 Deno.test("errorResponse logs the type of non-Error values", async () => {
@@ -75,7 +82,7 @@ Deno.test("errorResponse logs the type of non-Error values", async () => {
     errorResponse("boom", undefined, "corr-3");
   });
 
-  assertEquals(logged, [["unexpected_error", "string", "corr-3"]]);
+  assertEquals(JSON.parse(String(logged[0][0])).error_type, "string");
 });
 
 Deno.test("errorResponse adds the given headers", () => {

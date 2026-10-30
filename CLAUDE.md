@@ -71,7 +71,8 @@ Si le ticket touche `supabase/functions/` (code serveur Deno), dans ce dossier :
 | `docs/claude/development.md` | Commandes, qualité, tests (unitaires et E2E), conventions de code, IDs HTML |
 | `docs/claude/supabase.md` | Auth, sessions anonymes, PostgreSQL, migrations, RLS |
 | `docs/claude/ai-astrology.md` | Calcul astrologique (Astronomy Engine), IA, contexte structuré, règles éditoriales |
-| `docs/claude/security.md` | Secrets, données personnelles, rate limiting, logs |
+| `docs/claude/security.md` | Secrets, données personnelles, rate limiting, logs (`logEvent`) |
+| `docs/runbook/monitoring.md` | Runbook monitoring : format des logs structurés, lecture, seuils d'alerte, règles pour ajouter un log |
 | `docs/claude/pull-requests.md` | Création de PR, corrections, notifications, interdiction de merge auto |
 | `docs/claude/deployment.md` | Déploiement OVH, Docker, Caddy/HTTPS, secrets, logs |
 | `docs/claude/orchestration.md` | Orchestrateur, workers, coordination par fichiers, budget, boucle de review |

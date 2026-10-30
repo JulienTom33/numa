@@ -1,5 +1,6 @@
 import type { HandlerContext } from "../_shared/handler.ts";
 import { HttpError, json } from "../_shared/http.ts";
+import { logEvent } from "../_shared/logger.ts";
 import type { RateLimitRule } from "../_shared/rateLimit.ts";
 
 export const DELETE_ACCOUNT_RATE_LIMIT = {
@@ -52,7 +53,7 @@ export function createDeleteAccountHandler(
     } catch {
       purged = false;
     }
-    if (!purged) console.error("delete-account: rate_limits_purge_failed");
+    if (!purged) logEvent("error", "rate_limits_purge_failed", { function: "delete-account" });
     return json({ deleted: true });
   };
 }

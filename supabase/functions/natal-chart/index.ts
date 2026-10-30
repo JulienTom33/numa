@@ -8,6 +8,7 @@ import { createSupabaseBirthDataStore } from "./store.ts";
 
 Deno.serve(
   createHandler({
+    functionName: "natal-chart",
     methods: ["GET", "POST"],
     allowedOrigins: parseAllowedOrigins(Deno.env.get("ALLOWED_ORIGINS")),
     verifyToken: verifySupabaseToken,

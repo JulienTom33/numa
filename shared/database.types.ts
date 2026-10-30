@@ -187,6 +187,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"weekly_horoscopes": {
+                  Row: {
+                    "ascendant_sign": string | null,"cache_key": string,"created_at": string,"engine_version": string,"factors": NonNullable<Json>,"model": string,"prompt_version": string,"provider": string,"sections": NonNullable<Json>,"sun_sign": string,"week_start": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ascendant_sign"?: string | null,"cache_key": string,"created_at"?: string,"engine_version": string,"factors": NonNullable<Json>,"model": string,"prompt_version": string,"provider": string,"sections": NonNullable<Json>,"sun_sign": string,"week_start": string
+                  }
+                  Update: {
+                    "ascendant_sign"?: string | null,"cache_key"?: string,"created_at"?: string,"engine_version"?: string,"factors"?: NonNullable<Json>,"model"?: string,"prompt_version"?: string,"provider"?: string,"sections"?: NonNullable<Json>,"sun_sign"?: string,"week_start"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {
@@ -201,6 +215,9 @@ isOneToOne: false
                            },
 "consume_rate_limit":
 { Args: { "p_key": string,"p_limit": number,"p_window_seconds": number }; Returns: boolean
+                           },
+"purge_rate_limits":
+{ Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "question_count":
 { Args: { "p_user_id": string }; Returns: number
