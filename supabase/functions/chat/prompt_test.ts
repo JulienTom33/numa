@@ -9,7 +9,7 @@ import {
 import { chartFixture } from "./test_helpers.ts";
 
 Deno.test("the prompt is versioned", () => {
-  assertEquals(PROMPT_VERSION, "sidera-chat-v4");
+  assertEquals(PROMPT_VERSION, "sidera-chat-v5");
 });
 
 Deno.test("the system prompt carries the editorial rules", () => {
@@ -36,7 +36,8 @@ Deno.test("the question stays in the user message, after the factors", () => {
 
   assertEquals(system.content.includes("Ma question"), false);
   assertStringIncludes(user.content, JSON.stringify(factors));
-  assertEquals(user.content.endsWith("Ma question"), true);
+  assertEquals(user.content.indexOf("Ma question") > user.content.indexOf(JSON.stringify(factors)), true);
+  assertStringIncludes(user.content, "Consigne pour cette réponse");
   assertEquals(user.content.includes("1975"), false);
 });
 

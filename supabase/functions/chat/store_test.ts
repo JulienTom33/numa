@@ -4,7 +4,7 @@ import { HttpError } from "../_shared/http.ts";
 import { createSupabaseChartSource, createSupabaseConversationStore } from "./store.ts";
 import { chartFixture } from "./test_helpers.ts";
 
-const answer = { text: "R", provider: "gemini", model: "m", promptVersion: "sidera-chat-v4" };
+const answer = { text: "R", provider: "gemini", model: "m", promptVersion: "sidera-chat-v5" };
 
 function rpcClient(result: { data: unknown; error: { code: string } | null }, calls: unknown[]) {
   return {
@@ -37,7 +37,7 @@ Deno.test("record_answer receives the traceability fields", async () => {
     p_question: "Q",
     p_answer: "R",
     p_factors: {},
-    p_prompt_version: "sidera-chat-v4",
+    p_prompt_version: "sidera-chat-v5",
     p_provider: "gemini",
     p_model: "m",
   }]]);
