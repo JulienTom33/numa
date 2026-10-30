@@ -23,7 +23,10 @@
 			fields {
 				request>remote_ip ip_mask 16 32
 				request>client_ip ip_mask 16 32
-				request>headers>X-Forwarded-For ip_mask 16 32
+				request>remote_addr delete
+				request>headers>X-Forwarded-For delete
+				request>headers>X-Real-Ip delete
+				request>headers>Forwarded delete
 			}
 		}
 	}
