@@ -10,7 +10,7 @@ const meta = {
     sending: false,
     errorMessage: null,
     summary: completeSummary,
-    quota: { limit: 2, used: 0, remaining: 2 },
+    quota: { limit: 4, used: 0, remaining: 4 },
     exhausted: false,
     draft: "",
     onDraftChange: () => undefined,
@@ -48,7 +48,7 @@ export const ErrorState: Story = {
 };
 
 export const QuotaReached: Story = {
-  args: { exhausted: true, quota: { limit: 2, used: 2, remaining: 0 } },
+  args: { exhausted: true, quota: { limit: 4, used: 4, remaining: 0 } },
 };
 
 export const ProfileLoading: Story = { args: { summary: null, quota: null } };

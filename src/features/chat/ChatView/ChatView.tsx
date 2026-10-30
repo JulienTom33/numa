@@ -53,6 +53,9 @@ function ChatView({
           <ChatSuggestions disabled={exhausted} onSelect={onSend} />
         </div>
       )}
+      <p id="chat-view__text--origin" className="text-xs text-ink-secondary">
+        {t("origin.note")}
+      </p>
       <ChatMessageList messages={messages} sending={sending} />
       {errorMessage && (
         <Callout id="chat-view__callout--error" tone="error" title={t("error.title")}>

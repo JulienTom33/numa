@@ -4,7 +4,7 @@ import { mockGeocode } from "../support/geocode";
 import { resolveMagicLinkHash, uniqueEmail, waitForEmail } from "../support/mailpit";
 
 test.describe("Parcours MVP complet", () => {
-  test("accueil, découverte, thème, horoscope, deux questions, inscription, migration et reconnexion", async ({
+  test("accueil, découverte, thème, horoscope, quatre questions, inscription, migration et reconnexion", async ({
     page,
     browser,
     baseURL,
@@ -24,13 +24,15 @@ test.describe("Parcours MVP complet", () => {
       await expect(page).toHaveURL(/\/mon-theme$/);
     });
 
-    await test.step("deux questions et quota épuisé", async () => {
+    await test.step("quatre questions et quota épuisé", async () => {
       await page.locator("#app__tabbar--main-consult").click();
       await page.locator("#chat-suggestions__chip--week").click();
       await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
-      await page.locator("#chat-view__input--question").fill("Et ma vie amoureuse ?");
-      await page.locator("#chat-view__input--question").press("Enter");
-      await expect(page.locator("#chat-message-list__message--m4")).toBeVisible();
+      for (const id of ["m4", "m6", "m8"]) {
+        await page.locator("#chat-view__input--question").fill("Et ma vie amoureuse ?");
+        await page.locator("#chat-view__input--question").press("Enter");
+        await expect(page.locator("#chat-message-list__message--" + id)).toBeVisible();
+      }
 
       await expect(page.locator("#signup-prompt__dialog--main")).toBeVisible();
       await page.locator("#signup-prompt__link--continue").click();

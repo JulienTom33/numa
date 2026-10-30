@@ -63,7 +63,7 @@ test.describe("Inscription, connexion et lien magique", () => {
 
   test("depuis le mode découverte, la création de compte conserve l'espace de l'utilisateur", async ({ page }) => {
     await completeOnboarding(page);
-    await askQuestions(page, 2);
+    await askQuestions(page, 4);
     await page.locator("#app__tabbar--main-consult").click();
     await page.locator("#discovery-quota-gate__button--sign-up").click();
     await page.locator("#auth-screen__button--email-link").click();

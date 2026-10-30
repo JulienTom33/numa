@@ -9,7 +9,7 @@ const base = {
   sending: false,
   errorMessage: null,
   summary: completeSummary,
-  quota: { limit: 2, used: 0, remaining: 2 },
+  quota: { limit: 4, used: 0, remaining: 4 },
   exhausted: false,
   draft: "",
   onDraftChange: vi.fn(),
@@ -22,7 +22,12 @@ describe("ChatView", () => {
     expect(screen.getByText("Posez votre question à Sidéra")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /\?$/ })).toHaveLength(5);
     expect(screen.getByText(/Profil analysé : Camille/)).toBeInTheDocument();
-    expect(screen.getByText("2 questions gratuites restantes")).toBeInTheDocument();
+    expect(screen.getByText("4 questions gratuites restantes")).toBeInTheDocument();
+  });
+
+  it("indique que le thème est calculé par le moteur et le texte rédigé par l'IA", () => {
+    render(<ChatView {...base} />);
+    expect(screen.getByText(/calculé par notre moteur astronomique.*rédigé par une IA.*pas une certitude/)).toBeInTheDocument();
   });
 
   it("affiche l'indication de confidentialité sous la saisie", () => {
@@ -69,7 +74,7 @@ describe("ChatView", () => {
   });
 
   it("quota atteint : saisie et suggestions bloquées", () => {
-    render(<ChatView {...base} exhausted quota={{ limit: 2, used: 2, remaining: 0 }} />);
+    render(<ChatView {...base} exhausted quota={{ limit: 4, used: 4, remaining: 0 }} />);
     expect(screen.getByLabelText("Votre question")).toBeDisabled();
     expect(screen.getByRole("button", { name: "Comment se présente ma semaine ?" })).toBeDisabled();
     expect(screen.getByText("Vous avez utilisé vos questions gratuites.")).toBeInTheDocument();

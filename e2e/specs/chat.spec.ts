@@ -11,7 +11,8 @@ test.describe("Chat Sidéra", () => {
     await expect(page.locator("#chat-view__intro--empty")).toBeVisible();
     await expect(page.locator("#chat-profile-badge__badge--main")).toContainText("Profil analysé");
     await expect(page.locator("#chat-suggestions__chip--week")).toBeVisible();
-    await expect(page.locator("#chat-view__text--quota")).toContainText("2 questions gratuites");
+    await expect(page.locator("#chat-view__text--quota")).toContainText("4 questions gratuites");
+    await expect(page.locator("#chat-view__text--origin")).toContainText("moteur astronomique");
   });
 
   test("indication de confidentialité visible sous la saisie", async ({ page }) => {
@@ -24,7 +25,7 @@ test.describe("Chat Sidéra", () => {
     await expect(page.locator("#chat-message-list__message--m1")).toBeVisible();
     await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
     await expect(page.locator("#chat-message-list__message--m2")).toContainText("Réponse de test déterministe");
-    await expect(page.locator("#chat-view__text--quota")).toContainText("1 question gratuite restante");
+    await expect(page.locator("#chat-view__text--quota")).toContainText("3 questions gratuites restantes");
   });
 
   test("envoi au clavier d'une question libre", async ({ page }) => {
@@ -34,14 +35,16 @@ test.describe("Chat Sidéra", () => {
     await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
   });
 
-  test("inscription proposée après la deuxième réponse, refus sans perte de la conversation", async ({ page }) => {
+  test("inscription proposée seulement après la quatrième réponse, refus sans perte de la conversation", async ({ page }) => {
     await page.locator("#chat-suggestions__chip--week").click();
     await expect(page.locator("#chat-message-list__message--m2")).toBeVisible();
-    await expect(page.locator("#signup-prompt__dialog--main")).toBeHidden();
 
-    await page.locator("#chat-view__input--question").fill("Et ma vie amoureuse ?");
-    await page.locator("#chat-view__input--question").press("Enter");
-    await expect(page.locator("#chat-message-list__message--m4")).toBeVisible();
+    for (const [index, id] of ["m4", "m6", "m8"].entries()) {
+      await expect(page.locator("#signup-prompt__dialog--main")).toBeHidden();
+      await page.locator("#chat-view__input--question").fill("Question " + (index + 2));
+      await page.locator("#chat-view__input--question").press("Enter");
+      await expect(page.locator("#chat-message-list__message--" + id)).toBeVisible();
+    }
 
     await expect(page.locator("#signup-prompt__dialog--main")).toBeVisible();
     await expect(page.locator("#signup-prompt__list--benefits")).toBeVisible();
@@ -50,7 +53,7 @@ test.describe("Chat Sidéra", () => {
 
     await page.locator("#signup-prompt__link--continue").click();
     await expect(page.locator("#signup-prompt__dialog--main")).toBeHidden();
-    await expect(page.locator("#chat-message-list__message--m4")).toBeVisible();
+    await expect(page.locator("#chat-message-list__message--m8")).toBeVisible();
   });
 
   test("le fondement de la réponse affiche positions et période non disponible", async ({ page }) => {
@@ -67,7 +70,7 @@ test.describe("Chat Sidéra", () => {
   });
 
   test("quota atteint : la saisie est bloquée", async ({ page }) => {
-    await askQuestions(page, 2);
+    await askQuestions(page, 4);
     await page.reload();
     await page.locator("#app__tabbar--main-consult").click();
 
