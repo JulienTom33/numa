@@ -79,6 +79,14 @@
     @apply bg-page font-sans text-ink antialiased;
   }
 
+  * {
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
   h1,
   h2,
   h3 {
