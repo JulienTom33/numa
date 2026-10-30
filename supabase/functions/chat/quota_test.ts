@@ -14,11 +14,11 @@ import { createMemoryStore, echoProvider, failingProvider } from "./test_helpers
 const anonymous: Caller = { userId: "anon-1", isAnonymous: true };
 const member: Caller = { userId: "member-1", isAnonymous: false };
 
-Deno.test("the anonymous quota allows two questions", () => {
-  assertEquals(ANONYMOUS_QUESTION_LIMIT, 2);
+Deno.test("the anonymous quota allows four questions", () => {
+  assertEquals(ANONYMOUS_QUESTION_LIMIT, 4);
 });
 
-Deno.test("returns the second answer, then refuses the third question", async () => {
+Deno.test("answers four questions, then refuses the fifth", async () => {
   const store = createMemoryStore();
   const provider = echoProvider();
 
@@ -27,23 +27,25 @@ Deno.test("returns the second answer, then refuses the third question", async ()
     store,
     () => provider.answer({ question: "q1", factors: null }),
   );
-  assertEquals(first.quota, { limit: 2, used: 1, remaining: 1 });
+  assertEquals(first.quota, { limit: 4, used: 1, remaining: 3 });
 
-  const second = await answerWithQuota(
-    anonymous,
-    store,
-    () => provider.answer({ question: "q2", factors: null }),
-  );
-  assertEquals(second.value.text, "réponse à : q2");
-  assertEquals(second.quota, { limit: 2, used: 2, remaining: 0 });
+  for (const [index, question] of ["q2", "q3", "q4"].entries()) {
+    const next = await answerWithQuota(
+      anonymous,
+      store,
+      () => provider.answer({ question, factors: null }),
+    );
+    assertEquals(next.value.text, "réponse à : " + question);
+    assertEquals(next.quota, { limit: 4, used: index + 2, remaining: 3 - (index + 1) });
+  }
 
   const error = await assertRejects(
     () =>
-      answerWithQuota(anonymous, store, () => provider.answer({ question: "q3", factors: null })),
+      answerWithQuota(anonymous, store, () => provider.answer({ question: "q5", factors: null })),
     HttpError,
   );
   assertEquals([error.status, error.code], [429, "question_quota_exceeded"]);
-  assertEquals(provider.calls, ["q1", "q2"]);
+  assertEquals(provider.calls, ["q1", "q2", "q3", "q4"]);
 });
 
 Deno.test("a provider error does not consume a question", async () => {
@@ -66,11 +68,13 @@ Deno.test("a provider error does not consume a question", async () => {
 
 Deno.test("two simultaneous questions cannot exceed the quota", async () => {
   const store = createMemoryStore();
-  await answerWithQuota(
-    anonymous,
-    store,
-    () => echoProvider().answer({ question: "q1", factors: null }),
-  );
+  for (const question of ["q1", "q2", "q3"]) {
+    await answerWithQuota(
+      anonymous,
+      store,
+      () => echoProvider().answer({ question, factors: null }),
+    );
+  }
 
   let release = () => {};
   const slowProvider: QuestionProvider = {
@@ -83,21 +87,21 @@ Deno.test("two simultaneous questions cannot exceed the quota", async () => {
   const pending = answerWithQuota(
     anonymous,
     store,
-    () => slowProvider.answer({ question: "q2", factors: null }),
+    () => slowProvider.answer({ question: "q4", factors: null }),
   );
   const concurrent = await assertRejects(
     () =>
       answerWithQuota(
         anonymous,
         store,
-        () => echoProvider().answer({ question: "q2-bis", factors: null }),
+        () => echoProvider().answer({ question: "q4-bis", factors: null }),
       ),
     HttpError,
   );
   assertEquals(concurrent.status, 429);
 
   release();
-  assertEquals((await pending).quota?.used, 2);
+  assertEquals((await pending).quota?.used, 4);
 });
 
 Deno.test("identified accounts are not limited by the anonymous quota", async () => {
@@ -117,14 +121,14 @@ Deno.test("identified accounts are not limited by the anonymous quota", async ()
 
 Deno.test("readQuota reports the server-side counter", async () => {
   const store = createMemoryStore();
-  assertEquals(await readQuota(anonymous, store), { limit: 2, used: 0, remaining: 2 });
+  assertEquals(await readQuota(anonymous, store), { limit: 4, used: 0, remaining: 4 });
 
   await answerWithQuota(
     anonymous,
     store,
     () => echoProvider().answer({ question: "q1", factors: null }),
   );
-  assertEquals(await readQuota(anonymous, store), { limit: 2, used: 1, remaining: 1 });
+  assertEquals(await readQuota(anonymous, store), { limit: 4, used: 1, remaining: 3 });
 });
 
 function fakeClient(results: Record<string, unknown>, calls: [string, unknown][]) {

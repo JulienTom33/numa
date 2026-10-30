@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import DiscoveryConsultGate from "./DiscoveryConsultGate";
 
 vi.mock("../useQuestionQuota/useQuestionQuota", () => ({
-  useQuestionQuota: () => ({ quota: { limit: 2, used: 2, remaining: 0 } }),
+  useQuestionQuota: () => ({ quota: { limit: 4, used: 4, remaining: 0 } }),
 }));
 
 describe("DiscoveryConsultGate", () => {

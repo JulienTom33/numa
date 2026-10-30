@@ -3,7 +3,7 @@ import type { Caller } from "../_shared/auth.ts";
 import { HttpError } from "../_shared/http.ts";
 import { logEvent } from "../_shared/logger.ts";
 
-export const ANONYMOUS_QUESTION_LIMIT = 2;
+export const ANONYMOUS_QUESTION_LIMIT = 4;
 
 export interface QuotaStatus {
   limit: number;

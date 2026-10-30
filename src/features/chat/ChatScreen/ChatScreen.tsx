@@ -9,8 +9,6 @@ import ChatView from "../ChatView/ChatView";
 import SignupPrompt from "../SignupPrompt/SignupPrompt";
 import { useChat } from "../useChat/useChat";
 
-const SIGNUP_PROMPT_ANSWERS = 2;
-
 function ChatScreen() {
   const { t } = useTranslation("common");
   const navigate = useNavigate();
@@ -30,7 +28,7 @@ function ChatScreen() {
   );
 
   const answerCount = messages.filter((message) => message.author === "sidera").length;
-  const promptOpen = isAnonymous && !promptDismissed && !sending && answerCount >= SIGNUP_PROMPT_ANSWERS;
+  const promptOpen = isAnonymous && !promptDismissed && !sending && exhausted && answerCount > 0;
 
   return (
     <>

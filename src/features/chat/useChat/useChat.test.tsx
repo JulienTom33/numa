@@ -9,7 +9,7 @@ const ask = vi.fn();
 
 function mockQuota(remaining: number) {
   vi.mocked(useQuestionQuota).mockReturnValue({
-    quota: { limit: 2, used: 2 - remaining, remaining },
+    quota: { limit: 4, used: 4 - remaining, remaining },
     loading: false,
     error: null,
     refresh: vi.fn(),

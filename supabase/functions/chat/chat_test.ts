@@ -60,10 +60,10 @@ Deno.test("GET returns the quota read from the server", async () => {
   );
 
   assertEquals(response.status, 200);
-  assertEquals(await response.json(), { quota: { limit: 2, used: 0, remaining: 2 } });
+  assertEquals(await response.json(), { quota: { limit: 4, used: 0, remaining: 4 } });
 });
 
-Deno.test("POST answers twice then returns 429 on the third question", async () => {
+Deno.test("POST answers four times then returns 429 on the fifth question", async () => {
   const handler = chat();
 
   const first = await handler(ask({ question: "Q1 " }));
@@ -72,16 +72,18 @@ Deno.test("POST answers twice then returns 429 on the third question", async () 
     basis: null,
     conversationId: "conversation-1",
     messageId: "message-1",
-    quota: { limit: 2, used: 1, remaining: 1 },
+    quota: { limit: 4, used: 1, remaining: 3 },
   });
 
-  const second = await handler(ask({ question: "Q2" }));
-  assertEquals(second.status, 200);
-  assertEquals((await second.json()).quota.remaining, 0);
+  for (const [index, question] of ["Q2", "Q3", "Q4"].entries()) {
+    const next = await handler(ask({ question }));
+    assertEquals(next.status, 200);
+    assertEquals((await next.json()).quota.remaining, 2 - index);
+  }
 
-  const third = await handler(ask({ question: "Q3" }));
-  assertEquals(third.status, 429);
-  assertEquals((await third.json()).error.code, "question_quota_exceeded");
+  const fifth = await handler(ask({ question: "Q5" }));
+  assertEquals(fifth.status, 429);
+  assertEquals((await fifth.json()).error.code, "question_quota_exceeded");
 });
 
 Deno.test("POST records the factors, prompt version, provider and model with the answer", async () => {
@@ -267,9 +269,9 @@ Deno.test("POST does not consume the global AI cap when the anonymous quota is e
     memoryConversations(),
     rateLimits,
   );
-  await handler(ask({ question: "Q1" }));
-  await handler(ask({ question: "Q2" }));
-  await handler(ask({ question: "Q3" }));
+  for (const question of ["Q1", "Q2", "Q3", "Q4", "Q5"]) {
+    await handler(ask({ question }));
+  }
 
-  assertEquals(rateLimits.calls.filter((key) => key === "ai:global").length, 2);
+  assertEquals(rateLimits.calls.filter((key) => key === "ai:global").length, 4);
 });

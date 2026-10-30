@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import DiscoveryQuotaGate from "./DiscoveryQuotaGate";
 
-const quota = (remaining: number) => ({ limit: 2, used: 2 - remaining, remaining });
+const quota = (remaining: number) => ({ limit: 4, used: 4 - remaining, remaining });
 
 describe("DiscoveryQuotaGate", () => {
   const renderGate = (remaining: number | null) =>

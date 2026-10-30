@@ -42,21 +42,23 @@ function LocationProbe() {
   return <p id="location-probe">{useLocation().pathname}</p>;
 }
 
-async function askTwice() {
-  vi.mocked(askQuestion)
-    .mockResolvedValueOnce({ answer: "Première réponse", basis: null, quota: { limit: 2, used: 1, remaining: 1 }, error: null })
-    .mockResolvedValueOnce({ answer: "Seconde réponse", basis: null, quota: { limit: 2, used: 2, remaining: 0 }, error: null });
-  await userEvent.type(screen.getByLabelText("Votre question"), "Une{Enter}");
-  expect(await screen.findByText("Première réponse")).toBeInTheDocument();
-  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-  await userEvent.type(screen.getByLabelText("Votre question"), "Deux{Enter}");
-  expect(await screen.findByText("Seconde réponse")).toBeInTheDocument();
+async function askFourTimes() {
+  const quota = (used: number) => ({ limit: 4, used, remaining: 4 - used });
+  const answers = ["Première", "Deuxième", "Troisième", "Quatrième"];
+  answers.forEach((answer, index) => {
+    vi.mocked(askQuestion).mockResolvedValueOnce({ answer, basis: null, quota: quota(index + 1), error: null });
+  });
+  for (const [index, answer] of answers.entries()) {
+    await userEvent.type(screen.getByLabelText("Votre question"), "Q" + index + "{Enter}");
+    expect(await screen.findByText(answer)).toBeInTheDocument();
+    if (index < 3) expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  }
 }
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(fetchMyChart).mockResolvedValue({ data: completeChart, error: null });
-  vi.mocked(fetchQuestionQuota).mockResolvedValue({ quota: { limit: 2, used: 0, remaining: 2 }, error: null });
+  vi.mocked(fetchQuestionQuota).mockResolvedValue({ quota: { limit: 4, used: 0, remaining: 4 }, error: null });
 });
 
 describe("ChatScreen", () => {
@@ -64,7 +66,7 @@ describe("ChatScreen", () => {
     vi.mocked(askQuestion).mockResolvedValue({
       answer: "Réponse de Sidéra",
       basis: null,
-      quota: { limit: 2, used: 1, remaining: 1 },
+      quota: { limit: 4, used: 1, remaining: 3 },
       error: null,
     });
     renderScreen();
@@ -73,7 +75,7 @@ describe("ChatScreen", () => {
 
     expect(await screen.findByText("Réponse de Sidéra")).toBeInTheDocument();
     expect(askQuestion).toHaveBeenCalledWith("Bonjour");
-    expect(await screen.findByText("1 question gratuite restante")).toBeInTheDocument();
+    expect(await screen.findByText("3 questions gratuites restantes")).toBeInTheDocument();
   });
 
   it("restaure la saisie et affiche l'erreur quand le quota est dépassé", async () => {
@@ -91,20 +93,20 @@ describe("ChatScreen", () => {
     expect(screen.getByLabelText("Votre question")).toHaveValue("Bonjour");
   });
 
-  it("propose l'inscription après la deuxième réponse et le refus conserve la conversation", async () => {
+  it("propose l'inscription après la quatrième réponse et le refus conserve la conversation", async () => {
     renderScreen();
-    await askTwice();
+    await askFourTimes();
 
     expect(await screen.findByRole("dialog", { name: "Gardez vos lectures avec vous" })).toBeInTheDocument();
     await userEvent.click(screen.getByText("Continuer sans compte"));
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getByText("Seconde réponse")).toBeInTheDocument();
+    expect(screen.getByText("Quatrième")).toBeInTheDocument();
   });
 
   it("navigue vers l'inscription ou la connexion", async () => {
     renderScreen();
-    await askTwice();
+    await askFourTimes();
 
     await userEvent.click(await screen.findByRole("button", { name: "Se connecter" }));
 
@@ -113,7 +115,7 @@ describe("ChatScreen", () => {
 
   it("ne propose pas l'inscription à un utilisateur connecté", async () => {
     renderScreen(false);
-    await askTwice();
+    await askFourTimes();
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });

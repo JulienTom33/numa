@@ -13,7 +13,7 @@ test.describe("Mode découverte", () => {
     }
   });
 
-  test("aucune incitation tant que les deux lectures gratuites sont intactes", async ({ page }) => {
+  test("aucune incitation tant que les quatre lectures gratuites sont intactes", async ({ page }) => {
     await page.locator("#app__tabbar--main-consult").click();
 
     await expect(page.locator("#chat-view__section--main")).toBeVisible();
@@ -22,14 +22,14 @@ test.describe("Mode découverte", () => {
   });
 
   test("le bandeau apparaît quand il reste une lecture gratuite", async ({ page }) => {
-    await askQuestions(page, 1);
+    await askQuestions(page, 3);
     await page.locator("#app__tabbar--main-consult").click();
 
     await expect(page.locator("#discovery-banner__callout--remaining")).toBeVisible();
   });
 
   test("le bouton d'inscription mène à l'inscription quand les lectures sont épuisées", async ({ page }) => {
-    await askQuestions(page, 2);
+    await askQuestions(page, 4);
     await page.locator("#app__tabbar--main-consult").click();
     await page.locator("#discovery-quota-gate__button--sign-up").click();
 

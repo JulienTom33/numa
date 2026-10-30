@@ -26,13 +26,16 @@
     "remaining_other": "{{count}} questions gratuites restantes",
     "exhausted": "Vous avez utilisé vos questions gratuites."
   },
+  "origin": {
+    "note": "Votre thème est calculé par notre moteur astronomique, puis le texte est rédigé par une IA. C'est une tendance, pas une certitude."
+  },
   "input": {
     "privacyHint": "Évitez d'y saisir e-mail, téléphone ou date de naissance précise.",
     "disabledPlaceholder": "Créez un compte pour continuer"
   },
   "signupPrompt": {
     "title": "Gardez vos lectures avec vous",
-    "intro": "Vous avez reçu deux réponses de Sidéra. Avec un compte :",
+    "intro": "Vous avez utilisé vos questions gratuites. Avec un compte :",
     "benefits": {
       "history": "retrouvez vos conversations et vos lectures",
       "chart": "conservez votre thème et vos préférences",
