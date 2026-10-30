@@ -43,8 +43,15 @@ describe("DateStep", () => {
     expect(screen.getByLabelText("Jour")).toHaveAttribute("id", "date-step__select--day");
     expect(screen.getByLabelText("Mois")).toHaveAttribute("id", "date-step__select--month");
     expect(screen.getByLabelText("Année")).toHaveAttribute("id", "date-step__select--year");
-    expect(screen.getByRole("option", { name: "2026" })).toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: "2027" })).not.toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "2011" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "2012" })).not.toBeInTheDocument();
+  });
+
+  it("explains that the minimum age is 15 when the date is too recent", () => {
+    renderStatic({ day: 16, month: 10, year: 2011 });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("réservé aux personnes de 15 ans ou plus");
+    expect(screen.getByRole("button", { name: "Continuer" })).toBeDisabled();
   });
 
   it("keeps Continue disabled while the date is incomplete", () => {

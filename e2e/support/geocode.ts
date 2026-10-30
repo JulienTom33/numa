@@ -12,13 +12,29 @@ export const BORDEAUX = {
   timezone: "Europe/Paris",
 };
 
+export const PARIS = {
+  id: "2988507",
+  name: "Paris",
+  region: "Île-de-France",
+  country: "France",
+  countryCode: "FR",
+  label: "Paris, Île-de-France, France",
+  latitude: 48.85341,
+  longitude: 2.3488,
+  timezone: "Europe/Paris",
+  arrondissements: [
+    { number: 1, latitude: 48.862, longitude: 2.3359 },
+    { number: 15, latitude: 48.8417, longitude: 2.2937 },
+  ],
+};
+
 const CORS_HEADERS = {
   "access-control-allow-origin": "*",
   "access-control-allow-headers": "*",
   "access-control-allow-methods": "POST, OPTIONS",
 };
 
-export async function mockGeocode(page: Page): Promise<void> {
+export async function mockGeocode(page: Page, places: object[] = [BORDEAUX]): Promise<void> {
   await page.route("**/functions/v1/geocode", async (route) => {
     if (route.request().method() === "OPTIONS") {
       await route.fulfill({ status: 204, headers: CORS_HEADERS });
@@ -28,7 +44,7 @@ export async function mockGeocode(page: Page): Promise<void> {
       status: 200,
       headers: CORS_HEADERS,
       contentType: "application/json",
-      body: JSON.stringify({ places: [BORDEAUX] }),
+      body: JSON.stringify({ places }),
     });
   });
 }
