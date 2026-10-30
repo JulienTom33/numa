@@ -1,3 +1,5 @@
+import { logEvent } from "./logger.ts";
+
 export class HttpError extends Error {
   constructor(
     readonly status: number,
@@ -21,18 +23,19 @@ export function errorResponse(
   correlationId: string = crypto.randomUUID(),
 ): Response {
   if (error instanceof HttpError) {
-    if (error.status >= 500) console.error("http_error", error.code, correlationId);
+    if (error.status >= 500) {
+      logEvent("error", "http_error", { code: error.code, correlation_id: correlationId });
+    }
     return json(
       { error: { code: error.code, message: error.message, correlationId } },
       { status: error.status, headers },
     );
   }
 
-  console.error(
-    "unexpected_error",
-    error instanceof Error ? error.name : typeof error,
-    correlationId,
-  );
+  logEvent("error", "unexpected_error", {
+    error_type: error instanceof Error ? error.name : typeof error,
+    correlation_id: correlationId,
+  });
   return json(
     {
       error: {

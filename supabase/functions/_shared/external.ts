@@ -1,3 +1,5 @@
+import { logEvent, providerKind } from "./logger.ts";
+
 export type ExternalFailureKind = "timeout" | "rate_limited" | "http_error" | "network_error";
 
 export class ExternalFailure extends Error {
@@ -61,12 +63,20 @@ export async function fetchExternal(
   options: ExternalCallOptions,
 ): Promise<Response> {
   const maxAttempts = 1 + (options.retries ?? 0);
+  const startedAt = Date.now();
   for (let tries = 1;; tries += 1) {
     try {
       return await attempt(url, init, options);
     } catch (error) {
       if (!(error instanceof ExternalFailure)) throw error;
-      console.error("external_failure", options.service, error.kind, error.status ?? "-");
+      logEvent("error", "external_failure", {
+        provider_kind: providerKind(options.service),
+        service: options.service,
+        kind: error.kind,
+        status: error.status,
+        attempt: tries,
+        latency_ms: Date.now() - startedAt,
+      });
       if (tries >= maxAttempts || !isTransient(error)) throw error;
     }
   }

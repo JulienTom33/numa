@@ -8,6 +8,7 @@ import { createCurrentSkyHandler } from "./currentSky.ts";
 
 Deno.serve(
   createHandler({
+    functionName: "current-sky",
     methods: ["GET", "POST"],
     allowedOrigins: parseAllowedOrigins(Deno.env.get("ALLOWED_ORIGINS")),
     verifyToken: verifySupabaseToken,

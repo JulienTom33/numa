@@ -1,4 +1,5 @@
 import { HttpError } from "../_shared/http.ts";
+import { logEvent } from "../_shared/logger.ts";
 import type { ProviderSettings } from "./config.ts";
 import { ProviderFailure, requestCompletion } from "./completion.ts";
 import { buildMessages, PROMPT_VERSION } from "./prompt.ts";
@@ -74,7 +75,11 @@ export function createChainProvider(options: ChainOptions): QuestionProvider {
             const failure = error instanceof ProviderFailure
               ? error
               : new ProviderFailure("http_error");
-            console.error("ai_provider_failure", settings.id, failure.kind);
+            logEvent("error", "ai_provider_failure", {
+              provider_kind: "ai",
+              service: settings.id,
+              kind: failure.kind,
+            });
             if (tries === 0 && isRetryable(failure)) {
               await options.sleep(failure.retryAfterMs ?? 0);
               continue;

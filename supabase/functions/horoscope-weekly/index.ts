@@ -20,6 +20,7 @@ const provider = Deno.env.get("AI_PROVIDER_STUB") === "1"
 
 Deno.serve(
   createHandler({
+    functionName: "horoscope-weekly",
     methods: ["POST"],
     allowedOrigins: parseAllowedOrigins(Deno.env.get("ALLOWED_ORIGINS")),
     verifyToken: verifySupabaseToken,

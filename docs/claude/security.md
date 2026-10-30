@@ -26,6 +26,7 @@
 ## Logs
 
 - Logs applicatifs sans données personnelles ni secrets.
+- Côté Edge Functions, tout log passe par `logEvent` (`supabase/functions/_shared/logger.ts`), jamais par `console.*` direct. Format des événements, seuils d'alerte et règles : `docs/runbook/monitoring.md`.
 - Logs d'erreur suffisamment détaillés pour debug (stack, contexte technique) sans contenu utilisateur sensible.
 
 ## Appels externes

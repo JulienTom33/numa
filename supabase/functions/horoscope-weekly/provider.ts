@@ -1,3 +1,4 @@
+import { logEvent } from "../_shared/logger.ts";
 import { ProviderFailure, requestCompletion } from "../chat/completion.ts";
 import type { ProviderSettings } from "../chat/config.ts";
 import { finalizeAnswer } from "../chat/validate.ts";
@@ -47,7 +48,11 @@ export function createWeeklyChain(options: WeeklyChainOptions): WeeklyProvider {
           const failure = error instanceof ProviderFailure
             ? error
             : new ProviderFailure("http_error");
-          console.error("ai_provider_failure", settings.id, failure.kind);
+          logEvent("error", "ai_provider_failure", {
+            provider_kind: "ai",
+            service: settings.id,
+            kind: failure.kind,
+          });
         }
       }
 
