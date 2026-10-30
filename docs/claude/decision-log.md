@@ -256,3 +256,10 @@ Contexte : l'API Mistral exige un abonnement (le plan gratuit testé renvoyait 0
 Décision : la chaîne par défaut devient Gemini `gemini-3.1-flash-lite` (endpoint compatible OpenAI, secret `GEMINI_API_KEY`) puis Groq `openai/gpt-oss-120b` ; Mistral est retiré du code. Le secret se pose avec `supabase secrets set GEMINI_API_KEY=...`, jamais dans le dépôt.
 Risque accepté : les conditions du plan gratuit de Gemini interdisent un public EEE, Royaume-Uni et Suisse (`docs/research/fournisseurs-ia.md`). Acceptable pour la démo et une bêta fermée ; à revoir avant un lancement public en Europe.
 Alternatives écartées : Mistral (abonnement) ; Groq seul (hébergement hors UE, pas de redondance).
+
+## 2026-10-30 — Budget IA de la bêta recalculé avec quatre questions anonymes
+
+Contexte : le quota anonyme est passé de 2 à 4 questions et Mistral est écarté ; le tableau de budget de `docs/research/fournisseurs-ia.md` n'était plus valable (issue #271).
+Décision : pour 100 testeurs au jour de pic, le besoin est d'environ 817 appels IA par jour (400 questions anonymes, 300 questions de comptes, environ 117 horoscopes), soit 82 % du plafond global `AI_DAILY_LIMIT` (1 000). Le plafond et le quota de quatre questions sont conservés. Gemini reste le fournisseur principal, Groq le secours (environ 69 appels par jour seulement en plan gratuit).
+À faire avant la bêta : relever dans AI Studio les limites réelles (RPM, TPM, RPD) de `gemini-3.1-flash-lite` pour le projet, les consigner dans le document de recherche, et revoir le plafond si elles sont inférieures à 800 appels par jour. Les limites d'usage des horoscopes en mode découverte restent à définir par le mainteneur.
+Alternatives écartées : relever le plafond à 2 000 sans connaître les limites de Gemini (le plafond ne crée pas de capacité) ; réduire le quota anonyme à 3 (jugé insuffisant par le mainteneur, voir l'entrée sur les quatre questions).

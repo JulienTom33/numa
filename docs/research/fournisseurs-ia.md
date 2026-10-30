@@ -1,6 +1,6 @@
 # Fournisseurs IA : quotas, coûts et stratégie (#51)
 
-> **Mise à jour du 2026-10-30 :** le mainteneur écarte Mistral (API sur abonnement). La chaîne par défaut est désormais **Gemini `gemini-3.1-flash-lite` puis Groq** (voir `docs/claude/decision-log.md`). Le reste du document, qui compare encore Mistral, est conservé comme historique de la recherche.
+> **Mise à jour du 2026-10-30 :** le mainteneur écarte Mistral (API sur abonnement). La chaîne par défaut est désormais **Gemini `gemini-3.1-flash-lite` puis Groq** (voir `docs/claude/decision-log.md`). Le budget est recalculé avec 4 questions anonymes (#271). Le reste du document, qui compare encore Mistral, est conservé comme historique de la recherche.
 
 Recherche préalable à #26 (intégration du fournisseur IA et du prompt Sidéra). Sources consultées le **2026-10-17**. Tarifs et limites changent souvent : toute valeur est à revérifier avant la mise en production. « Non vérifié » = introuvable ou non confirmé par une source officielle. Ce document n'est pas un avis juridique.
 
@@ -53,16 +53,34 @@ Chaîne : **Mistral (principal)**, **Groq `openai/gpt-oss-120b` (secours 1)**, *
 
 ## Budget de quota gratuit contre une bêta privée
 
-Hypothèses (à ajuster) : bêta de **100 testeurs**, 2 questions anonymes chacun (quota #27) + 3 questions de compte par testeur et par jour = **500 questions/jour** au pic. Prompt réduit : environ 2 500 tokens en entrée (consignes + facteurs astrologiques + question) et 400 en sortie, soit **2 900 tokens/question**, **1,45 million de tokens/jour**, environ 45 millions de tokens/mois, 500 requêtes/jour.
+Recalculé le 2026-10-30 (#271) avec le quota anonyme à **4 questions** (#263), Gemini principal et Groq secours (Mistral écarté).
 
-| Source | Capacité gratuite | Questions/jour couvertes | Verdict |
+Hypothèses (à ajuster), pour **100 testeurs** au jour de pic (tout le monde essaie le même jour) :
+
+| Poste | Calcul | Appels IA/jour |
+|---|---|---|
+| Questions anonymes | 100 testeurs × 4 questions | 400 |
+| Questions de comptes | 100 testeurs × 3 questions | 300 |
+| Horoscopes du jour | 1 par testeur et par jour (mis en cache, pire cas : un par testeur) | 100 |
+| Horoscopes de la semaine | 100 testeurs ÷ 7 jours | environ 14 |
+| Horoscopes du mois | 100 testeurs ÷ 30 jours | environ 3 |
+| **Total** | | **environ 817** |
+
+Hypothèse de jetons : environ 2 500 en entrée et 400 en sortie, soit 2 900 par appel, donc environ **2,4 millions de jetons/jour** au pic. Le rythme d'un testeur reste borné par la limite de 10 questions par minute (`RATE_LIMITS.chat`).
+
+| Source | Capacité gratuite | Appels/jour couverts | Verdict |
 |---|---|---|---|
-| Mistral (chiffres tiers, non vérifiés) | 1 milliard de tokens/mois, 500 000 tokens/min, 1 requête/s | Environ 11 000 (limite mensuelle) ; 1 requête/s tient largement pour 500 requêtes/jour en pointes modérées | Tient très largement **si** ces chiffres sont exacts |
-| Groq gpt-oss-120b (plan Developer, borne de référence ; Free non vérifié) | 200 000 tokens/jour, 1 000 requêtes/jour | Environ 69 questions/jour (limite en tokens) | Insuffisant seul ; sert de secours pour absorber des pannes ou des pics |
+| Plafond global `AI_DAILY_LIMIT` | 1 000 appels/jour par défaut (`DEFAULT_AI_DAILY_LIMIT`) | 1 000 | 817 appels = 82 % du plafond ; le plafond tient jusqu'à environ 120 testeurs au jour de pic |
+| Gemini `gemini-3.1-flash-lite` (gratuit) | Limites RPM, TPM et RPD par projet, visibles seulement dans AI Studio ; **non vérifié** (la page de limites ne publie pas les valeurs du palier gratuit) | Non vérifié | À relever dans AI Studio avant la bêta ; en cas de dépassement, la chaîne bascule sur Groq |
+| Groq gpt-oss-120b (plan Developer, borne de référence ; Free non vérifié) | 200 000 jetons/jour, 1 000 requêtes/jour | Environ 69 (limite en jetons) | Secours seulement : absorbe une panne ou un dépassement ponctuel de Gemini, pas la charge nominale |
 | OpenRouter `:free` | 50 requêtes/jour | 50 | Marginal, écarté |
-| Gemini gratuit | Non vérifié | Non applicable | Écarté (conditions) |
 
-Lecture : le gratuit tient pour 100 testeurs **uniquement grâce à Mistral**. Il cesse de tenir (1) si les limites réelles du compte Mistral sont très inférieures aux chiffres tiers, à vérifier dans la console avant de s'engager, (2) si le secours Groq doit porter plus d'environ 70 questions/jour, ce qui arrive si Mistral est indisponible plus de quelques heures, (3) au-delà d'environ 10 000 questions/jour sur Mistral (environ 2 000 testeurs actifs avec 5 questions/jour), en supposant les chiffres tiers corrects. Au-delà, l'application devra soit passer sur un plan payant (décision écartée à ce stade), soit réduire le quota par utilisateur.
+Lecture :
+
+- Le doublement du quota anonyme fait passer le besoin de environ 617 à environ 817 appels/jour pour 100 testeurs : le plafond de 1 000 tient, avec une marge de 18 %.
+- Les questions anonymes sont un coût ponctuel (4 par visiteur, une seule fois) ; les questions de comptes et les horoscopes se répètent chaque jour. Après le pic d'inscription, la charge nominale est plus basse.
+- Le point faible n'est pas le plafond mais la capacité réelle de Gemini gratuit, non vérifiée : si elle est inférieure à environ 800 appels/jour, Groq ne peut en absorber qu'environ 69 par jour.
+- Au-delà d'environ 120 testeurs au jour de pic, relever `AI_DAILY_LIMIT` n'a de sens que si les limites relevées dans AI Studio le permettent ; sinon réduire le quota anonyme ou limiter les horoscopes en mode découverte (limites encore à fixer).
 
 ## Verrous juridiques et mesures d'atténuation
 
