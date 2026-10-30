@@ -71,7 +71,7 @@ Aucun secret dans le dépôt : identifiants OAuth saisis dans le dashboard (ou `
 
 ## Quota de questions anonymes
 
-- Deux questions par session anonyme (`ANONYMOUS_QUESTION_LIMIT`, `supabase/functions/chat/quota.ts`), comptées dans `usage_counters` (`period_start = '-infinity'` : toute la session).
+- Quatre questions par session anonyme (`ANONYMOUS_QUESTION_LIMIT`, `supabase/functions/chat/quota.ts`), comptées dans `usage_counters` (`period_start = '-infinity'` : toute la session).
 - Edge Function `chat` : `GET` renvoie `{ quota }`, `POST { question }` renvoie `{ answer, quota }`, `429 question_quota_exceeded` au-delà de la limite, `502 provider_unavailable` si le fournisseur échoue (question non décomptée).
 - Parcours serveur : `reserve_question` → appel fournisseur → `commit_question` (succès) ou `release_question` (échec). Voir `decision-log.md` (2026-10-15, #27).
 - Client : `src/features/discovery/questionQuota/questionQuota.ts` et `useQuestionQuota()` ; le compteur affiché vient toujours du serveur.

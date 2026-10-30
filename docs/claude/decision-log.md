@@ -242,3 +242,10 @@ Alternatives écartées : gestion d'erreurs propre à chaque fonction (comportem
 Contexte : `supabase/config.toml` n'est pas poussé en production, les réglages réels dépendent du dashboard (issue #185).
 Décision : mot de passe minimum 8 caractères dans `config.toml` ; en production, Site URL et redirections sans localhost, protection contre les mots de passe divulgués (dashboard uniquement, plan Pro requis), confirmation d'email activée et SMTP dédié avant l'ouverture publique. `enable_confirmations` reste à `false` en local pour les tests E2E. Checklist dans `docs/claude/supabase.md`.
 Alternatives écartées : confirmation d'email désactivée en production (comptes non vérifiés) ; SMTP Supabase par défaut en public (quota et délivrabilité insuffisants).
+
+## 2026-10-30 — Quota de quatre questions en mode découverte
+
+Contexte : à la première démo, deux questions ne suffisaient pas pour juger le chat, et la fiche d'inscription s'ouvrait dès la deuxième réponse, ce qui donnait l'impression de n'en avoir qu'une (issue #263).
+Décision : `ANONYMOUS_QUESTION_LIMIT` passe à 4 (`supabase/functions/chat/quota.ts`) ; le quota affiché vient du serveur ; la fiche d'inscription ne s'ouvre qu'une fois le quota épuisé après une réponse ; aucune migration (`reserve_question` reçoit déjà la limite en paramètre). Cette limite remplace celle de deux questions décrite dans les entrées précédentes (quota #27).
+Conséquence : le budget IA de la bêta double pour les questions anonymes (400 au lieu de 200 pour 100 testeurs), à comparer au plafond global `AI_DAILY_LIMIT` ; l'hypothèse de `docs/research/fournisseurs-ia.md` reste à réviser.
+Alternatives écartées : quota paramétrable par variable d'environnement (aucun besoin avant la bêta) ; quota de trois questions (jugé insuffisant par le mainteneur).
