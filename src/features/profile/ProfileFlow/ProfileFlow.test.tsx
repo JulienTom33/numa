@@ -19,7 +19,7 @@ const chartMock = vi.hoisted(() => ({
 vi.mock("../../chart/useMyChart/useMyChart", () => ({
   useMyChart: () => ({
     status: chartMock.status,
-    data: { summary: { sun: { sign: "pisces" }, ascendant: { sign: "taurus" } } },
+    data: { summary: { sun: { sign: "pisces" }, ascendant: { sign: "taurus" }, confidence: "high" }, natal: { bodies: [], ascendantLongitude: null, midheavenLongitude: null, aspects: [], cusps: null }, transits: null },
     errorCode: chartMock.status === "error" ? "internal_error" : null,
     retry: chartMock.retry,
   }),

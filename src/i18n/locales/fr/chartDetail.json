@@ -1,0 +1,98 @@
+{
+  "details": {
+    "title": "Votre thème en détail",
+    "intro": "Voici chaque position de votre thème avec une lecture simple. Ce sont des tendances à explorer, pas des vérités figées.",
+    "confidence": {
+      "high": "Calcul fiable : votre heure de naissance est précise.",
+      "medium": "Calcul à nuancer : votre heure de naissance est approximative, les maisons et l'Ascendant peuvent varier.",
+      "low": "Calcul partiel : sans heure de naissance, les maisons et l'Ascendant restent à confirmer."
+    },
+    "planets": {
+      "title": "Planètes, signes et maisons",
+      "position": "{{sign}} {{degree}}°",
+      "house": "Maison {{house}}",
+      "houseUnknown": "Maison non calculée",
+      "retrograde": "rétrograde",
+      "retrogradeHelp": "Rétrograde : la planète semble reculer vue de la Terre, ce qui invite souvent à revenir sur ce thème plutôt qu'à avancer vite.",
+      "roles": {
+        "sun": "Le Soleil évoque votre identité profonde et ce qui vous donne de l'élan.",
+        "moon": "La Lune évoque vos besoins émotionnels et votre manière de vous ressourcer.",
+        "mercury": "Mercure évoque votre façon de penser, d'apprendre et de communiquer.",
+        "venus": "Vénus évoque votre manière d'aimer, de créer du lien et d'apprécier la vie.",
+        "mars": "Mars évoque votre énergie, votre façon d'agir et de vous affirmer.",
+        "jupiter": "Jupiter évoque la confiance, la croissance et ce qui vous ouvre des possibles.",
+        "saturn": "Saturne évoque la structure, la patience et les efforts qui s'inscrivent dans la durée.",
+        "uranus": "Uranus évoque le besoin de liberté, d'originalité et de changement.",
+        "neptune": "Neptune évoque l'intuition, l'imaginaire et la sensibilité.",
+        "pluto": "Pluton évoque les transformations profondes et les renouveaux."
+      }
+    },
+    "angles": {
+      "title": "Angles du thème",
+      "ascendant": "Ascendant : {{sign}} {{degree}}°",
+      "ascendantHelp": "L'Ascendant décrit la manière dont vous pourriez aborder les situations nouvelles et être perçu(e).",
+      "midheaven": "Milieu du Ciel : {{sign}} {{degree}}°",
+      "midheavenHelp": "Le Milieu du Ciel évoque votre orientation de vie et ce que vous souhaitez construire au fil du temps.",
+      "unavailable": "Sans heure de naissance, les angles ne peuvent pas être calculés."
+    },
+    "aspects": {
+      "title": "Aspects entre planètes",
+      "intro": "Un aspect est un angle entre deux planètes. Plus l'écart (l'orbe) est faible, plus le lien est marqué.",
+      "none": "Aucun aspect serré n'a été relevé dans votre thème.",
+      "orb": "écart {{orb}}°",
+      "pair": "{{a}} et {{b}}",
+      "types": {
+        "conjunction": "Conjonction",
+        "sextile": "Sextile",
+        "square": "Carré",
+        "trine": "Trigone",
+        "opposition": "Opposition"
+      },
+      "meanings": {
+        "conjunction": "Les deux énergies se mêlent et s'amplifient.",
+        "sextile": "Les deux énergies peuvent se soutenir avec un peu d'initiative.",
+        "square": "Les deux énergies peuvent créer une tension qui pousse à évoluer.",
+        "trine": "Les deux énergies circulent plutôt facilement.",
+        "opposition": "Les deux énergies cherchent un équilibre entre deux pôles."
+      }
+    }
+  },
+  "understand": {
+    "button": "Comprendre mon thème",
+    "title": "Comprendre mon thème",
+    "close": "Fermer",
+    "intro": "Votre thème natal est une photographie du ciel au moment et au lieu de votre naissance. Il propose des pistes de réflexion et ne prédit rien de certain.",
+    "sections": {
+      "bigThree": {
+        "title": "Soleil, Lune et Ascendant",
+        "body": "Le Soleil évoque votre identité et votre élan, la Lune vos besoins émotionnels, l'Ascendant votre manière d'aborder le monde. Ensemble, ils forment le socle de votre profil."
+      },
+      "planets": {
+        "title": "Les planètes",
+        "body": "Chaque planète symbolise une fonction : penser, aimer, agir, grandir, se structurer. Le signe où elle se trouve colore sa manière de s'exprimer."
+      },
+      "signs": {
+        "title": "Les signes",
+        "body": "Les 12 signes sont des styles, des nuances. Une même planète s'exprime différemment en Bélier, en Taureau ou en Poissons."
+      },
+      "houses": {
+        "title": "Les maisons",
+        "body": "Les 12 maisons découpent le ciel en domaines de vie : identité, relations, travail, foyer... Elles dépendent de l'heure et du lieu de naissance."
+      },
+      "aspects": {
+        "title": "Les aspects",
+        "body": "Les aspects sont les angles entre planètes. Ils indiquent comment deux fonctions de votre thème dialoguent : elles se soutiennent, se frottent ou se complètent."
+      },
+      "limits": {
+        "title": "Précision et limites",
+        "body": "Si votre heure de naissance est approximative ou inconnue, l'Ascendant et les maisons peuvent changer, et le signe de la Lune peut rester à confirmer. L'astrologie n'est pas une science exacte : lisez votre thème comme une invitation à vous observer, pas comme un verdict."
+      }
+    },
+    "conclusion": "Rien n'est écrit d'avance : votre thème décrit des tendances, vos choix restent les vôtres."
+  },
+  "discovery": {
+    "title": "Pour aller plus loin",
+    "body": "Le thème détaillé (positions de chaque planète, maisons, angles et aspects) est réservé aux comptes connectés. Créez un compte gratuit pour le retrouver.",
+    "signup": "Se connecter pour en savoir plus"
+  }
+}

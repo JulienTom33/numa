@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes } from "react-router";
+import { AppContext, type AppContextValue } from "../../../shared/navigation/appContext/appContext";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createQueryWrapper } from "../../../shared/queryClient/queryTestWrapper/queryTestWrapper";
 import { fetchMyChart } from "../skyChart/skyChart";
@@ -24,11 +26,28 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+function renderFlow(isAnonymous: boolean) {
+  const Wrapper = createQueryWrapper();
+  const context = { isAnonymous } as unknown as AppContextValue;
+  render(
+    <Wrapper>
+      <AppContext.Provider value={context}>
+        <MemoryRouter>
+          <Routes>
+            <Route path="/" element={<MyChartFlow />} />
+            <Route path="/inscription" element={<p id="test__text--signup">Inscription</p>} />
+          </Routes>
+        </MemoryRouter>
+      </AppContext.Provider>
+    </Wrapper>,
+  );
+}
+
 describe("MyChartFlow", () => {
   it("passe du chargement au thème", async () => {
     fetchMock.mockResolvedValue({ data: completeChart, error: null });
 
-    render(<MyChartFlow />, { wrapper: createQueryWrapper() });
+    renderFlow(false);
 
     expect(screen.getByRole("status")).toBeInTheDocument();
     expect(await screen.findByText("Ascendant Scorpion")).toBeInTheDocument();
@@ -38,10 +57,19 @@ describe("MyChartFlow", () => {
     fetchMock.mockResolvedValueOnce({ data: null, error: "network_error" });
     fetchMock.mockResolvedValueOnce({ data: completeChart, error: null });
 
-    render(<MyChartFlow />, { wrapper: createQueryWrapper() });
+    renderFlow(false);
     await userEvent.click(await screen.findByRole("button", { name: "Réessayer" }));
 
     expect(await screen.findByText("Ascendant Scorpion")).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("en mode découverte, propose de se connecter pour le détail", async () => {
+    fetchMock.mockResolvedValue({ data: completeChart, error: null });
+
+    renderFlow(true);
+    await userEvent.click(await screen.findByRole("button", { name: "Se connecter pour en savoir plus" }));
+
+    expect(await screen.findByText("Inscription")).toBeInTheDocument();
   });
 });
