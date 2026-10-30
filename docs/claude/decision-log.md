@@ -249,3 +249,10 @@ Contexte : à la première démo, deux questions ne suffisaient pas pour juger l
 Décision : `ANONYMOUS_QUESTION_LIMIT` passe à 4 (`supabase/functions/chat/quota.ts`) ; le quota affiché vient du serveur ; la fiche d'inscription ne s'ouvre qu'une fois le quota épuisé après une réponse ; aucune migration (`reserve_question` reçoit déjà la limite en paramètre). Cette limite remplace celle de deux questions décrite dans les entrées précédentes (quota #27).
 Conséquence : le budget IA de la bêta double pour les questions anonymes (400 au lieu de 200 pour 100 testeurs), à comparer au plafond global `AI_DAILY_LIMIT` ; l'hypothèse de `docs/research/fournisseurs-ia.md` reste à réviser.
 Alternatives écartées : quota paramétrable par variable d'environnement (aucun besoin avant la bêta) ; quota de trois questions (jugé insuffisant par le mainteneur).
+
+## 2026-10-30 — Gemini fournisseur IA principal, Mistral écarté
+
+Contexte : l'API Mistral exige un abonnement (le plan gratuit testé renvoyait 0 requête par minute) ; le mainteneur veut un fournisseur gratuit et fiable (issue #272).
+Décision : la chaîne par défaut devient Gemini `gemini-3.1-flash-lite` (endpoint compatible OpenAI, secret `GEMINI_API_KEY`) puis Groq `openai/gpt-oss-120b` ; Mistral est retiré du code. Le secret se pose avec `supabase secrets set GEMINI_API_KEY=...`, jamais dans le dépôt.
+Risque accepté : les conditions du plan gratuit de Gemini interdisent un public EEE, Royaume-Uni et Suisse (`docs/research/fournisseurs-ia.md`). Acceptable pour la démo et une bêta fermée ; à revoir avant un lancement public en Europe.
+Alternatives écartées : Mistral (abonnement) ; Groq seul (hébergement hors UE, pas de redondance).

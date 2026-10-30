@@ -10,7 +10,7 @@ test.describe("Politique de confidentialité", () => {
     await expect(page.locator("#privacy-policy__title--main")).toBeVisible();
     await expect(page.locator("#privacy-policy__callout--summary")).toBeVisible();
     await expect(page.locator("#privacy-policy__title--deletion")).toBeVisible();
-    await expect(page.locator("#privacy-policy__list--providers")).toContainText("Mistral AI");
+    await expect(page.locator("#privacy-policy__list--providers")).toContainText("Google (Gemini)");
 
     await page.getByRole("button", { name: "Retour" }).click();
     await expect(page.locator("#welcome__title--main")).toBeVisible();

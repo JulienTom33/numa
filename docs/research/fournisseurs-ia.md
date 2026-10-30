@@ -1,5 +1,7 @@
 # Fournisseurs IA : quotas, coûts et stratégie (#51)
 
+> **Mise à jour du 2026-10-30 :** le mainteneur écarte Mistral (API sur abonnement). La chaîne par défaut est désormais **Gemini `gemini-3.1-flash-lite` puis Groq** (voir `docs/claude/decision-log.md`). Le reste du document, qui compare encore Mistral, est conservé comme historique de la recherche.
+
 Recherche préalable à #26 (intégration du fournisseur IA et du prompt Sidéra). Sources consultées le **2026-10-17**. Tarifs et limites changent souvent : toute valeur est à revérifier avant la mise en production. « Non vérifié » = introuvable ou non confirmé par une source officielle. Ce document n'est pas un avis juridique.
 
 ## Décision du mainteneur : gratuit uniquement

@@ -35,8 +35,9 @@ describe("PrivacyPolicyScreen", () => {
 
     expect(screen.getByText(/transmis tel quel au fournisseur d'IA/)).toBeInTheDocument();
     const list = screen.getByRole("list");
-    for (const provider of ["Supabase", "OVH", "Mistral AI", "Groq", "Open-Meteo", "Google et Apple"]) {
-      expect(within(list).getByText(new RegExp(`^${provider}`))).toBeInTheDocument();
+    for (const provider of ["Supabase", "OVH", "Google (Gemini)", "Groq", "Open-Meteo", "Google et Apple"]) {
+      const escaped = provider.replace(/[()]/g, "\\$&");
+      expect(within(list).getByText(new RegExp(`^${escaped}`))).toBeInTheDocument();
     }
   });
 

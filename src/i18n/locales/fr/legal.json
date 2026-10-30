@@ -55,7 +55,7 @@
       "items": {
         "supabase": "Supabase : authentification et base de données qui stocke votre compte et vos données.",
         "ovh": "OVH : hébergement de l'application.",
-        "mistral": "Mistral AI : fournisseur d'IA principal, qui rédige les réponses à vos questions.",
+        "gemini": "Google (Gemini) : fournisseur d'IA principal, qui rédige les réponses à vos questions. Dans l'offre gratuite utilisée par Sidéra, Google peut réutiliser les contenus envoyés pour améliorer ses services, et ses serveurs peuvent être situés hors de l'Union européenne : ne saisissez aucune donnée personnelle dans vos questions.",
         "groq": "Groq : fournisseur d'IA de secours, utilisé si le premier ne répond pas. Ses serveurs sont situés aux États-Unis, avec des clauses contractuelles types pour encadrer le transfert.",
         "openMeteo": "Open-Meteo : recherche des lieux de naissance. Le texte que vous saisissez dans ce champ lui est transmis.",
         "oauth": "Google et Apple : uniquement si vous choisissez de vous connecter avec leur compte."

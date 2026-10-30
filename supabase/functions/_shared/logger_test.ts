@@ -43,6 +43,6 @@ Deno.test("logEvent does not let fields override level or event", () => {
 
 Deno.test("providerKind tells geocoding apart from AI providers", () => {
   assertEquals(providerKind("open-meteo"), "geocoding");
-  assertEquals(providerKind("mistral"), "ai");
+  assertEquals(providerKind("gemini"), "ai");
   assertEquals(providerKind("astrology-api"), "astrology");
 });
