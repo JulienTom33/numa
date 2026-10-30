@@ -50,6 +50,7 @@
   "basis": {
     "noChart": "Aucun thème natal n'était disponible : cette réponse ne s'appuie sur aucune donnée de votre profil.",
     "intro": "Cette réponse s'appuie sur les éléments de votre thème de naissance listés ci-dessous.",
+    "periodLabel": "Période concernée :",
     "period": "non disponible, cette lecture s'appuie sur votre thème de naissance et non sur des transits.",
     "placementsTitle": "Positions utilisées",
     "placement": "{{body}} en {{sign}}, à {{degree}}° du signe",

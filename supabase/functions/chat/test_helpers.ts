@@ -1,5 +1,5 @@
 import type { NatalChart } from "../../../shared/contracts/natalChart/natalChart.ts";
-import { PROMPT_VERSION } from "./prompt.ts";
+import { type HistoryMessage, PROMPT_VERSION } from "./prompt.ts";
 import type { QuestionProvider } from "./provider.ts";
 import type { QuotaStore } from "./quota.ts";
 import type { ChartSource, ConversationStore } from "./store.ts";
@@ -43,12 +43,18 @@ export const failingProvider: QuestionProvider = {
   answer: () => Promise.reject(new Error("upstream down")),
 };
 
-export function echoProvider(): QuestionProvider & { calls: string[] } {
+export function echoProvider(): QuestionProvider & {
+  calls: string[];
+  histories: HistoryMessage[][];
+} {
   const calls: string[] = [];
+  const histories: HistoryMessage[][] = [];
   return {
     calls,
-    answer: ({ question }) => {
+    histories,
+    answer: ({ question, history }) => {
       calls.push(question);
+      histories.push(history ?? []);
       return Promise.resolve({
         text: `réponse à : ${question}`,
         provider: "test",
@@ -65,11 +71,13 @@ export function memoryCharts(chart: NatalChart | null = null): ChartSource {
 
 export function memoryConversations(
   ownsAll = true,
+  past: Record<string, HistoryMessage[]> = {},
 ): ConversationStore & { recorded: RecordInput[] } {
   const recorded: RecordInput[] = [];
   return {
     recorded,
     owns: () => Promise.resolve(ownsAll),
+    history: (userId, conversationId) => Promise.resolve(past[`${userId}:${conversationId}`] ?? []),
     record: (input) => {
       recorded.push(input);
       return Promise.resolve({
