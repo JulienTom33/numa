@@ -78,6 +78,8 @@
     "title": "Événements de la période",
     "intro": "Un ingrès est le passage d'un astre dans un autre signe. Une station rétrograde : l'astre semble reculer vu de la Terre, puis reprend sa marche directe. Les phases de la Lune et les éclipses rythment aussi le mois.",
     "none": "Aucun événement particulier sur cette période.",
+    "moonIngressesSummary": "Passages de la Lune dans les signes ({{count}})",
+    "moonIngressesNote": "La Lune change de signe environ tous les deux jours et demi.",
     "ingress": "{{body}} passe de {{from}} à {{to}}",
     "station": {
       "retrograde": "{{body}} devient rétrograde en {{sign}}",

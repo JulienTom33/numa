@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Card from "../../../shared/components/ui/Card/Card";
+import Disclosure from "../../../shared/components/ui/Disclosure/Disclosure";
 import type { Ephemeris } from "../ephemeris/ephemeris";
 import { buildEvents, type EphemerisEventItem } from "../ephemerisEvents/ephemerisEvents";
 import { formatParisDate, formatParisTime } from "../parisTime/parisTime";
@@ -8,9 +9,18 @@ interface Props {
   events: Ephemeris["events"];
 }
 
+const MOON_GROUP_MIN = 3;
+
+function isMoonIngress(item: EphemerisEventItem): boolean {
+  return item.kind === "ingress" && item.body === "moon";
+}
+
 function EventsCard({ events }: Props) {
   const { t, i18n } = useTranslation(["ephemeris", "astrology"]);
-  const items = buildEvents({ events });
+  const allItems = buildEvents({ events });
+  const moonIngresses = allItems.filter(isMoonIngress);
+  const grouped = moonIngresses.length >= MOON_GROUP_MIN;
+  const items = grouped ? allItems.filter((item) => !isMoonIngress(item)) : allItems;
 
   const describe = (item: EphemerisEventItem): string => {
     if (item.kind === "ingress") {
@@ -33,6 +43,18 @@ function EventsCard({ events }: Props) {
     });
   };
 
+  const renderItem = (item: EphemerisEventItem) => (
+    <li key={item.id} id={`ephemeris__item--event-${item.id}`} className="flex flex-col">
+      <span className="font-semibold text-ink">{describe(item)}</span>
+      <time dateTime={item.at} className="text-ink-secondary">
+        {t("ephemeris:events.at", {
+          date: formatParisDate(item.at, i18n.language),
+          time: formatParisTime(item.at, i18n.language),
+        })}
+      </time>
+    </li>
+  );
+
   return (
     <Card id="ephemeris__card--events" as="section" tone="white" padding="lg">
       <h2 id="ephemeris__title--events" className="font-display text-base font-bold text-ink">
@@ -47,20 +69,22 @@ function EventsCard({ events }: Props) {
         </p>
       ) : (
         <ul id="ephemeris__list--events" className="mt-3 flex flex-col gap-3 text-sm">
-          {items.map((item) => {
-            return (
-              <li key={item.id} id={`ephemeris__item--event-${item.id}`} className="flex flex-col">
-                <span className="font-semibold text-ink">{describe(item)}</span>
-                <time dateTime={item.at} className="text-ink-secondary">
-                  {t("ephemeris:events.at", {
-                    date: formatParisDate(item.at, i18n.language),
-                    time: formatParisTime(item.at, i18n.language),
-                  })}
-                </time>
-              </li>
-            );
-          })}
+          {items.map(renderItem)}
         </ul>
+      )}
+      {grouped && (
+        <Disclosure
+          id="ephemeris__disclosure--moon-ingresses"
+          summary={t("ephemeris:events.moonIngressesSummary", { count: moonIngresses.length })}
+          className="mt-3"
+        >
+          <p id="ephemeris__text--moon-ingresses-note" className="text-sm text-ink-muted">
+            {t("ephemeris:events.moonIngressesNote")}
+          </p>
+          <ul id="ephemeris__list--moon-ingresses" className="mt-2 flex flex-col gap-3 text-sm">
+            {moonIngresses.map(renderItem)}
+          </ul>
+        </Disclosure>
       )}
     </Card>
   );
