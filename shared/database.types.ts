@@ -91,6 +91,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"monthly_horoscopes": {
+                  Row: {
+                    "ascendant_sign": string | null,"cache_key": string,"created_at": string,"engine_version": string,"factors": NonNullable<Json>,"model": string,"month_start": string,"prompt_version": string,"provider": string,"sections": NonNullable<Json>,"sun_sign": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ascendant_sign"?: string | null,"cache_key": string,"created_at"?: string,"engine_version": string,"factors": NonNullable<Json>,"model": string,"month_start": string,"prompt_version": string,"provider": string,"sections": NonNullable<Json>,"sun_sign": string
+                  }
+                  Update: {
+                    "ascendant_sign"?: string | null,"cache_key"?: string,"created_at"?: string,"engine_version"?: string,"factors"?: NonNullable<Json>,"model"?: string,"month_start"?: string,"prompt_version"?: string,"provider"?: string,"sections"?: NonNullable<Json>,"sun_sign"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"natal_charts": {
                   Row: {
                     "birth_data_id": string,"cache_key": string,"chart_data": NonNullable<Json>,"computed_at": string,"created_at": string,"id": string,"user_id": string

@@ -10,6 +10,8 @@ import { fetchHoroscope } from "../horoscope/horoscope";
 import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
 import { fetchWeeklyHoroscope } from "../../horoscope/weeklyHoroscope/weeklyHoroscope";
 import { sampleWeeklyHoroscope } from "../../horoscope/WeeklyHoroscopeCard/weeklyHoroscopeFixtures";
+import { fetchMonthlyHoroscope } from "../../horoscope/monthlyHoroscope/monthlyHoroscope";
+import { sampleMonthlyHoroscope } from "../../horoscope/MonthlyHoroscopeCard/monthlyHoroscopeFixtures";
 import TodayFlow from "./TodayFlow";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
@@ -34,7 +36,12 @@ vi.mock("../../horoscope/weeklyHoroscope/weeklyHoroscope", async (importOriginal
   fetchWeeklyHoroscope: vi.fn(),
 }));
 
-const anonymous = vi.hoisted(() => ({ value: false }));
+vi.mock("../../horoscope/monthlyHoroscope/monthlyHoroscope", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../horoscope/monthlyHoroscope/monthlyHoroscope")>()),
+  fetchMonthlyHoroscope: vi.fn(),
+}));
+
+const anonymous =vi.hoisted(() => ({ value: false }));
 
 vi.mock("../../../shared/navigation/appContext/appContext", () => ({
   useAppContext: () => ({ isAnonymous: anonymous.value }),
@@ -43,6 +50,7 @@ vi.mock("../../../shared/navigation/appContext/appContext", () => ({
 const fetchMock = vi.mocked(fetchMyChart);
 const horoscopeMock = vi.mocked(fetchHoroscope);
 const weeklyMock = vi.mocked(fetchWeeklyHoroscope);
+const monthlyMock = vi.mocked(fetchMonthlyHoroscope);
 
 function renderFlow() {
   render(
@@ -62,6 +70,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   horoscopeMock.mockResolvedValue({ data: sampleHoroscope, error: null });
   weeklyMock.mockResolvedValue({ data: sampleWeeklyHoroscope, error: null });
+  monthlyMock.mockResolvedValue({ data: sampleMonthlyHoroscope, error: null });
   anonymous.value = false;
 });
 
@@ -108,7 +117,22 @@ describe("TodayFlow", () => {
     expect(document.getElementById("weekly-horoscope__text--general")).toBeInTheDocument();
   });
 
-  it("revient à l'horoscope du jour depuis la semaine", async () => {
+  it("ne charge la lecture mensuelle qu'à la bascule sur « Mois »", async () => {
+    fetchMock.mockResolvedValue({ data: completeChart, error: null });
+    renderFlow();
+
+    const monthOption = await screen.findByRole("radio", { name: "Mois" });
+    expect(monthlyMock).not.toHaveBeenCalled();
+
+    await userEvent.click(monthOption);
+
+    expect(await screen.findByRole("heading", { name: "Votre horoscope du mois" })).toBeInTheDocument();
+    expect(monthlyMock).toHaveBeenCalledTimes(1);
+    expect(weeklyMock).not.toHaveBeenCalled();
+    expect(document.getElementById("monthly-horoscope__text--general")).toBeInTheDocument();
+  });
+
+  it("revient à l'horoscope du jour depuis la semaine",async () => {
     fetchMock.mockResolvedValue({ data: completeChart, error: null });
     renderFlow();
 

@@ -6,7 +6,8 @@ import type { MyChartData } from "../../chart/skyChart/skyChart";
 import type { MyChartStatus } from "../../chart/useMyChart/useMyChart";
 import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
 import { sampleWeeklyHoroscope } from "../../horoscope/WeeklyHoroscopeCard/weeklyHoroscopeFixtures";
-import TodayScreen, { type HoroscopePeriod } from "./TodayScreen";
+import { sampleMonthlyHoroscope } from "../../horoscope/MonthlyHoroscopeCard/monthlyHoroscopeFixtures";
+import TodayScreen,{ type HoroscopePeriod } from "./TodayScreen";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
 
@@ -32,6 +33,7 @@ function renderScreen({ status = "ready", data = completeChart, isAnonymous = fa
       errorCode={status === "error" ? "network_error" : null}
       horoscope={{ status: "ready", data: sampleHoroscope, errorCode: null, retry: handlers.onRetry }}
       weeklyHoroscope={{ status: "ready", data: sampleWeeklyHoroscope, errorCode: null, retry: handlers.onRetry }}
+      monthlyHoroscope={{ status: "ready", data: sampleMonthlyHoroscope, errorCode: null, retry: handlers.onRetry }}
       period={period}
       isAnonymous={isAnonymous}
       today={new Date("2026-10-24T10:00:00Z")}
@@ -69,6 +71,15 @@ describe("TodayScreen", () => {
     expect(document.getElementById("weekly-horoscope__card--root")).toBeInTheDocument();
     expect(document.getElementById("horoscope__card--root")).toBeNull();
     expect(screen.getByRole("radio", { name: "Semaine" })).toBeChecked();
+  });
+
+  it("affiche l'horoscope du mois quand la période est « mois »", () => {
+    renderScreen({ period: "month" });
+
+    expect(document.getElementById("monthly-horoscope__card--root")).toBeInTheDocument();
+    expect(document.getElementById("horoscope__card--root")).toBeNull();
+    expect(document.getElementById("weekly-horoscope__card--root")).toBeNull();
+    expect(screen.getByRole("radio", { name: "Mois" })).toBeChecked();
   });
 
   it("signale le changement de période", async () => {

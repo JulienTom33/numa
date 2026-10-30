@@ -13,6 +13,8 @@ import type { MyChartData } from "../../chart/skyChart/skyChart";
 import SegmentedControl from "../../../shared/components/ui/SegmentedControl/SegmentedControl";
 import WeeklyHoroscopeCard from "../../horoscope/WeeklyHoroscopeCard/WeeklyHoroscopeCard";
 import type { UseWeeklyHoroscopeResult } from "../../horoscope/weeklyHoroscope/useWeeklyHoroscope";
+import MonthlyHoroscopeCard from "../../horoscope/MonthlyHoroscopeCard/MonthlyHoroscopeCard";
+import type { UseMonthlyHoroscopeResult } from "../../horoscope/monthlyHoroscope/useMonthlyHoroscope";
 import HoroscopeCard from "../HoroscopeCard/HoroscopeCard";
 import type { UseHoroscopeResult } from "../useHoroscope/useHoroscope";
 import { readEnergy, type Influence, type IntensityLevel } from "../todayEnergy/todayEnergy";
@@ -23,6 +25,7 @@ interface Props {
   errorCode: NatalChartErrorCode | null;
   horoscope: UseHoroscopeResult;
   weeklyHoroscope: UseWeeklyHoroscopeResult;
+  monthlyHoroscope: UseMonthlyHoroscopeResult;
   period: HoroscopePeriod;
   isAnonymous: boolean;
   today: Date;
@@ -33,9 +36,9 @@ interface Props {
   onAskQuestion: () => void;
 }
 
-export type HoroscopePeriod = "day" | "week";
+export type HoroscopePeriod = "day" | "week" | "month";
 
-const PERIOD_OPTIONS: HoroscopePeriod[] = ["day", "week"];
+const PERIOD_OPTIONS: HoroscopePeriod[] = ["day", "week", "month"];
 
 const INFLUENCE_TONES: Record<Influence, CardTone> = {
   relations: "coral",
@@ -58,6 +61,7 @@ function TodayScreen({
   errorCode,
   horoscope,
   weeklyHoroscope,
+  monthlyHoroscope,
   period,
   isAnonymous,
   today,
@@ -201,12 +205,20 @@ function TodayScreen({
               onRetry={horoscope.retry}
               onOpenProfile={onOpenProfile}
             />
-          ) : (
+          ) : period === "week" ? (
             <WeeklyHoroscopeCard
               status={weeklyHoroscope.status}
               data={weeklyHoroscope.data}
               errorCode={weeklyHoroscope.errorCode}
               onRetry={weeklyHoroscope.retry}
+              onOpenProfile={onOpenProfile}
+            />
+          ) : (
+            <MonthlyHoroscopeCard
+              status={monthlyHoroscope.status}
+              data={monthlyHoroscope.data}
+              errorCode={monthlyHoroscope.errorCode}
+              onRetry={monthlyHoroscope.retry}
               onOpenProfile={onOpenProfile}
             />
           )}

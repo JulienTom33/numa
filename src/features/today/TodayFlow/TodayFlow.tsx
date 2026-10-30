@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useAppContext } from "../../../shared/navigation/appContext/appContext";
 import { paths } from "../../../shared/navigation/routes/routes";
 import { useMyChart } from "../../chart/useMyChart/useMyChart";
+import { useMonthlyHoroscope } from "../../horoscope/monthlyHoroscope/useMonthlyHoroscope";
 import { useWeeklyHoroscope } from "../../horoscope/weeklyHoroscope/useWeeklyHoroscope";
 import { localIsoDate } from "../horoscope/horoscope";
 import TodayScreen, { type HoroscopePeriod } from "../TodayScreen/TodayScreen";
@@ -18,6 +19,8 @@ function TodayFlow() {
   const horoscope = useHoroscope(isoDate, status === "ready");
   const weeklyHoroscope = useWeeklyHoroscope(isoDate, status === "ready" && period === "week");
 
+  const monthlyHoroscope = useMonthlyHoroscope(isoDate, status === "ready" && period === "month");
+
   return (
     <TodayScreen
       status={status}
@@ -25,6 +28,7 @@ function TodayFlow() {
       errorCode={errorCode}
       horoscope={horoscope}
       weeklyHoroscope={weeklyHoroscope}
+      monthlyHoroscope={monthlyHoroscope}
       period={period}
       isAnonymous={isAnonymous}
       today={today}

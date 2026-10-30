@@ -439,5 +439,8 @@ verify_jwt = true
 [functions.horoscope-weekly]
 verify_jwt = true
 
+[functions.horoscope-monthly]
+verify_jwt = true
+
 [functions.delete-account]
 verify_jwt = true

@@ -2,7 +2,36 @@
   "periodLabel": "Période de l'horoscope",
   "period": {
     "day": "Jour",
-    "week": "Semaine"
+    "week": "Semaine",
+    "month": "Mois"
+  },
+  "monthly": {
+    "title": "Votre horoscope du mois",
+    "range": "Du {{start}} au {{end}}",
+    "loading": "Rédaction de votre horoscope du mois…",
+    "retry": "Réessayer",
+    "completeProfile": "Renseigner mes données",
+    "fallback": {
+      "notice": "La rédaction n'est pas disponible pour le moment. Voici les repères calculés pour votre mois, sans interprétation."
+    },
+    "basis": {
+      "title": "Repères du mois",
+      "eventsTitle": "Événements du ciel",
+      "aspectsTitle": "Liens lents entre planètes",
+      "empty": "Aucun événement ni lien marqué n'a été relevé ce mois-ci : le ciel reste plutôt calme.",
+      "disclaimer": "Ces repères sont calculés à partir des positions réelles des planètes. Ils décrivent des tendances possibles, pas des prévisions."
+    },
+    "why": {
+      "title": "Pourquoi cette lecture ?",
+      "intro": "Cette lecture reformule en mots les repères calculés pour le mois, sans rien ajouter d'autre.",
+      "disclaimer": "Texte rédigé par une IA à partir de ces repères. Il décrit des tendances possibles, pas des prévisions, et ne remplace aucun avis médical, financier ou juridique."
+    },
+    "errors": {
+      "birth_data_not_found": "Votre horoscope du mois a besoin de vos données de naissance, qui ne sont pas encore renseignées.",
+      "unauthenticated": "Votre session a expiré. Reconnectez-vous pour lire votre horoscope.",
+      "rate_limit_exceeded": "Trop de demandes en peu de temps. Patientez quelques secondes puis réessayez.",
+      "network_error": "Votre horoscope du mois n'a pas pu être chargé. Vérifiez votre connexion puis réessayez."
+    }
   },
   "weekly": {
     "title": "Votre horoscope de la semaine",
