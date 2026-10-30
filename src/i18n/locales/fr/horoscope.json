@@ -1,0 +1,73 @@
+{
+  "periodLabel": "Période de l'horoscope",
+  "period": {
+    "day": "Jour",
+    "week": "Semaine"
+  },
+  "weekly": {
+    "title": "Votre horoscope de la semaine",
+    "range": "Du {{start}} au {{end}}",
+    "loading": "Rédaction de votre horoscope de la semaine…",
+    "retry": "Réessayer",
+    "completeProfile": "Renseigner mes données",
+    "sections": {
+      "general": "Général",
+      "relations": "Relations",
+      "work": "Travail",
+      "energy": "Énergie"
+    },
+    "fallback": {
+      "notice": "La rédaction n'est pas disponible pour le moment. Voici les repères calculés pour votre semaine, sans interprétation."
+    },
+    "basis": {
+      "title": "Repères de la semaine",
+      "eventsTitle": "Événements du ciel",
+      "aspectsTitle": "Liens entre planètes",
+      "empty": "Aucun événement ni lien marqué n'a été relevé cette semaine : le ciel reste plutôt calme.",
+      "orb": "(écart de {{orb}}°)",
+      "ascendantUnknown": "Sans heure de naissance, votre Ascendant n'est pas utilisé.",
+      "disclaimer": "Ces repères sont calculés à partir des positions réelles des planètes. Ils décrivent des tendances possibles, pas des prévisions."
+    },
+    "why": {
+      "title": "Pourquoi cette lecture ?",
+      "intro": "Cette lecture reformule en mots les repères calculés pour la semaine, sans rien ajouter d'autre.",
+      "disclaimer": "Texte rédigé par une IA à partir de ces repères. Il décrit des tendances possibles, pas des prévisions, et ne remplace aucun avis médical, financier ou juridique."
+    },
+    "events": {
+      "ingress": "{{body}} entre en {{sign}}",
+      "station": {
+        "retrograde": "{{body}} devient rétrograde",
+        "direct": "{{body}} redevient direct"
+      },
+      "moonPhase": {
+        "new_moon": "Nouvelle Lune",
+        "first_quarter": "Premier quartier de Lune",
+        "full_moon": "Pleine Lune",
+        "last_quarter": "Dernier quartier de Lune"
+      },
+      "eclipse": {
+        "solar": "Éclipse de Soleil {{kind}}",
+        "lunar": "Éclipse de Lune {{kind}}"
+      },
+      "eclipseKinds": {
+        "penumbral": "par la pénombre",
+        "partial": "partielle",
+        "annular": "annulaire",
+        "total": "totale"
+      }
+    },
+    "aspects": {
+      "conjunction": "{{a}} en conjonction avec {{b}}",
+      "sextile": "{{a}} en sextile avec {{b}}",
+      "square": "{{a}} en carré avec {{b}}",
+      "trine": "{{a}} en trigone avec {{b}}",
+      "opposition": "{{a}} en opposition avec {{b}}"
+    },
+    "errors": {
+      "birth_data_not_found": "Votre horoscope de la semaine a besoin de vos données de naissance, qui ne sont pas encore renseignées.",
+      "unauthenticated": "Votre session a expiré. Reconnectez-vous pour lire votre horoscope.",
+      "rate_limit_exceeded": "Trop de demandes en peu de temps. Patientez quelques secondes puis réessayez.",
+      "network_error": "Votre horoscope de la semaine n'a pas pu être chargé. Vérifiez votre connexion puis réessayez."
+    }
+  }
+}

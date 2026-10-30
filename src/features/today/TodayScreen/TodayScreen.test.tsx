@@ -5,7 +5,8 @@ import { approximateTimeChart, completeChart, unknownTimeChart } from "../../cha
 import type { MyChartData } from "../../chart/skyChart/skyChart";
 import type { MyChartStatus } from "../../chart/useMyChart/useMyChart";
 import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
-import TodayScreen from "./TodayScreen";
+import { sampleWeeklyHoroscope } from "../../horoscope/WeeklyHoroscopeCard/weeklyHoroscopeFixtures";
+import TodayScreen, { type HoroscopePeriod } from "./TodayScreen";
 
 vi.mock("../../../shared/supabaseClient/supabaseClient", () => ({ supabase: {} }));
 
@@ -13,10 +14,12 @@ interface Options {
   status?: MyChartStatus;
   data?: MyChartData | null;
   isAnonymous?: boolean;
+  period?: HoroscopePeriod;
 }
 
-function renderScreen({ status = "ready", data = completeChart, isAnonymous = false }: Options = {}) {
+function renderScreen({ status = "ready", data = completeChart, isAnonymous = false, period = "day" }: Options = {}) {
   const handlers = {
+    onPeriodChange: vi.fn(),
     onRetry: vi.fn(),
     onOpenProfile: vi.fn(),
     onSignUp: vi.fn(),
@@ -28,6 +31,8 @@ function renderScreen({ status = "ready", data = completeChart, isAnonymous = fa
       data={data}
       errorCode={status === "error" ? "network_error" : null}
       horoscope={{ status: "ready", data: sampleHoroscope, errorCode: null, retry: handlers.onRetry }}
+      weeklyHoroscope={{ status: "ready", data: sampleWeeklyHoroscope, errorCode: null, retry: handlers.onRetry }}
+      period={period}
       isAnonymous={isAnonymous}
       today={new Date("2026-10-24T10:00:00Z")}
       {...handlers}
@@ -48,6 +53,30 @@ describe("TodayScreen", () => {
     expect(document.getElementById("today__text--sources")).toHaveTextContent("16 octobre 2026");
     expect(document.getElementById("horoscope__text--general")).toHaveTextContent("La journée peut inviter");
     expect(document.getElementById("horoscope__button--why")).toBeInTheDocument();
+  });
+
+  it("affiche l'horoscope du jour par défaut avec la bascule jour/semaine", () => {
+    renderScreen();
+
+    expect(screen.getByRole("radio", { name: "Jour" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Semaine" })).not.toBeChecked();
+    expect(document.getElementById("weekly-horoscope__card--root")).toBeNull();
+  });
+
+  it("affiche l'horoscope de la semaine quand la période est « semaine »", () => {
+    renderScreen({ period: "week" });
+
+    expect(document.getElementById("weekly-horoscope__card--root")).toBeInTheDocument();
+    expect(document.getElementById("horoscope__card--root")).toBeNull();
+    expect(screen.getByRole("radio", { name: "Semaine" })).toBeChecked();
+  });
+
+  it("signale le changement de période", async () => {
+    const { onPeriodChange } = renderScreen();
+
+    await userEvent.click(screen.getByRole("radio", { name: "Semaine" }));
+
+    expect(onPeriodChange).toHaveBeenCalledWith("week");
   });
 
   it("masque la pastille découverte quand l'utilisateur est connecté", () => {
