@@ -1,7 +1,7 @@
 import type { AspectType } from "../../../../shared/contracts/natalChart/natalChart.ts";
 import type { CurrentSky, SkyBodyId, TransitAspect } from "../../chart/skyChart/skyChart";
 
-export const INFLUENCES = ["relations", "work", "energy"] as const;
+export const INFLUENCES = ["relations", "love", "work", "energy"] as const;
 
 export type Influence = (typeof INFLUENCES)[number];
 
@@ -18,7 +18,8 @@ export interface EnergyReading {
 }
 
 const INFLUENCE_BODIES: Record<Influence, readonly SkyBodyId[]> = {
-  relations: ["venus", "moon", "neptune"],
+  relations: ["moon", "neptune"],
+  love: ["venus"],
   work: ["saturn", "mercury", "jupiter"],
   energy: ["mars", "sun", "uranus", "pluto"],
 };
