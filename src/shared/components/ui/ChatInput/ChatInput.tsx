@@ -61,7 +61,7 @@ function ChatInput({
         aria-label={sendLabel ?? t("common:actions.send")}
         disabled={!canSend}
         className={cx(
-          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-coral text-white transition-colors hover:bg-coral-hover",
+          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-coral text-on-accent transition-colors hover:bg-coral-hover",
           focusRing,
           "disabled:cursor-not-allowed disabled:bg-coral-disabled",
         )}
