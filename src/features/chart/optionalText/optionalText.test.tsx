@@ -5,28 +5,29 @@ import { useOptionalText } from "./optionalText";
 
 describe("useOptionalText", () => {
   afterEach(() => {
-    i18n.removeResourceBundle("fr", "chartHouses");
-    i18n.addResourceBundle("fr", "chartHouses", {});
+    const bundle = i18n.getResourceBundle("fr", "chartHouses") as Record<string, unknown>;
+    delete bundle["test-texte"];
+    delete bundle["test-noeud"];
   });
 
   it("renvoie null quand la clé n'existe pas", () => {
     const { result } = renderHook(() => useOptionalText());
 
-    expect(result.current("chartSignsPersonal", "mercury.scorpio")).toBeNull();
-    expect(result.current("chartHouses", "1")).toBeNull();
+    expect(result.current("chartSignsPersonal", "mercury.inexistant")).toBeNull();
+    expect(result.current("chartHouses", "99")).toBeNull();
   });
 
   it("renvoie le texte quand la clé existe", () => {
-    i18n.addResourceBundle("fr", "chartHouses", { "1": "Maison de l'identité." });
+    i18n.addResourceBundle("fr", "chartHouses", { "test-texte": "Maison de l'identité." }, true, true);
     const { result } = renderHook(() => useOptionalText());
 
-    expect(result.current("chartHouses", "1")).toBe("Maison de l'identité.");
+    expect(result.current("chartHouses", "test-texte")).toBe("Maison de l'identité.");
   });
 
   it("ignore un nœud qui n'est pas un texte", () => {
-    i18n.addResourceBundle("fr", "chartHouses", { "2": { a: "b" } });
+    i18n.addResourceBundle("fr", "chartHouses", { "test-noeud": { a: "b" } }, true, true);
     const { result } = renderHook(() => useOptionalText());
 
-    expect(result.current("chartHouses", "2")).toBeNull();
+    expect(result.current("chartHouses", "test-noeud")).toBeNull();
   });
 });
