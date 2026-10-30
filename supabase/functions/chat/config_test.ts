@@ -1,9 +1,9 @@
 import { assertEquals, assertThrows } from "jsr:@std/assert@1";
 import { DEFAULT_PROVIDERS, parseProviders } from "./config.ts";
 
-Deno.test("the default chain is Mistral then Groq gpt-oss-120b", () => {
+Deno.test("the default chain is Gemini then Groq gpt-oss-120b", () => {
   assertEquals(DEFAULT_PROVIDERS.map((p) => [p.id, p.model, p.timeoutMs]), [
-    ["mistral", "mistral-small-latest", 15000],
+    ["gemini", "gemini-3.1-flash-lite", 20000],
     ["groq", "openai/gpt-oss-120b", 10000],
   ]);
   assertEquals(parseProviders(undefined), DEFAULT_PROVIDERS);

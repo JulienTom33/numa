@@ -19,7 +19,7 @@ const sectionIds = [
   "metrics",
 ] as const;
 
-const providerIds = ["supabase", "ovh", "mistral", "groq", "openMeteo", "oauth"] as const;
+const providerIds = ["supabase", "ovh", "gemini", "groq", "openMeteo", "oauth"] as const;
 
 function PrivacyPolicyScreen({ onBack }: Props) {
   const { t } = useTranslation(["legal", "common"]);

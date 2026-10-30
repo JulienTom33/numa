@@ -12,12 +12,12 @@ export interface ProviderSettings {
 
 export const DEFAULT_PROVIDERS: ProviderSettings[] = [
   {
-    id: "mistral",
-    baseUrl: "https://api.mistral.ai/v1",
-    model: "mistral-small-latest",
-    timeoutMs: 15_000,
+    id: "gemini",
+    baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
+    model: "gemini-3.1-flash-lite",
+    timeoutMs: 20_000,
     enabled: true,
-    apiKeyEnv: "MISTRAL_API_KEY",
+    apiKeyEnv: "GEMINI_API_KEY",
   },
   {
     id: "groq",

@@ -20,7 +20,7 @@ interface Harness {
 function harness(
   handlers: Record<string, (call: number) => Response | Promise<Response>>,
   providers: ProviderSettings[] = DEFAULT_PROVIDERS,
-  keys: Record<string, string> = { MISTRAL_API_KEY: "mk", GROQ_API_KEY: "gk" },
+  keys: Record<string, string> = { GEMINI_API_KEY: "mk", GROQ_API_KEY: "gk" },
 ): Harness {
   const calls: string[] = [];
   const counts = new Map<string, number>();
@@ -50,7 +50,7 @@ const request = { question: "Que dit mon Soleil ?", factors: null };
 
 Deno.test("the primary provider answers and the fallback is not called", async () => {
   const { calls, provider } = harness({
-    "api.mistral.ai": () => completion(GOOD_TEXT),
+    "generativelanguage.googleapis.com": () => completion(GOOD_TEXT),
     "api.groq.com": () => completion(GOOD_TEXT),
   });
 
@@ -58,28 +58,28 @@ Deno.test("the primary provider answers and the fallback is not called", async (
 
   assertEquals(answer, {
     text: GOOD_TEXT,
-    provider: "mistral",
-    model: "mistral-small-latest",
+    provider: "gemini",
+    model: "gemini-3.1-flash-lite",
     promptVersion: "sidera-chat-v3",
   });
-  assertEquals(calls, ["api.mistral.ai"]);
+  assertEquals(calls, ["generativelanguage.googleapis.com"]);
 });
 
 Deno.test("falls back to Groq on a server error from the primary", async () => {
   const { calls, provider } = harness({
-    "api.mistral.ai": () => new Response("boom", { status: 503 }),
+    "generativelanguage.googleapis.com": () => new Response("boom", { status: 503 }),
     "api.groq.com": () => completion(GOOD_TEXT),
   });
 
   const answer = await provider.answer(request);
 
   assertEquals([answer.provider, answer.model], ["groq", "openai/gpt-oss-120b"]);
-  assertEquals(calls, ["api.mistral.ai", "api.groq.com"]);
+  assertEquals(calls, ["generativelanguage.googleapis.com", "api.groq.com"]);
 });
 
 Deno.test("retries once after a short retry-after, then answers", async () => {
   const { calls, sleeps, provider } = harness({
-    "api.mistral.ai": (call) =>
+    "generativelanguage.googleapis.com": (call) =>
       call === 1
         ? new Response("slow down", { status: 429, headers: { "retry-after": "1" } })
         : completion(GOOD_TEXT),
@@ -88,41 +88,41 @@ Deno.test("retries once after a short retry-after, then answers", async () => {
 
   const answer = await provider.answer(request);
 
-  assertEquals(answer.provider, "mistral");
-  assertEquals(calls, ["api.mistral.ai", "api.mistral.ai"]);
+  assertEquals(answer.provider, "gemini");
+  assertEquals(calls, ["generativelanguage.googleapis.com", "generativelanguage.googleapis.com"]);
   assertEquals(sleeps, [1000]);
 });
 
 Deno.test("switches immediately on a long retry-after", async () => {
   const { calls, sleeps, provider } = harness({
-    "api.mistral.ai": () =>
+    "generativelanguage.googleapis.com": () =>
       new Response("slow down", { status: 429, headers: { "retry-after": "30" } }),
     "api.groq.com": () => completion(GOOD_TEXT),
   });
 
   assertEquals((await provider.answer(request)).provider, "groq");
-  assertEquals(calls, ["api.mistral.ai", "api.groq.com"]);
+  assertEquals(calls, ["generativelanguage.googleapis.com", "api.groq.com"]);
   assertEquals(sleeps, []);
 });
 
 Deno.test("a 429 without retry-after opens the breaker for the cooldown", async () => {
   const { calls, clock, provider } = harness({
-    "api.mistral.ai": () => new Response("slow down", { status: 429 }),
+    "generativelanguage.googleapis.com": () => new Response("slow down", { status: 429 }),
     "api.groq.com": () => completion(GOOD_TEXT),
   });
 
   await provider.answer(request);
   await provider.answer(request);
-  assertEquals(calls, ["api.mistral.ai", "api.groq.com", "api.groq.com"]);
+  assertEquals(calls, ["generativelanguage.googleapis.com", "api.groq.com", "api.groq.com"]);
 
   clock.value = BREAKER_COOLDOWN_MS + 1;
   await provider.answer(request);
-  assertEquals(calls.slice(3), ["api.mistral.ai", "api.groq.com"]);
+  assertEquals(calls.slice(3), ["generativelanguage.googleapis.com", "api.groq.com"]);
 });
 
 Deno.test("an invalid or non-French answer counts as a failure", async () => {
   const { provider } = harness({
-    "api.mistral.ai": () => completion("   "),
+    "generativelanguage.googleapis.com": () => completion("   "),
     "api.groq.com": () => completion("Your sun sign suggests a calm and thoughtful nature."),
   });
 
@@ -132,7 +132,7 @@ Deno.test("an invalid or non-French answer counts as a failure", async () => {
 
 Deno.test("a timeout moves on to the next provider", async () => {
   const { provider } = harness({
-    "api.mistral.ai": () => {
+    "generativelanguage.googleapis.com": () => {
       throw new DOMException("timeout", "TimeoutError");
     },
     "api.groq.com": () => completion(GOOD_TEXT),
@@ -143,7 +143,7 @@ Deno.test("a timeout moves on to the next provider", async () => {
 
 Deno.test("fails with ai_unavailable when the whole chain fails", async () => {
   const { provider } = harness({
-    "api.mistral.ai": () => new Response("boom", { status: 500 }),
+    "generativelanguage.googleapis.com": () => new Response("boom", { status: 500 }),
     "api.groq.com": () => new Response("boom", { status: 500 }),
   });
 
@@ -153,10 +153,10 @@ Deno.test("fails with ai_unavailable when the whole chain fails", async () => {
 
 Deno.test("skips disabled providers and providers without a key", async () => {
   const providers = DEFAULT_PROVIDERS.map((settings) =>
-    settings.id === "mistral" ? { ...settings, enabled: false } : settings
+    settings.id === "gemini" ? { ...settings, enabled: false } : settings
   );
   const { calls, provider } = harness({
-    "api.mistral.ai": () => completion(GOOD_TEXT),
+    "generativelanguage.googleapis.com": () => completion(GOOD_TEXT),
     "api.groq.com": () => completion(GOOD_TEXT),
   }, providers);
   assertEquals((await provider.answer(request)).provider, "groq");
