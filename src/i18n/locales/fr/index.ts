@@ -10,6 +10,7 @@ import chat from "./chat.json";
 import common from "./common.json";
 import cookies from "./cookies.json";
 import discovery from "./discovery.json";
+import ephemeris from "./ephemeris.json";
 import history from "./history.json";
 import horoscope from "./horoscope.json";
 import legal from "./legal.json";
@@ -19,6 +20,6 @@ import today from "./today.json";
 import ui from "./ui.json";
 import welcome from "./welcome.json";
 
-export const fr = { common, welcome, auth, ui, astrology, onboarding, discovery, chart, chartDetail, chartSigns, chartSignsPersonal, chartSignsOuter, chartHouses, chat, history, legal, profile, today, cookies, horoscope };
+export const fr = { common, welcome, auth, ui, astrology, onboarding, discovery, chart, chartDetail, chartSigns, chartSignsPersonal, chartSignsOuter, chartHouses, chat, history, legal, profile, today, cookies, horoscope, ephemeris };
 
 export type Translations = typeof fr;

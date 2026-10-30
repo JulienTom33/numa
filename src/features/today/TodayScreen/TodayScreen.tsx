@@ -35,6 +35,7 @@ interface Props {
   onOpenProfile: () => void;
   onSignUp: () => void;
   onAskQuestion: () => void;
+  onOpenEphemeris: () => void;
 }
 
 export type HoroscopePeriod = "day" | "week" | "month";
@@ -56,8 +57,9 @@ function TodayScreen({
   onOpenProfile,
   onSignUp,
   onAskQuestion,
+  onOpenEphemeris,
 }: Props) {
-  const { t, i18n } = useTranslation(["today", "chart", "astrology", "horoscope"]);
+  const { t, i18n } = useTranslation(["today", "chart", "astrology", "horoscope", "ephemeris"]);
   const firstName = data?.summary.firstName ?? null;
   const transits = data?.transits ?? null;
   const energy = transits ? readEnergy(transits) : null;
@@ -182,6 +184,25 @@ function TodayScreen({
           </Card>
         </>
       )}
+
+      <Card id="today__card--ephemeris" as="section" tone="sky" padding="lg">
+        <h2 id="today__title--ephemeris" className="font-display text-base font-bold text-ink">
+          {t("ephemeris:entry.title")}
+        </h2>
+        <p id="today__text--ephemeris" className="mt-1 text-sm text-ink-secondary">
+          {t("ephemeris:entry.description")}
+        </p>
+        <Button
+          id="today__button--ephemeris"
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-4"
+          onClick={onOpenEphemeris}
+        >
+          {t("ephemeris:entry.action")}
+        </Button>
+      </Card>
 
       <Card id="today__card--chat" as="section" tone="white" padding="lg">
         <h2 id="today__title--chat" className="font-display text-base font-bold text-ink">

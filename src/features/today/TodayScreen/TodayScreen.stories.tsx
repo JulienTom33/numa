@@ -23,6 +23,7 @@ const meta = {
     onOpenProfile: () => undefined,
     onSignUp: () => undefined,
     onAskQuestion: () => undefined,
+    onOpenEphemeris: () => undefined,
   },
   decorators: [
     (Story) => (

@@ -12,6 +12,7 @@ export const paths = {
   theme: "/mon-theme",
   profile: "/profil",
   history: "/historique",
+  ephemeris: "/ephemeride",
 } as const;
 
 export const tabPaths: Record<MainTab, string> = {

@@ -37,6 +37,7 @@ function TodayFlow() {
       onOpenProfile={() => navigate(paths.profile)}
       onSignUp={() => navigate(paths.signup)}
       onAskQuestion={() => navigate(paths.consult)}
+      onOpenEphemeris={() => navigate(paths.ephemeris)}
     />
   );
 }
