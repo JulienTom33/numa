@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { approximateTimeChart, completeChart, unknownTimeChart } from "../../chart/MyChart/myChartFixtures";
 import { sampleHoroscope } from "../HoroscopeCard/horoscopeFixtures";
 import { sampleWeeklyHoroscope } from "../../horoscope/WeeklyHoroscopeCard/weeklyHoroscopeFixtures";
+import { sampleMonthlyHoroscope } from "../../horoscope/MonthlyHoroscopeCard/monthlyHoroscopeFixtures";
 import TodayScreen from "./TodayScreen";
 
 const meta = {
@@ -13,6 +14,7 @@ const meta = {
     errorCode: null,
     horoscope: { status: "ready", data: sampleHoroscope, errorCode: null, retry: () => undefined },
     weeklyHoroscope: { status: "ready", data: sampleWeeklyHoroscope, errorCode: null, retry: () => undefined },
+    monthlyHoroscope: { status: "ready", data: sampleMonthlyHoroscope, errorCode: null, retry: () => undefined },
     period: "day",
     isAnonymous: false,
     today: new Date("2026-10-24T10:00:00Z"),
@@ -38,6 +40,8 @@ type Story = StoryObj<typeof meta>;
 export const Connected: Story = {};
 
 export const WeeklyView: Story = { args: { period: "week" } };
+
+export const MonthlyView: Story = { args: { period: "month" } };
 
 export const Discovery: Story = { args: { isAnonymous: true } };
 
