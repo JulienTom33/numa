@@ -60,7 +60,7 @@ Deno.test("the primary provider answers and the fallback is not called", async (
     text: GOOD_TEXT,
     provider: "gemini",
     model: "gemini-3.1-flash-lite",
-    promptVersion: "sidera-chat-v4",
+    promptVersion: "sidera-chat-v5",
   });
   assertEquals(calls, ["generativelanguage.googleapis.com"]);
 });
