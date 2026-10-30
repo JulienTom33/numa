@@ -17,12 +17,12 @@ interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "id"> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-coral text-white hover:bg-coral-hover disabled:bg-coral-disabled",
-  ink: "bg-ink text-white hover:bg-ink/90 disabled:bg-ink-muted",
+  primary: "bg-coral text-on-accent hover:bg-coral-hover disabled:bg-coral-disabled",
+  ink: "bg-ink text-on-accent hover:bg-ink/90 disabled:bg-ink-muted",
   outline:
     "border border-ink bg-transparent text-ink hover:bg-white disabled:border-line disabled:text-ink-muted disabled:hover:bg-transparent",
   soft: "bg-violet-soft text-violet-ink hover:bg-violet/25 disabled:text-ink-muted disabled:hover:bg-violet-soft",
-  danger: "bg-coral-ink text-white hover:bg-coral-ink/90 disabled:bg-coral-disabled",
+  danger: "bg-coral-ink text-on-accent hover:bg-coral-ink/90 disabled:bg-coral-disabled",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

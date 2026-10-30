@@ -16,7 +16,7 @@ function AppShell({ id, screenKey, children, tabBar }: Props) {
 
   return (
     <div id={id} className="flex h-dvh justify-center overflow-hidden bg-page text-ink">
-      <div className="flex h-full w-full max-w-app flex-col pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+      <div className="flex h-full w-full max-w-shell flex-col pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         <main
           ref={scrollRef}
           id={`${id}-content`}
