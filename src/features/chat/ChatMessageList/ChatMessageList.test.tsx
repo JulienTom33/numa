@@ -20,7 +20,7 @@ describe("ChatMessageList", () => {
     expect(document.getElementById("chat-message-list__message--m2")).toHaveTextContent("Salutations");
   });
 
-  it("propose le fondement et la période seulement quand le fondement est connu", async () => {
+  it("propose le fondement et sans la période sous la réponse quand le fondement est connu", async () => {
     render(
       <ChatMessageList
         sending={false}
@@ -34,8 +34,9 @@ describe("ChatMessageList", () => {
     expect(document.getElementById("chat-message-list__message--m1-why")).toBeNull();
     const toggle = document.getElementById("chat-message-list__message--m2-why");
     expect(toggle).toHaveTextContent("Pourquoi cette réponse ?");
-    expect(screen.getByText(/Période concernée/)).toBeInTheDocument();
+    expect(screen.getByText(/Période concernée/)).not.toBeVisible();
     await userEvent.click(toggle as HTMLElement);
+    expect(screen.getByText(/Période concernée/)).toBeVisible();
     expect(screen.getByText(/Aucun thème natal n'était disponible/)).toBeVisible();
   });
 

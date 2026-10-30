@@ -74,7 +74,10 @@ export function createChatHandler(
       await enforceAiDailyLimit(rateLimits, dailyAiLimit);
       const chart = await charts.latest(caller.userId);
       const factors = chart ? extractFactors(chart) : null;
-      const answer = await provider.answer({ question, factors });
+      const history = conversationId === null
+        ? []
+        : await conversations.history(caller.userId, conversationId);
+      const answer = await provider.answer({ question, factors, history });
       const recorded = await conversations.record({
         userId: caller.userId,
         conversationId,
