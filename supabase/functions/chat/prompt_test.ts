@@ -23,7 +23,7 @@ Deno.test("the system prompt carries the editorial rules", () => {
       "Porphyre",
       "renvoie vers un professionnel",
       "vouvoyant",
-      "90 à 170 mots",
+      "90 à 150 mots",
     ]
   ) {
     assertStringIncludes(system.content, rule);
