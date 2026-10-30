@@ -3,9 +3,8 @@ import { formatDate } from "../../../i18n/format/format";
 import Avatar from "../../../shared/components/ui/Avatar/Avatar";
 import Button from "../../../shared/components/ui/Button/Button";
 import Callout from "../../../shared/components/ui/Callout/Callout";
-import Card, { type CardTone } from "../../../shared/components/ui/Card/Card";
+import Card from "../../../shared/components/ui/Card/Card";
 import TopBar from "../../../shared/components/ui/TopBar/TopBar";
-import { cx } from "../../../shared/cx/cx";
 import DiscoveryModeBadge from "../../discovery/DiscoveryModeBadge/DiscoveryModeBadge";
 import type { NatalChartErrorCode } from "../../chart/natalChart/natalChart";
 import type { MyChartStatus } from "../../chart/useMyChart/useMyChart";
@@ -17,7 +16,9 @@ import MonthlyHoroscopeCard from "../../horoscope/MonthlyHoroscopeCard/MonthlyHo
 import type { UseMonthlyHoroscopeResult } from "../../horoscope/monthlyHoroscope/useMonthlyHoroscope";
 import HoroscopeCard from "../HoroscopeCard/HoroscopeCard";
 import type { UseHoroscopeResult } from "../useHoroscope/useHoroscope";
-import { readEnergy, type Influence, type IntensityLevel } from "../todayEnergy/todayEnergy";
+import EnergyCard from "../EnergyCard/EnergyCard";
+import InfluencesSection from "../InfluencesSection/InfluencesSection";
+import { readEnergy } from "../todayEnergy/todayEnergy";
 
 interface Props {
   status: MyChartStatus;
@@ -39,21 +40,6 @@ interface Props {
 export type HoroscopePeriod = "day" | "week" | "month";
 
 const PERIOD_OPTIONS: HoroscopePeriod[] = ["day", "week", "month"];
-
-const INFLUENCE_TONES: Record<Influence, CardTone> = {
-  relations: "coral",
-  work: "sky",
-  energy: "gold",
-};
-
-const INFLUENCE_BAR: Record<Influence, string> = {
-  relations: "bg-coral",
-  work: "bg-sky",
-  energy: "bg-gold",
-};
-
-const LEVEL_SEGMENTS: Record<IntensityLevel, number> = { calm: 1, moderate: 2, strong: 3 };
-const SEGMENTS = [1, 2, 3];
 
 function TodayScreen({
   status,
@@ -131,63 +117,9 @@ function TodayScreen({
 
       {status === "ready" && (
         <>
-          <Card id="today__card--energy" as="section" tone="violet" padding="lg">
-            <h2 id="today__title--energy" className="font-display text-lg font-bold text-violet-ink">
-              {t("today:energy.title")}
-            </h2>
-            {energy ? (
-              <p id="today__text--energy" className="mt-3 text-base text-ink">
-                {energy.headline
-                  ? t("today:energy.headline", {
-                      aspect: t(`chart:myChart.transits.aspects.${energy.headline.type}`, {
-                        planet: t(`astrology:bodies.${energy.headline.transitBody}`),
-                        point: t(`astrology:placement.${energy.headline.natalPoint}`).toLowerCase(),
-                      }),
-                    })
-                  : t("today:energy.calm")}
-              </p>
-            ) : (
-              <div className="mt-3 flex flex-col items-start gap-3">
-                <p id="today__text--energy-unavailable" className="text-sm text-ink">
-                  {t("today:energy.unavailable")}
-                </p>
-                <Button id="today__button--energy-retry" type="button" variant="outline" size="sm" onClick={onRetry}>
-                  {t("today:retry")}
-                </Button>
-              </div>
-            )}
-          </Card>
+          <EnergyCard energy={energy} onRetry={onRetry} />
 
-          {energy && (
-            <section aria-labelledby="today__title--influences" className="flex flex-col gap-3">
-              <h2 id="today__title--influences" className="font-display text-base font-bold text-ink">
-                {t("today:influences.title")}
-              </h2>
-              <ul id="today__list--influences" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                {energy.influences.map(({ influence, level }) => (
-                  <li key={influence} id={`today__item--influence-${influence}`}>
-                    <Card id={`today__card--influence-${influence}`} tone={INFLUENCE_TONES[influence]}>
-                      <p className="font-display text-sm font-bold">{t(`today:influences.${influence}`)}</p>
-                      <div aria-hidden="true" className="mt-2 flex gap-1">
-                        {SEGMENTS.map((segment) => (
-                          <span
-                            key={segment}
-                            className={cx(
-                              "h-1.5 flex-1 rounded-full",
-                              segment <= LEVEL_SEGMENTS[level] ? INFLUENCE_BAR[influence] : "bg-white/60",
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <p id={`today__text--influence-${influence}`} className="mt-2 text-sm text-ink-secondary">
-                        {t(`today:influences.levels.${level}`)}
-                      </p>
-                    </Card>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          {energy && <InfluencesSection influences={energy.influences} />}
 
           <SegmentedControl
             id="today__control--period"
@@ -227,6 +159,9 @@ function TodayScreen({
             <h2 id="today__title--sources" className="font-display text-sm font-bold text-ink">
               {t("today:sources.title")}
             </h2>
+            <p id="today__text--sources-purpose" className="mt-1 text-sm text-ink-secondary">
+              {t("today:sources.purpose")}
+            </p>
             <p id="today__text--sources" className="mt-1 text-sm text-ink-secondary">
               {transits
                 ? t("today:sources.text", {

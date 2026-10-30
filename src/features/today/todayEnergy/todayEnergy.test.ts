@@ -13,7 +13,8 @@ describe("readEnergy", () => {
     const { influences } = readEnergy(currentSky);
 
     expect(influences).toEqual([
-      { influence: "relations", level: "strong" },
+      { influence: "relations", level: "calm" },
+      { influence: "love", level: "strong" },
       { influence: "work", level: "moderate" },
       { influence: "energy", level: "strong" },
     ]);
