@@ -30,7 +30,7 @@
       },
       "retention": {
         "title": "Conservation",
-        "body": "Vos données sont conservées tant que votre compte existe. Elles sont accessibles uniquement avec votre session : personne d'autre ne peut les lire depuis l'application."
+        "body": "Vos données sont conservées tant que votre compte existe. Elles sont accessibles uniquement avec votre session : personne d'autre ne peut les lire depuis l'application. Les journaux techniques d'accès du serveur n'enregistrent que des adresses IP tronquées (anonymisées en partie) et sont supprimés automatiquement par rotation, au plus environ 50 Mo, soit quelques jours à quelques semaines selon le trafic."
       },
       "deletion": {
         "title": "Suppression du compte",
