@@ -16,7 +16,7 @@ interface Props {
 }
 
 const markerClasses: Record<StepStatus, string> = {
-  done: "bg-sage text-white",
+  done: "bg-sage text-on-accent",
   current: "border-2 border-violet bg-white",
   pending: "border-2 border-line bg-white",
 };

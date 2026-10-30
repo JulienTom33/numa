@@ -31,7 +31,7 @@ function Avatar({ id, name, size = "md", onClick, label, showEditBadge = false }
       {showEditBadge && (
         <span
           aria-hidden="true"
-          className="absolute -bottom-0.5 -right-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-page bg-coral text-white"
+          className="absolute -bottom-0.5 -right-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-page bg-coral text-on-accent"
         >
           <Icon name="edit" size={12} />
         </span>
