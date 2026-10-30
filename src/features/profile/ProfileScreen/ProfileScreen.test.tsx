@@ -37,10 +37,10 @@ describe("ProfileScreen", () => {
     expect(document.getElementById("profile__row--tone")).toHaveTextContent("Équilibré");
   });
 
-  it("indique le mode découverte pour un compte anonyme sans email", () => {
+  it("n'ajoute pas de badge de statut pour un compte anonyme, le badge du mode découverte est celui des onglets", () => {
     renderScreen({ profile: anonymousProfile, email: null, sun: null, ascendant: null });
 
-    expect(document.getElementById("profile__badge--status")).toHaveTextContent("Mode découverte");
+    expect(document.getElementById("profile__badge--status")).toBeNull();
     expect(document.getElementById("profile__row--email")).toHaveTextContent("Aucun email associé");
     expect(document.getElementById("profile__text--placements")).toHaveTextContent("Non disponible");
   });
