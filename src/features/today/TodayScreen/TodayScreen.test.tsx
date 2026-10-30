@@ -25,6 +25,7 @@ function renderScreen({ status = "ready", data = completeChart, isAnonymous = fa
     onOpenProfile: vi.fn(),
     onSignUp: vi.fn(),
     onAskQuestion: vi.fn(),
+    onOpenEphemeris: vi.fn(),
   };
   render(
     <TodayScreen
@@ -116,6 +117,14 @@ describe("TodayScreen", () => {
 
     expect(onOpenProfile).toHaveBeenCalledTimes(1);
     expect(onAskQuestion).toHaveBeenCalledTimes(1);
+  });
+
+  it("propose d'ouvrir l'éphéméride", async () => {
+    const { onOpenEphemeris } = renderScreen();
+
+    await userEvent.click(screen.getByRole("button", { name: "Voir l'éphéméride" }));
+
+    expect(onOpenEphemeris).toHaveBeenCalledTimes(1);
   });
 
   it("indique le chargement", () => {

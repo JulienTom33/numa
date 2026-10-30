@@ -1,4 +1,5 @@
 import { Navigate, type RouteObject } from "react-router";
+import EphemerisFlow from "./features/ephemeris/EphemerisFlow/EphemerisFlow";
 import HistoryFlow from "./features/history/HistoryFlow/HistoryFlow";
 import AppRoot from "./shared/navigation/AppRoot/AppRoot";
 import AuthCallbackRoute from "./shared/navigation/AuthCallbackRoute/AuthCallbackRoute";
@@ -36,6 +37,7 @@ export const routes: RouteObject[] = [
                   { path: paths.theme, element: <TabScreen tab="theme" /> },
                   { path: paths.profile, element: <TabScreen tab="profile" /> },
                   { path: paths.history, element: <HistoryFlow /> },
+                  { path: paths.ephemeris, element: <EphemerisFlow /> },
                 ],
               },
             ],

@@ -1,0 +1,111 @@
+{
+  "title": "Éphéméride",
+  "intro": "Le ciel réel, jour après jour : où se trouvent les astres et ce qui se passe entre eux.",
+  "utcNote": "Les jours, semaines et mois suivent le calendrier UTC (temps universel). Les heures des événements sont affichées à l'heure de Paris.",
+  "entry": {
+    "title": "Le ciel du jour",
+    "description": "Positions des astres, phase de la Lune, aspects et événements à venir, calculés pour tout le monde.",
+    "action": "Voir l'éphéméride"
+  },
+  "back": "Retour à Aujourd'hui",
+  "period": {
+    "label": "Durée affichée",
+    "day": "Jour",
+    "week": "Semaine",
+    "month": "Mois"
+  },
+  "nav": {
+    "label": "Navigation dans le temps",
+    "previous": "Période précédente",
+    "next": "Période suivante",
+    "today": "Aujourd'hui",
+    "range": "{{from}} au {{to}}"
+  },
+  "announce": "Période affichée : {{range}}.",
+  "daySelect": "Jour affiché",
+  "loading": "Calcul du ciel en cours…",
+  "error": {
+    "text": "L'éphéméride n'a pas pu être chargée.",
+    "retry": "Réessayer"
+  },
+  "empty": {
+    "title": "Rien à afficher",
+    "description": "Aucune donnée n'est disponible pour cette période."
+  },
+  "positions": {
+    "title": "Positions des astres",
+    "intro": "La position d'un astre indique devant quel signe du zodiaque il se trouve, avec son degré dans ce signe.",
+    "caption": "Positions du {{date}}, calculées à midi UTC, soit 13 h ou 14 h à Paris",
+    "columns": {
+      "body": "Astre",
+      "sign": "Signe",
+      "position": "Position",
+      "motion": "Mouvement",
+      "speed": "Vitesse"
+    },
+    "position": "{{degree}}°{{minute}}′",
+    "retrograde": "rétrograde",
+    "direct": "directe",
+    "speed": "{{speed}} °/jour",
+    "scrollLabel": "Tableau des positions, défilement horizontal"
+  },
+  "moon": {
+    "title": "Phase de la Lune",
+    "intro": "La phase décrit la part éclairée de la Lune vue de la Terre, selon sa position par rapport au Soleil.",
+    "illumination": "Illumination : {{value}}",
+    "age": "Âge : {{age}} jours depuis la nouvelle lune",
+    "phases": {
+      "new_moon": "Nouvelle lune",
+      "waxing_crescent": "Premier croissant",
+      "first_quarter": "Premier quartier",
+      "waxing_gibbous": "Lune gibbeuse croissante",
+      "full_moon": "Pleine lune",
+      "waning_gibbous": "Lune gibbeuse décroissante",
+      "last_quarter": "Dernier quartier",
+      "waning_crescent": "Dernier croissant"
+    }
+  },
+  "aspects": {
+    "title": "Aspects du jour",
+    "intro": "Un aspect est un angle entre deux astres. Plus l'écart est petit, plus le lien est marqué.",
+    "none": "Aucun aspect serré ce jour-là.",
+    "showAll": "Voir tout ({{count}})",
+    "showLess": "Réduire la liste",
+    "pair": "{{type}} · {{a}} et {{b}}",
+    "orb": "écart {{orb}}°"
+  },
+  "events": {
+    "title": "Événements de la période",
+    "intro": "Un ingrès est le passage d'un astre dans un autre signe. Une station rétrograde : l'astre semble reculer vu de la Terre, puis reprend sa marche directe. Les phases de la Lune et les éclipses rythment aussi le mois.",
+    "none": "Aucun événement particulier sur cette période.",
+    "ingress": "{{body}} passe de {{from}} à {{to}}",
+    "station": {
+      "retrograde": "{{body}} devient rétrograde en {{sign}}",
+      "direct": "{{body}} redevient direct en {{sign}}"
+    },
+    "moonPhase": {
+      "new_moon": "Nouvelle lune",
+      "first_quarter": "Premier quartier",
+      "full_moon": "Pleine lune",
+      "last_quarter": "Dernier quartier"
+    },
+    "eclipse": "{{eclipse}} {{kind}}",
+    "eclipseBody": {
+      "solar": "Éclipse solaire",
+      "lunar": "Éclipse lunaire"
+    },
+    "eclipseKind": {
+      "penumbral": "de pénombre",
+      "partial": "partielle",
+      "annular": "annulaire",
+      "total": "totale"
+    },
+    "at": "{{date}} à {{time}} (heure de Paris)"
+  },
+  "source": {
+    "title": "D'où viennent ces données",
+    "text": "Les positions sont calculées localement par notre moteur astronomique ({{name}} {{version}}). Elles sont identiques pour tout le monde.",
+    "precision": "Leur précision est vérifiée à quelques secondes d'arc près contre les éphémérides de référence de la NASA (JPL Horizons) sur des dates de contrôle.",
+    "notPrediction": "Ce sont des positions et des événements astronomiques, pas des prédictions."
+  }
+}
